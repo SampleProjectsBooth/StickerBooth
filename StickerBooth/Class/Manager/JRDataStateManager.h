@@ -10,15 +10,26 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JRDataStateManager : NSObject
+typedef NS_ENUM(NSInteger, JRDataStateType) {
+    JRDataState_None = 0,
+    JRDataState_Success,
+    JRDataState_Fail,
+};
 
-+ (instancetype)shareInstance;
+@interface JRDataStateManager : NSObject
 
 @property (readonly, nonatomic, nullable) NSArray <NSArray *>*dataSources;
 
-+ (void)giveDataSource:(NSArray <NSArray *>*)dataSource;
+@property (assign, nonatomic) NSUInteger section;
 
-+ (void)changeState:(NSIndexPath *)indexPath;
++ (instancetype)shareInstance;
+
+- (void)giveDataSources:(NSArray <NSArray *>*)dataSources;
+
+- (void)changeState:(NSInteger)row stateType:(JRDataStateType)stateType;
+
+/** 如果index大于下标，会崩溃 */
+- (JRDataStateType)stateTypeForIndex:(NSUInteger)index;
 
 @end
 

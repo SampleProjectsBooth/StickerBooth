@@ -118,11 +118,11 @@
 			isa = PBXGroup;
 			children = (
 				66DEB583240619A600C770B5 /* Vendors */,
-				66DEB590240619A600C770B5 /* JRTitleShowView.m */,
 				66DEB591240619A600C770B5 /* Source */,
 				66DEB594240619A600C770B5 /* Cell */,
 				66DEB5A0240619A600C770B5 /* Manager */,
 				66DEB5A3240619A600C770B5 /* JRTitleShowView.h */,
+				66DEB590240619A600C770B5 /* JRTitleShowView.m */,
 			);
 			path = Class;
 			sourceTree = "<group>";

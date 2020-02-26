@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, nonatomic, nonnull) LFMEGifView *imageView;
 
+- (void)setCellData:(id)data indexPath:(NSIndexPath *)indexPath;
+
 @end
 
 NS_ASSUME_NONNULL_END

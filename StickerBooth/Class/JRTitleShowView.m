@@ -11,6 +11,7 @@
 #import "LFDownloadManager.h"
 #import "LFEditCollectionView.h"
 #import "JRTitleCollectionViewCell.h"
+#import "JRDataStateManager.h"
 
 /** title高度 */
 CGFloat const JR_V_ScrollView_heitht = 50.f;
@@ -52,6 +53,7 @@ CGFloat const JR_O_margin = 1.5f;
     _titles = titles;
     _selectTitle = [titles firstObject];
     _objs = objs;
+    [[JRDataStateManager shareInstance] giveDataSources:_objs];
     [self _initSubViews];
 }
 
@@ -118,7 +120,7 @@ CGFloat const JR_O_margin = 1.5f;
         imageCell.contentView.backgroundColor = array[indexPath.row];
         imageCell.delegate = self;
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item) {
-        
+        [JRDataStateManager shareInstance].section = indexPath.row;
     }];
     
 }

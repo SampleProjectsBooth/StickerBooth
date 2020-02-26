@@ -9,6 +9,7 @@
 #import "JRCollectionViewCell.h"
 #import "JRImageCollectionViewCell.h"
 #import "LFEditCollectionView.h"
+#import "JRDataStateManager.h"
 
 @interface JRCollectionViewCell ()
 
@@ -63,12 +64,14 @@
         return [JRImageCollectionViewCell identifier];
     } configureCell:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item, UICollectionViewCell * _Nonnull cell) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)cell;
-        [imageCell setCellData:item];
+        [imageCell setCellData:item indexPath:indexPath];
         imageCell.contentView.backgroundColor = [UIColor lightGrayColor];
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
-        if ([weakSelf.delegate respondsToSelector:@selector(didSelectObj:index:)]) {
-            [weakSelf.delegate didSelectObj:imageCell.imageView.data index:indexPath.row];
+        if ([[JRDataStateManager shareInstance] stateTypeForIndex:indexPath.row] == JRDataState_Success) {
+            if ([weakSelf.delegate respondsToSelector:@selector(didSelectObj:index:)]) {
+                [weakSelf.delegate didSelectObj:imageCell.imageView.data index:indexPath.row];
+            }
         }
     }];
     

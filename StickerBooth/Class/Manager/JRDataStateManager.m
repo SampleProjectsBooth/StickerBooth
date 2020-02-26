@@ -7,7 +7,6 @@
 //
 
 #import "JRDataStateManager.h"
-#import <UIKit/UIKit.h>
 
 @interface JRDataStateManager ()
 
@@ -33,25 +32,36 @@
     return [self.states copy];
 }
 
-+ (void)changeState:(NSIndexPath *)indexPath
+- (void)changeState:(NSInteger)row stateType:(JRDataStateType)stateType
 {
-    NSMutableArray *array = [[JRDataStateManager shareInstance].states objectAtIndex:indexPath.section];
-    if ([[array objectAtIndex:indexPath.row] integerValue] == 0) {
-        [array replaceObjectAtIndex:indexPath.row withObject:@1];
-    } else {
-        [array replaceObjectAtIndex:indexPath.row withObject:@0];
+    if([[JRDataStateManager shareInstance].states count] >= self.section) {
+        NSMutableArray *array = [[JRDataStateManager shareInstance].states objectAtIndex:self.section];
+        if (array.count >= row) {
+            [array replaceObjectAtIndex:row withObject:@(stateType)];
+        }
     }
 }
 
-+ (void)giveDataSource:(NSArray *)dataSource
+- (void)giveDataSources:(NSArray <NSArray *>*)dataSources
 {
-    [JRDataStateManager shareInstance].states = [NSMutableArray arrayWithCapacity:dataSource.count];
-    for (NSArray *array in dataSource) {
+    [JRDataStateManager shareInstance].states = [NSMutableArray arrayWithCapacity:dataSources.count];
+    for (NSArray *array in dataSources) {
         NSMutableArray *s = [NSMutableArray arrayWithCapacity:array.count];
-        for (id obj in array) {
-            [s addObject:@0];
+        
+        for (NSInteger i = 0; array.count > i; i++) {
+            [s addObject:@(JRDataState_None)];
         }
+        
         [[JRDataStateManager shareInstance].states addObject:s];
     }
+}
+
+- (JRDataStateType)stateTypeForIndex:(NSUInteger)index
+{
+    if([[JRDataStateManager shareInstance].states count] >= self.section) {
+        NSMutableArray *array = [[JRDataStateManager shareInstance].states objectAtIndex:self.section];
+        return [[array objectAtIndex:index] integerValue];
+    } 
+    return JRDataState_None;
 }
 @end
