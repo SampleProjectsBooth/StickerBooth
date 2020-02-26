@@ -8,7 +8,7 @@
 
 #import "JRImageCollectionViewCell.h"
 #import "LFDownloadManager.h"
-#import "LFVideoProgressView.h"
+#import "LFStickerProgressView.h"
 #import <Photos/Photos.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 #import "JRDataStateManager.h"
@@ -17,7 +17,7 @@
 
 @property (strong, nonatomic) LFMEGifView *imageView;
 
-@property (weak, nonatomic) LFVideoProgressView *progressView;
+@property (weak, nonatomic) LFStickerProgressView *progressView;
 
 @property (weak, nonatomic) id item;
 
@@ -80,7 +80,7 @@
             }
         } else {
             self.progressView.hidden = NO;
-            [self.progressView showLoading];
+            self.progressView.progress = 0;
             __weak typeof(self) weakSelf = self;
             [[LFDownloadManager shareLFDownloadManager] lf_downloadURL:dataURL progress:^(int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite, NSURL *URL) {
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
@@ -91,7 +91,6 @@
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
                     if (error || downloadData == nil) {
                         [[JRDataStateManager shareInstance] changeState:indexPath.row stateType:JRDataState_Fail];
-                        [weakSelf.progressView showFailure];
                         weakSelf.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
                     } else {
                         [[JRDataStateManager shareInstance] changeState:indexPath.row stateType:JRDataState_Success];
@@ -113,7 +112,7 @@
     [self.contentView addSubview:imageView];
     self.imageView = imageView;
     
-    LFVideoProgressView *view1 = [[LFVideoProgressView alloc] initWithFrame:CGRectZero];
+    LFStickerProgressView *view1 = [[LFStickerProgressView alloc] initWithFrame:CGRectZero];
     [self.contentView addSubview:view1];
     [self.contentView bringSubviewToFront:view1];
     self.progressView = view1;

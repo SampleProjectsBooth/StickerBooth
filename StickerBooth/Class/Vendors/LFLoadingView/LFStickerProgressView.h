@@ -8,14 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface LFVideoProgressView : UIView
+@interface LFStickerProgressView : UIView
 
 /** 进度值*/
 @property (nonatomic, assign) float progress;
-
-@property (nonatomic, copy) void (^clickBlock)(void);
-
-- (void)showLoading;
-- (void)showFailure;
 
 @end

@@ -6,9 +6,9 @@
 //  Copyright © 2016年 GZMiracle. All rights reserved.
 //
 
-#import "LFVideoProgressView.h"
+#import "LFStickerProgressView.h"
 
-@interface LFVideoProgressView ()
+@interface LFStickerProgressView ()
 
 /** 大小 */
 @property (nonatomic, assign) CGRect circlesSize;
@@ -17,12 +17,9 @@
 /** 前圆环 */
 @property (nonatomic, strong) CAShapeLayer *foreCircle;
 
-@property (nonatomic, strong) UIButton *playButton;
-@property (nonatomic, strong) UILabel *tipsLabel;
-
 @end
 
-@implementation LFVideoProgressView
+@implementation LFStickerProgressView
 
 - (id)init
 {
@@ -35,7 +32,6 @@
     if(self){
         self.backgroundColor = [UIColor clearColor];
         self.circlesSize = CGRectMake(20, 1, 18, 18);
-//        [self createView];
         [self resetProgressView];
     }
     return self;
@@ -59,34 +55,6 @@
         if (_progress > 0) {
             self.foreCircle.strokeEnd = _progress;
         }
-    }
-    
-    self.tipsLabel.center = self.playButton.center = CGPointMake(self.center.x-self.frame.origin.x, self.center.y-self.frame.origin.y);
-    CGRect lableFrame = self.tipsLabel.frame;
-    lableFrame.origin.y += CGRectGetHeight(self.playButton.frame)/2 + CGRectGetHeight(lableFrame)/2 + 10.f;
-    self.tipsLabel.frame = lableFrame;
-}
-
--(void)createView
-{
-    if (self.playButton == nil) {
-        self.playButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.playButton.frame = CGRectMake(0, 0, 45, 45);
-        [self.playButton setImage:[UIImage imageNamed:@"LFPhotoSource.bundle/play"] forState:UIControlStateNormal];
-        [self.playButton setImage:[UIImage imageNamed:@"LFPhotoSource.bundle/not_play"] forState:UIControlStateSelected];
-        [self.playButton addTarget:self action:@selector(onClick:) forControlEvents:UIControlEventTouchUpInside];
-        self.playButton.hidden = YES;
-        [self addSubview:self.playButton];
-    }
-    if (self.tipsLabel == nil) {
-        self.tipsLabel = [[UILabel alloc] init];
-        self.tipsLabel.frame = CGRectMake(0, 0, 300, 20);
-        self.tipsLabel.text = @"轻触载入";
-        self.tipsLabel.textColor = [UIColor whiteColor];
-        self.tipsLabel.textAlignment = NSTextAlignmentCenter;
-        self.tipsLabel.hidden = YES;
-        self.tipsLabel.font = [UIFont systemFontOfSize:14.f];
-        [self addSubview:self.tipsLabel];
     }
 }
 
@@ -150,7 +118,6 @@
     _progress = progress;
     
     if (progress >= 0) {
-        self.playButton.hidden = self.tipsLabel.hidden = YES;
         
         if (self.backCircle == nil) {
             [self addBackCircleWithSize:self.circlesSize.origin.x lineWidth:self.circlesSize.origin.y];
@@ -194,7 +161,6 @@
     if ([self.backCircle animationForKey:@"rotationAnimation"]) {
         return ;
     }
-    self.playButton.hidden = self.tipsLabel.hidden = YES;
     [self drawBackCircle:YES];
     CABasicAnimation *rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
     rotationAnimation.toValue = [NSNumber numberWithFloat:M_PI * 2.0];
@@ -219,27 +185,7 @@
     self.backCircle = nil;
     self.foreCircle = nil;
     _progress = 0;
-    self.playButton.hidden = NO;
-    [self.playButton setSelected:NO];
-    self.tipsLabel.hidden = NO;
 }
 
-- (void)onClick:(id)sender
-{
-    self.progress = 0;
-    if (self.clickBlock) {
-        self.clickBlock();
-    }
-}
 
-- (void)showLoading
-{
-    [self resetProgressView];
-}
-- (void)showFailure
-{
-    [self resetProgressView];
-    [self.playButton setSelected:YES];
-    self.tipsLabel.hidden = YES;
-}
 @end

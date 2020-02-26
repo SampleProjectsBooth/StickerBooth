@@ -27,4 +27,6 @@ typedef void(^lf_completeBlock)(NSData * data, NSError *error, NSURL *URL);
 
 + (void)lf_clearCached;
 
+- (NSData *)dataFromSandboxWithURL:(NSURL *)URL;
+
 @end
