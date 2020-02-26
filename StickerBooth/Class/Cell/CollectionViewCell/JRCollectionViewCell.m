@@ -23,6 +23,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.contentView.backgroundColor = [UIColor clearColor];
         [self _initSubView];
     } return self;
 }
@@ -41,6 +42,7 @@
     [super prepareForReuse];
     if (self.collectionView) {
         self.collectionView.dataSources = @[];
+        [self.collectionView reloadData];
     }
 }
 
@@ -70,8 +72,7 @@
         return [JRImageCollectionViewCell identifier];
     } configureCell:^(NSIndexPath * _Nonnull indexPath, JRStickerContent * _Nonnull item, UICollectionViewCell * _Nonnull cell) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)cell;
-        [imageCell setCellData:item indexPath:indexPath];
-        imageCell.contentView.backgroundColor = [UIColor lightGrayColor];
+        [imageCell setCellData:item];
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, JRStickerContent * _Nonnull item) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
         if (item.state == JRStickerContentState_Success) {

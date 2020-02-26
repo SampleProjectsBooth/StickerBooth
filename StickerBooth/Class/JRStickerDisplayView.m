@@ -20,7 +20,7 @@ CGFloat const JR_V_Button_width = 80.f;
 /** 按钮在scrollView的间距 */
 CGFloat const JR_O_margin = 1.5f;
 
-@interface JRStickerDisplayView () <JRCollectionViewDelegate>
+@interface JRStickerDisplayView () <JRCollectionViewDelegate, LFEditCollectionViewDelegate>
 
 @property (readonly , nonatomic, nonnull) NSArray <NSString *>*titles;
 
@@ -30,6 +30,8 @@ CGFloat const JR_O_margin = 1.5f;
 
 @property (strong, nonatomic) LFEditCollectionView *topCollectionView;
 
+@property (copy, nonatomic) NSString *selectTitle;
+
 @end
 
 @implementation JRStickerDisplayView
@@ -38,6 +40,7 @@ CGFloat const JR_O_margin = 1.5f;
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.backgroundColor = [UIColor blackColor];
     } return self;
 }
 
@@ -81,7 +84,7 @@ CGFloat const JR_O_margin = 1.5f;
     LFEditCollectionView *tCollectionView = [[LFEditCollectionView alloc] initWithFrame:CGRectZero];
     tCollectionView.showsVerticalScrollIndicator = NO;
     tCollectionView.showsHorizontalScrollIndicator = NO;
-    tCollectionView.backgroundColor = [UIColor orangeColor];
+    tCollectionView.backgroundColor = [UIColor clearColor];
     tCollectionView.collectionViewLayout = tFlowLayout;
     [self addSubview:tCollectionView];
     self.topCollectionView = tCollectionView;
@@ -91,10 +94,13 @@ CGFloat const JR_O_margin = 1.5f;
 
     [self.topCollectionView callbackCellIdentifier:^NSString * _Nonnull(NSIndexPath * _Nonnull indexPath) {
         return [JRTitleCollectionViewCell identifier];
-    } configureCell:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item, UICollectionViewCell * _Nonnull cell) {
+    } configureCell:^(NSIndexPath * _Nonnull indexPath, NSString *  _Nonnull item, UICollectionViewCell * _Nonnull cell) {
         JRTitleCollectionViewCell *titleCell = (JRTitleCollectionViewCell *)cell;
         [titleCell setCellData:item];
-        titleCell.contentView.backgroundColor = [UIColor blueColor];
+        titleCell.backgroundColor =  [UIColor clearColor];
+        if ([weakSelf.selectTitle isEqualToString:item]) {
+            titleCell.backgroundColor =  [UIColor orangeColor];
+        }
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item) {
         [weakSelf _changeTitle:item];
         [weakSelf.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
@@ -110,13 +116,13 @@ CGFloat const JR_O_margin = 1.5f;
     collectionView.pagingEnabled = YES;
     collectionView.showsVerticalScrollIndicator = NO;
     collectionView.showsHorizontalScrollIndicator = NO;
+    collectionView.delegate = self;
     collectionView.backgroundColor = [UIColor clearColor];
     [self addSubview:collectionView];
     self.collectionView = collectionView;
     [self.collectionView setDataSources:@[_titles]];
     [self.collectionView registerClass:[JRCollectionViewCell class] forCellWithReuseIdentifier:[JRCollectionViewCell identifier]];
 
-    NSArray *array = @[[UIColor brownColor], [UIColor redColor], [UIColor yellowColor], [UIColor blackColor]];
     [self.collectionView callbackCellIdentifier:^NSString * _Nonnull(NSIndexPath * _Nonnull indexPath) {
         return [JRCollectionViewCell identifier];
     } configureCell:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item, UICollectionViewCell * _Nonnull cell) {
@@ -124,10 +130,7 @@ CGFloat const JR_O_margin = 1.5f;
         imageCell.backgroundColor = [UIColor clearColor];
         if (weakSelf.contents.count > indexPath.row) {
             [imageCell setCellData:[weakSelf.contents objectAtIndex:indexPath.row]];
-        } else {
-            [imageCell setCellData:nil];
         }
-        imageCell.contentView.backgroundColor = array[indexPath.row];
         imageCell.delegate = self;
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item) {
         
@@ -137,7 +140,13 @@ CGFloat const JR_O_margin = 1.5f;
 
 - (void)_changeTitle:(NSString *)string
 {
-    _selectTitle = string;
+    if ([self.selectTitle isEqualToString:string]) {
+        return;
+    }
+    NSUInteger oldIndex = [self.titles indexOfObject:_selectTitle];
+    NSUInteger selectIndex = [self.titles indexOfObject:string];
+    self.selectTitle = string;
+    [self.topCollectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:oldIndex inSection:0], [NSIndexPath indexPathForRow:selectIndex inSection:0]]];
 }
 
 #pragma mark 调整视图
@@ -145,7 +154,7 @@ CGFloat const JR_O_margin = 1.5f;
 {
     self.topCollectionView.frame = CGRectMake(0.f, 0.f, CGRectGetWidth(self.frame), JR_V_ScrollView_heitht + JR_O_margin*2);
     
-    self.collectionView.frame = CGRectMake(0.f, JR_V_ScrollView_heitht, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame) - CGRectGetHeight(self.topCollectionView.frame));
+    self.collectionView.frame = CGRectMake(0.f, JR_V_ScrollView_heitht, CGRectGetWidth(self.frame)+10.f, CGRectGetHeight(self.frame) - CGRectGetHeight(self.topCollectionView.frame));
     self.collectionView.itemSize = self.collectionView.frame.size;
     [self.collectionView invalidateIntrinsicContentSize];
 }
@@ -157,6 +166,18 @@ CGFloat const JR_O_margin = 1.5f;
     
     if (self.didSelectBlock) {
         self.didSelectBlock(indexPath, obj);
+    }
+}
+
+#pragma mark - LFEditCollectionViewDelegate
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if ([scrollView.superview isEqual:self.collectionView]) {
+        NSInteger index = scrollView.contentOffset.x / scrollView.frame.size.width;
+        if (self.titles.count > index) {
+            NSString *string = [self.titles objectAtIndex:index];
+            [self _changeTitle:string];
+        }
     }
 }
 

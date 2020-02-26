@@ -58,14 +58,13 @@
 
 
 #pragma mark - Public Methods
-- (void)setCellData:(JRStickerContent *)item indexPath:(nonnull NSIndexPath *)indexPath
+- (void)setCellData:(JRStickerContent *)item
 {
     [super setCellData:item];
     if (item.state == JRStickerContentState_Fail) {
         self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
         return;
     }
-
     id data = item.content;
     if ([data isKindOfClass:[NSURL class]]) {
         NSURL *dataURL = (NSURL *)data;
@@ -87,7 +86,6 @@
                     weakSelf.progressView.progress = progess;
                 }
             } completion:^(NSData *downloadData, NSError *error, NSURL *URL) {
-                NSLog(@"row:%ld", indexPath.row);
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
                     if (error || downloadData == nil) {
                         item.state = JRStickerContentState_Fail;
@@ -108,16 +106,17 @@
 #pragma mark - Private Methods
 - (void)_initSubViewAndDataSources
 {
+    self.contentView.backgroundColor = [UIColor clearColor];
+
     LFMEGifView *imageView = [[LFMEGifView alloc] initWithFrame:CGRectZero];
     [self.contentView addSubview:imageView];
     self.imageView = imageView;
+    self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"success" ofType:@"png"]];
     
     LFStickerProgressView *view1 = [[LFStickerProgressView alloc] initWithFrame:CGRectZero];
     [self.contentView addSubview:view1];
     [self.contentView bringSubviewToFront:view1];
-    self.progressView = view1;
-    
-
+    self.progressView = view1;    
 }
 
 - (PHImageRequestID)getPhotoDataWithAsset:(id)asset completion:(void (^)(NSData *data,NSDictionary *info,BOOL isDegraded))completion progressHandler:(void (^)(double progress, NSError *error, BOOL *stop, NSDictionary *info))progressHandler {

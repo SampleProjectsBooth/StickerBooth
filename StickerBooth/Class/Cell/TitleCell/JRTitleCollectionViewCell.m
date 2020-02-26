@@ -20,6 +20,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.contentView.backgroundColor = [UIColor clearColor];
         [self _createCustomView];
     } return self;
 }
