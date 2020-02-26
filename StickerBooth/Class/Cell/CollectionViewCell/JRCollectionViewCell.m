@@ -55,7 +55,7 @@
     flowLayout.sectionInset = UIEdgeInsetsMake(5.f, 5.f, 5.f, 5.f);
     LFEditCollectionView *col = [[LFEditCollectionView alloc] initWithFrame:CGRectZero];
     col.collectionViewLayout = flowLayout;
-    col.pagingEnabled = YES;
+//    col.pagingEnabled = YES;
     col.backgroundColor = [UIColor clearColor];
     [self.contentView addSubview:col];
     self.collectionView = col;

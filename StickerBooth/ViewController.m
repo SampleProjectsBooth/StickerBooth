@@ -26,9 +26,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    [self _createShowView];
-    
+        
     JRTitleShowView *view = [[JRTitleShowView alloc] initWithFrame:self.view.bounds];
     [self.view addSubview:view];
     self.myView = view;
@@ -48,13 +46,21 @@
         NSLog(@"title:%@", weakSelf.myView.selectTitle);
         NSLog(@"%@", [[objs objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]);
         if (data) {
+            [weakSelf _createShowView];
             weakSelf.showView.frame = weakSelf.view.bounds;
             weakSelf.showView.backgroundColor = [UIColor blackColor];
             weakSelf.showView.data = data;
             [weakSelf.view bringSubviewToFront:weakSelf.showView];
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_hiddenShowView)];
+            [weakSelf.showView addGestureRecognizer:tap];
         }
     };
     NSLog(@"title:%@", self.myView.selectTitle);
+}
+
+- (void)_hiddenShowView
+{
+    [self.showView removeFromSuperview];
 }
 
 - (void)viewWillLayoutSubviews
