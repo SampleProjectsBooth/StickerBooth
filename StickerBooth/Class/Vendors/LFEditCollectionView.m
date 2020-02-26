@@ -235,6 +235,15 @@
     [self.collectionView invalidateIntrinsicContentSize];
 }
 
+- (void)reloadData
+{
+    [self.collectionView reloadData];
+}
+
+- (void)reloadItemsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths
+{
+    [self.collectionView reloadItemsAtIndexPaths:indexPaths];
+}
 #pragma mark - UICollectionViewFlowLayout setter/getter
 - (void)setCollectionViewLayout:(UICollectionViewLayout *)collectionViewLayout
 {

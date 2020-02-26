@@ -19,6 +19,15 @@
 
 @implementation JRCollectionViewCell
 
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.contentView.backgroundColor = [UIColor clearColor];
+//        [self _initSubView];
+    } return self;
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -32,8 +41,7 @@
 {
     [super prepareForReuse];
     if (self.collectionView) {
-        [self.collectionView removeFromSuperview];
-        self.collectionView = nil;
+        self.collectionView.dataSources = @[];
     }
 }
 
@@ -41,9 +49,9 @@
 - (void)setCellData:(id)data
 {
     if ([data isKindOfClass:[NSArray class]]) {
-        [self _initSubView];
         self.collectionView.dataSources = @[data];
     }
+    [self.collectionView reloadData];
 }
 
 #pragma mark - Private Methods
@@ -55,7 +63,6 @@
     flowLayout.sectionInset = UIEdgeInsetsMake(5.f, 5.f, 5.f, 5.f);
     LFEditCollectionView *col = [[LFEditCollectionView alloc] initWithFrame:CGRectZero];
     col.collectionViewLayout = flowLayout;
-//    col.pagingEnabled = YES;
     col.backgroundColor = [UIColor clearColor];
     [self.contentView addSubview:col];
     self.collectionView = col;
@@ -65,7 +72,7 @@
     } configureCell:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item, UICollectionViewCell * _Nonnull cell) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)cell;
         [imageCell setCellData:item indexPath:indexPath];
-        imageCell.contentView.backgroundColor = [UIColor lightGrayColor];
+        imageCell.contentView.backgroundColor = [UIColor clearColor];
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
         if ([[JRDataStateManager shareInstance] stateTypeForIndex:indexPath.row] == JRDataState_Success) {

@@ -16,6 +16,14 @@
 
 @implementation JRTitleCollectionViewCell
 
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self _createCustomView];
+    } return self;
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -25,13 +33,12 @@
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-    [self.label removeFromSuperview];
+    self.label.text = nil;
 }
 
 - (void)setCellData:(id)data
 {
     if ([data isKindOfClass:[NSString class]]) {
-        [self _createCustomView];
         self.label.text = data;
     }
 }
@@ -43,7 +50,7 @@
     [self.contentView addSubview:lable];
     self.label = lable;
     self.label.textAlignment = NSTextAlignmentCenter;
-    
+    self.label.textColor = [UIColor whiteColor];
 }
 
 @end
