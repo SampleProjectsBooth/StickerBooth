@@ -9,7 +9,7 @@
 #import "JRCollectionViewCell.h"
 #import "JRImageCollectionViewCell.h"
 #import "LFEditCollectionView.h"
-#import "JRDataStateManager.h"
+#import "JRStickerContent.h"
 
 @interface JRCollectionViewCell ()
 
@@ -62,13 +62,13 @@
     [self.collectionView registerClass:[JRImageCollectionViewCell class] forCellWithReuseIdentifier:[JRImageCollectionViewCell identifier]];
     [self.collectionView callbackCellIdentifier:^NSString * _Nonnull(NSIndexPath * _Nonnull indexPath) {
         return [JRImageCollectionViewCell identifier];
-    } configureCell:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item, UICollectionViewCell * _Nonnull cell) {
+    } configureCell:^(NSIndexPath * _Nonnull indexPath, JRStickerContent * _Nonnull item, UICollectionViewCell * _Nonnull cell) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)cell;
         [imageCell setCellData:item indexPath:indexPath];
         imageCell.contentView.backgroundColor = [UIColor lightGrayColor];
-    } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item) {
+    } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, JRStickerContent * _Nonnull item) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
-        if ([[JRDataStateManager shareInstance] stateTypeForIndex:indexPath.row] == JRDataState_Success) {
+        if (item.state == JRStickerContentState_Success) {
             if ([weakSelf.delegate respondsToSelector:@selector(didSelectObj:index:)]) {
                 [weakSelf.delegate didSelectObj:imageCell.imageView.data index:indexPath.row];
             }

@@ -6,12 +6,12 @@
 //  Copyright © 2020 djr. All rights reserved.
 //
 
-#import "JRTitleShowView.h"
+#import "JRStickerDisplayView.h"
 #import "JRCollectionViewCell.h"
 #import "LFDownloadManager.h"
 #import "LFEditCollectionView.h"
 #import "JRTitleCollectionViewCell.h"
-#import "JRDataStateManager.h"
+#import "JRStickerContent.h"
 
 /** title高度 */
 CGFloat const JR_V_ScrollView_heitht = 50.f;
@@ -20,11 +20,11 @@ CGFloat const JR_V_Button_width = 80.f;
 /** 按钮在scrollView的间距 */
 CGFloat const JR_O_margin = 1.5f;
 
-@interface JRTitleShowView () <JRCollectionViewDelegate>
+@interface JRStickerDisplayView () <JRCollectionViewDelegate>
 
 @property (readonly , nonatomic, nonnull) NSArray <NSString *>*titles;
 
-@property (readonly , nonatomic, nonnull) NSArray <NSArray *>*objs;
+@property (readonly , nonatomic, nonnull) NSArray <NSArray <JRStickerContent *>*>*contents;
 
 @property (strong, nonatomic) LFEditCollectionView *collectionView;
 
@@ -32,7 +32,7 @@ CGFloat const JR_O_margin = 1.5f;
 
 @end
 
-@implementation JRTitleShowView
+@implementation JRStickerDisplayView
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -48,13 +48,23 @@ CGFloat const JR_O_margin = 1.5f;
 }
 
 #pragma mark - Public Methods
-- (void)setTitles:(NSArray *)titles objs:(NSArray<NSArray *> *)objs
+- (void)setTitles:(NSArray *)titles contents:(NSArray<NSArray *> *)contents
 {
     _titles = titles;
     _selectTitle = [titles firstObject];
-    _objs = objs;
-    [[JRDataStateManager shareInstance] giveDataSources:_objs];
-    [self _initSubViews];
+    NSMutableArray *r_contents = [NSMutableArray arrayWithCapacity:contents.count];
+    for (NSArray *subContents in contents) {
+        NSMutableArray *s_contents = [NSMutableArray arrayWithCapacity:subContents.count];
+        for (id content in subContents) {
+            [s_contents addObject:[JRStickerContent stickerContentWithContent:content]];
+        }
+        [r_contents addObject:[s_contents copy]];
+    }
+    _contents = [r_contents copy];
+    
+    if (_titles.count) {
+        [self _initSubViews];
+    }
 }
 
 #pragma mark - Private Methods
@@ -112,15 +122,15 @@ CGFloat const JR_O_margin = 1.5f;
     } configureCell:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item, UICollectionViewCell * _Nonnull cell) {
         JRCollectionViewCell *imageCell = (JRCollectionViewCell *)cell;
         imageCell.backgroundColor = [UIColor clearColor];
-        if (weakSelf.objs.count > indexPath.row) {
-            [imageCell setCellData:[weakSelf.objs objectAtIndex:indexPath.row]];
+        if (weakSelf.contents.count > indexPath.row) {
+            [imageCell setCellData:[weakSelf.contents objectAtIndex:indexPath.row]];
         } else {
             [imageCell setCellData:nil];
         }
         imageCell.contentView.backgroundColor = array[indexPath.row];
         imageCell.delegate = self;
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item) {
-        [JRDataStateManager shareInstance].section = indexPath.row;
+        
     }];
     
 }
