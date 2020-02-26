@@ -34,9 +34,9 @@
 
 - (void)changeState:(NSInteger)row stateType:(JRDataStateType)stateType
 {
-    if([[JRDataStateManager shareInstance].states count] >= self.section) {
+    if([[JRDataStateManager shareInstance].states count] > self.section) {
         NSMutableArray *array = [[JRDataStateManager shareInstance].states objectAtIndex:self.section];
-        if (array.count >= row) {
+        if (array.count > row) {
             [array replaceObjectAtIndex:row withObject:@(stateType)];
         }
     }
@@ -58,10 +58,12 @@
 
 - (JRDataStateType)stateTypeForIndex:(NSUInteger)index
 {
-    if([[JRDataStateManager shareInstance].states count] >= self.section) {
+    if([[JRDataStateManager shareInstance].states count] > self.section) {
         NSMutableArray *array = [[JRDataStateManager shareInstance].states objectAtIndex:self.section];
-        return [[array objectAtIndex:index] integerValue];
-    } 
+        if (array.count > index) {
+            return [[array objectAtIndex:index] integerValue];
+        }
+    }
     return JRDataState_None;
 }
 @end
