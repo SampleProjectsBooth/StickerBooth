@@ -39,8 +39,8 @@
     }
     
     __weak typeof(self) weakSelf = self;
-    NSArray *array1 = @[];
-    NSArray *objs = @[a1, array1 ,@[[NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/677/w400h277/20200219/4639-iprtayz5721379.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/468/w300h168/20200219/8dea-iprtayz5718598.gif"], [NSURL URLWithString:@"https://f.sinaimg.cn/tech/transform/160/w480h480/20200220/d36d-ipvnszc8464062.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/168/w393h575/20200218/baab-iprtayz1354632.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/168/w393h575/20200218/1b0e-iprtayz1353680.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/69/w382h487/20200218/157c-iprtayz1351773.gif"], [NSURL URLWithString:@"https://f.sinaimg.cn/tech/transform/0/w400h400/20200218/67c5-iprtayz1348076.gif"]]];
+    NSArray *array1 = @[[NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/677/w400h277/20200219/4639-iprtayz5721379.gif"]];
+    NSArray *objs = @[array1, a1, @[[NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/677/w400h277/20200219/4639-iprtayz5721379.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/468/w300h168/20200219/8dea-iprtayz5718598.gif"], [NSURL URLWithString:@"https://f.sinaimg.cn/tech/transform/160/w480h480/20200220/d36d-ipvnszc8464062.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/168/w393h575/20200218/baab-iprtayz1354632.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/168/w393h575/20200218/1b0e-iprtayz1353680.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/69/w382h487/20200218/157c-iprtayz1351773.gif"], [NSURL URLWithString:@"https://f.sinaimg.cn/tech/transform/0/w400h400/20200218/67c5-iprtayz1348076.gif"]]];
     [self.myView setTitles:@[@"1", @"2", @"3", @"4"] objs:objs];
     self.myView.didSelectBlock = ^(NSIndexPath * _Nonnull indexPath, NSData * _Nullable data) {
         NSLog(@"title:%@", weakSelf.myView.selectTitle);
