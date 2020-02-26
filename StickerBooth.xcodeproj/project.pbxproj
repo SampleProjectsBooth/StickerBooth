@@ -16,7 +16,7 @@
 		3B897F1B240616B000A3E854 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F1A240616B000A3E854 /* main.m */; };
 		66DEB5A4240619A600C770B5 /* LFMEWeakSelectorTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB587240619A600C770B5 /* LFMEWeakSelectorTarget.m */; };
 		66DEB5A5240619A600C770B5 /* LFEditCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB588240619A600C770B5 /* LFEditCollectionView.m */; };
-		66DEB5A6240619A600C770B5 /* LFVideoProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB58A240619A600C770B5 /* LFVideoProgressView.m */; };
+		66DEB5A6240619A600C770B5 /* LFStickerProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB58A240619A600C770B5 /* LFStickerProgressView.m */; };
 		66DEB5A7240619A600C770B5 /* LFDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB58E240619A600C770B5 /* LFDownloadManager.m */; };
 		66DEB5A8240619A600C770B5 /* LFMEGifView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB58F240619A600C770B5 /* LFMEGifView.m */; };
 		66DEB5A9240619A600C770B5 /* JRTitleShowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB590240619A600C770B5 /* JRTitleShowView.m */; };
@@ -47,8 +47,8 @@
 		66DEB586240619A600C770B5 /* LFMEGifView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFMEGifView.h; sourceTree = "<group>"; };
 		66DEB587240619A600C770B5 /* LFMEWeakSelectorTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFMEWeakSelectorTarget.m; sourceTree = "<group>"; };
 		66DEB588240619A600C770B5 /* LFEditCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFEditCollectionView.m; sourceTree = "<group>"; };
-		66DEB58A240619A600C770B5 /* LFVideoProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFVideoProgressView.m; sourceTree = "<group>"; };
-		66DEB58B240619A600C770B5 /* LFVideoProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFVideoProgressView.h; sourceTree = "<group>"; };
+		66DEB58A240619A600C770B5 /* LFStickerProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFStickerProgressView.m; sourceTree = "<group>"; };
+		66DEB58B240619A600C770B5 /* LFStickerProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFStickerProgressView.h; sourceTree = "<group>"; };
 		66DEB58D240619A600C770B5 /* LFDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFDownloadManager.h; sourceTree = "<group>"; };
 		66DEB58E240619A600C770B5 /* LFDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFDownloadManager.m; sourceTree = "<group>"; };
 		66DEB58F240619A600C770B5 /* LFMEGifView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFMEGifView.m; sourceTree = "<group>"; };
@@ -145,8 +145,8 @@
 		66DEB589240619A600C770B5 /* LFLoadingView */ = {
 			isa = PBXGroup;
 			children = (
-				66DEB58A240619A600C770B5 /* LFVideoProgressView.m */,
-				66DEB58B240619A600C770B5 /* LFVideoProgressView.h */,
+				66DEB58A240619A600C770B5 /* LFStickerProgressView.m */,
+				66DEB58B240619A600C770B5 /* LFStickerProgressView.h */,
 			);
 			path = LFLoadingView;
 			sourceTree = "<group>";
@@ -289,7 +289,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				66DEB5A6240619A600C770B5 /* LFVideoProgressView.m in Sources */,
+				66DEB5A6240619A600C770B5 /* LFStickerProgressView.m in Sources */,
 				3B897F10240616A900A3E854 /* ViewController.m in Sources */,
 				66DEB5A9240619A600C770B5 /* JRTitleShowView.m in Sources */,
 				66DEB5B0240619A600C770B5 /* JRDataStateManager.m in Sources */,
