@@ -7,6 +7,7 @@
 //
 
 #import "LFDownloadManager.h"
+#import <objc/runtime.h>
 
 #define LFDownloadManagerDirector [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:NSStringFromClass([LFDownloadManager class])]
 #define LFDownloadManagerDirectorAppending(name) [LFDownloadManagerDirector stringByAppendingPathComponent:name]
@@ -52,12 +53,39 @@
 
 #pragma mark - //////////////   LFURLSessionOperation
 
+static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
+
+@class LFURLSessionOperation;
+@interface NSURLSessionTask (LFURLSessionOperation)
+
+@property (nonatomic, weak) LFURLSessionOperation *lf_operation;
+
+@end
+
+@implementation NSURLSessionTask (LFURLSessionOperation)
+
+- (LFURLSessionOperation *)lf_operation
+{
+    return objc_getAssociatedObject(self, LFURLSessionOperationKey);
+}
+
+- (void)setLf_operation:(LFURLSessionOperation *)lf_operation
+{
+    objc_setAssociatedObject(self, LFURLSessionOperationKey, lf_operation, OBJC_ASSOCIATION_ASSIGN);
+}
+
+@end
+
 @interface LFURLSessionOperation : NSOperation
 
-- (instancetype)initWithSession:(NSURLSession *)session URL:(NSURL *)url completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler;
-- (instancetype)initWithSession:(NSURLSession *)session request:(NSURLRequest *)request completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler;
+- (instancetype)initWithDataSession:(NSURLSession *)session URL:(NSURL *)url completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler;
+- (instancetype)initWithDataSession:(NSURLSession *)session request:(NSURLRequest *)request completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler;
 
-@property (nonatomic, strong, readonly) NSURLSessionDataTask *task;
+- (instancetype)initWithDownloadSession:(NSURLSession *)session URL:(NSURL *)URL;
+
+@property (nonatomic, strong, readonly) NSURLSessionTask *task;
+
+- (void)completeOperation;
 
 @end
 
@@ -67,22 +95,31 @@
     BOOL _executing;
 }
 
-- (instancetype)initWithSession:(NSURLSession *)session URL:(NSURL *)url completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler {
+- (instancetype)initWithDataSession:(NSURLSession *)session URL:(NSURL *)url completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler {
     if (self = [super init]) {
         __weak typeof(self) weakSelf = self;
-        _task = [session dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        _task = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
             [weakSelf completeOperationWithBlock:completionHandler data:data response:response error:error];
         }];
     }
     return self;
 }
 
-- (instancetype)initWithSession:(NSURLSession *)session request:(NSURLRequest *)request completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler {
+- (instancetype)initWithDataSession:(NSURLSession *)session request:(NSURLRequest *)request completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler {
     if (self = [super init]) {
         __weak typeof(self) weakSelf = self;
-        _task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        _task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
             [weakSelf completeOperationWithBlock:completionHandler data:data response:response error:error];
         }];
+    }
+    return self;
+}
+
+- (instancetype)initWithDownloadSession:(NSURLSession *)session URL:(NSURL *)URL
+{
+    if (self = [super init]) {
+        _task = [session downloadTaskWithURL:URL];
+        _task.lf_operation = self;
     }
     return self;
 }
@@ -117,13 +154,26 @@
     return YES;
 }
 
+- (BOOL)isAsynchronous
+{
+    return YES;
+}
+
 - (void)completeOperationWithBlock:(void (^)(NSData *, NSURLResponse *, NSError *))block data:(NSData *)data response:(NSURLResponse *)response error:(NSError *)error {
     if (block)
         block(data, response, error);
     [self completeOperation];
 }
 
+- (void)completeOperationWithBlock:(void (^)(NSURL *, NSURLResponse *, NSError *))block url:(NSURL *)url response:(NSURLResponse *)response error:(NSError *)error {
+    if (block)
+        block(url, response, error);
+    [self completeOperation];
+}
+
 - (void)completeOperation {
+    _task.lf_operation = nil;
+    
     [self willChangeValueForKey:@"isFinished"];
     [self willChangeValueForKey:@"isExecuting"];
 
@@ -225,7 +275,7 @@
      response：响应头信息，主要是对服务器端的描述
      error：错误信息，如果请求失败，则error有值
      */
-    LFURLSessionOperation *operation = [[LFURLSessionOperation alloc] initWithSession:self.session request:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    LFURLSessionOperation *operation = [[LFURLSessionOperation alloc] initWithDataSession:self.session request:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (completion) {
             completion(data, error, URL);
         }
@@ -273,7 +323,7 @@
     }
     
     // 2、利用NSURLSessionDownloadTask创建任务(task)
-    LFURLSessionOperation *operation = [[LFURLSessionOperation alloc] initWithSession:self.session URL:URL completionHandler:nil];
+    LFURLSessionOperation *operation = [[LFURLSessionOperation alloc] initWithDownloadSession:self.session URL:URL];
     // 3、执行任务
     [self.queue addOperation:operation];
 }
@@ -317,7 +367,7 @@
 {
     //location为下载好的文件路径
     //NSLog(@"didFinishDownloadingToURL, %@", location);
-    
+    [downloadTask.lf_operation completeOperation];
     NSURL *URL = downloadTask.currentRequest.URL;
     
     LFDownloadInfo *info = self.downloadDictionary[URL];
@@ -345,6 +395,7 @@
  */
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
+    [task.lf_operation completeOperation];
     if (error) {
         NSURL *URL = task.currentRequest.URL;
         if (task.state == NSURLSessionTaskStateCanceling) {
