@@ -249,9 +249,16 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
     return self.queue.maxConcurrentOperationCount;
 }
 
-- (NSData *)dataFromSandboxWithURL:(NSURL *)URL {
-    
-    NSString *path = LFDownloadManagerDirectorAppending(URL.lastPathComponent);
+- (NSString *)sandboxNameWithURL:(NSURL *)URL
+{
+    NSData *encodeData = [URL.absoluteString dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *base64String = [encodeData base64EncodedStringWithOptions:0];
+    return base64String;
+}
+
+- (NSData *)dataFromSandboxWithURL:(NSURL *)URL
+{
+    NSString *path = LFDownloadManagerDirectorAppending([self sandboxNameWithURL:URL]);
     NSData *data = [NSData dataWithContentsOfFile:path];
     if (data.length > 0 ) {
         return data;
@@ -374,7 +381,7 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
     NSData *data = [NSData dataWithContentsOfURL:location];
     if (self.cacheData) {
         //1、生成的Caches地址
-        NSString *cacepath = LFDownloadManagerDirectorAppending(info.downloadURL.lastPathComponent);
+        NSString *cacepath = LFDownloadManagerDirectorAppending([self sandboxNameWithURL:info.downloadURL]);
         //2、移动图片的存储地址
         NSFileManager *manager = [NSFileManager defaultManager];
         [manager moveItemAtURL:location toURL:[NSURL fileURLWithPath:cacepath] error:nil];
