@@ -51,8 +51,9 @@
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-    self.imageView.data = nil;
-    self.progressView.hidden = NO;
+    self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"success" ofType:@"png"]];
+    self.progressView.progress = 0;
+    self.progressView.hidden = YES;
 }
 
 
@@ -64,8 +65,6 @@
         self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
         return;
     }
-    self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"success" ofType:@"png"]];
-    self.progressView.hidden = YES;
 
     if ([data isKindOfClass:[NSURL class]]) {
         NSURL *dataURL = (NSURL *)data;
@@ -73,14 +72,13 @@
             NSData *localData = [NSData dataWithContentsOfURL:dataURL];
             if (localData) {
                 [[JRDataStateManager shareInstance] changeState:indexPath.row stateType:JRDataState_Success];
-                self.imageView.data = [NSData dataWithContentsOfURL:dataURL];
+                self.imageView.data = localData;
             } else {
                 [[JRDataStateManager shareInstance] changeState:indexPath.row stateType:JRDataState_Fail];
                 self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
             }
         } else {
             self.progressView.hidden = NO;
-            self.progressView.progress = 0;
             __weak typeof(self) weakSelf = self;
             [[LFDownloadManager shareLFDownloadManager] lf_downloadURL:dataURL progress:^(int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite, NSURL *URL) {
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
@@ -88,6 +86,7 @@
                     weakSelf.progressView.progress = progess;
                 }
             } completion:^(NSData *downloadData, NSError *error, NSURL *URL) {
+                NSLog(@"row:%ld", indexPath.row);
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
                     if (error || downloadData == nil) {
                         [[JRDataStateManager shareInstance] changeState:indexPath.row stateType:JRDataState_Fail];
