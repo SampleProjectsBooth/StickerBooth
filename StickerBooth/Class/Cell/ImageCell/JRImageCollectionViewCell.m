@@ -70,15 +70,22 @@
     if ([data isKindOfClass:[NSURL class]]) {
         NSURL *dataURL = (NSURL *)data;
         if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
-            [[JRDataStateManager shareInstance] changeState:indexPath.row stateType:JRDataState_Success];
-            self.imageView.data = [NSData dataWithContentsOfURL:dataURL];
+            NSData *localData = [NSData dataWithContentsOfURL:dataURL];
+            if (localData) {
+                [[JRDataStateManager shareInstance] changeState:indexPath.row stateType:JRDataState_Success];
+                self.imageView.data = [NSData dataWithContentsOfURL:dataURL];
+            } else {
+                [[JRDataStateManager shareInstance] changeState:indexPath.row stateType:JRDataState_Fail];
+                self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
+            }
         } else {
             self.progressView.hidden = NO;
             [self.progressView showLoading];
             __weak typeof(self) weakSelf = self;
             [[LFDownloadManager shareLFDownloadManager] lf_downloadURL:dataURL progress:^(int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite, NSURL *URL) {
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
-                    weakSelf.progressView.progress = totalBytesExpectedToWrite/totalBytesWritten;
+                    float progess = totalBytesWritten*1.00f/totalBytesExpectedToWrite*1.00f;
+                    weakSelf.progressView.progress = progess;
                 }
             } completion:^(NSData *downloadData, NSError *error, NSURL *URL) {
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
