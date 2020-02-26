@@ -78,6 +78,12 @@
                 self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
             }
         } else {
+            NSData *httplocalData = [[LFDownloadManager shareLFDownloadManager] dataFromSandboxWithURL:dataURL];
+            if (httplocalData) {
+                item.state = JRStickerContentState_Success;
+                self.imageView.data = httplocalData;
+                return;
+            }
             self.progressView.hidden = NO;
             __weak typeof(self) weakSelf = self;
             [[LFDownloadManager shareLFDownloadManager] lf_downloadURL:dataURL progress:^(int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite, NSURL *URL) {
