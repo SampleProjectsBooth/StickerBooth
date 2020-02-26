@@ -113,13 +113,17 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
     if (_image != image) {
         [self freeData];
         _image = image;
-        if (_image.images.count) {
-            _frameCount = _image.images.count;
-            _duration = _image.duration / _image.images.count;
-            [self setupDisplayLink];
+        if (image) {
+            if (_image.images.count) {
+                _frameCount = _image.images.count;
+                _duration = _image.duration / _image.images.count;
+                [self setupDisplayLink];
+            } else {
+                [self unsetupDisplayLink];
+                self.layer.contents = (__bridge id _Nullable)(_image.CGImage);
+            }
         } else {
             [self unsetupDisplayLink];
-            self.layer.contents = (__bridge id _Nullable)(_image.CGImage);
         }
     }
 }
@@ -229,6 +233,8 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
         
         if (!_autoPlay) {
             [self stopGif];
+        } else {
+            [self playGif];
         }
     }
 }

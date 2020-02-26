@@ -11,7 +11,7 @@
 #import "LFStickerProgressView.h"
 #import <Photos/Photos.h>
 #import <MobileCoreServices/UTCoreTypes.h>
-#import "JRDataStateManager.h"
+#import "JRStickerContent.h"
 
 @interface JRImageCollectionViewCell ()
 
@@ -51,36 +51,35 @@
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-    self.imageView.data = nil;
-    self.progressView.hidden = NO;
+    self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"success" ofType:@"png"]];
+    self.progressView.progress = 0;
+    self.progressView.hidden = YES;
 }
 
 
 #pragma mark - Public Methods
-- (void)setCellData:(id)data indexPath:(nonnull NSIndexPath *)indexPath
+- (void)setCellData:(JRStickerContent *)item indexPath:(nonnull NSIndexPath *)indexPath
 {
-    [super setCellData:data];
-    if ([[JRDataStateManager shareInstance] stateTypeForIndex:indexPath.row] == JRDataState_Fail) {
+    [super setCellData:item];
+    if (item.state == JRStickerContentState_Fail) {
         self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
         return;
     }
-    self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"success" ofType:@"png"]];
-    self.progressView.hidden = YES;
 
+    id data = item.content;
     if ([data isKindOfClass:[NSURL class]]) {
         NSURL *dataURL = (NSURL *)data;
         if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
             NSData *localData = [NSData dataWithContentsOfURL:dataURL];
             if (localData) {
-                [[JRDataStateManager shareInstance] changeState:indexPath.row stateType:JRDataState_Success];
-                self.imageView.data = [NSData dataWithContentsOfURL:dataURL];
+                item.state = JRStickerContentState_Success;
+                self.imageView.data = localData;
             } else {
-                [[JRDataStateManager shareInstance] changeState:indexPath.row stateType:JRDataState_Fail];
+                item.state = JRStickerContentState_Fail;
                 self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
             }
         } else {
             self.progressView.hidden = NO;
-            self.progressView.progress = 0;
             __weak typeof(self) weakSelf = self;
             [[LFDownloadManager shareLFDownloadManager] lf_downloadURL:dataURL progress:^(int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite, NSURL *URL) {
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
@@ -88,12 +87,13 @@
                     weakSelf.progressView.progress = progess;
                 }
             } completion:^(NSData *downloadData, NSError *error, NSURL *URL) {
+                NSLog(@"row:%ld", indexPath.row);
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
                     if (error || downloadData == nil) {
-                        [[JRDataStateManager shareInstance] changeState:indexPath.row stateType:JRDataState_Fail];
+                        item.state = JRStickerContentState_Fail;
                         weakSelf.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
                     } else {
-                        [[JRDataStateManager shareInstance] changeState:indexPath.row stateType:JRDataState_Success];
+                        item.state = JRStickerContentState_Success;
                         weakSelf.progressView.hidden = YES;
                         weakSelf.imageView.data = downloadData;
                     }

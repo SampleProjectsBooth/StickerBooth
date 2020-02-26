@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^JRDidSelectItemBlock)(NSIndexPath *indexPath, NSData * _Nullable data);
 
-@interface JRTitleShowView : UIView
+@interface JRStickerDisplayView : UIView
 
 /** 点击返回data */
 @property (copy , nonatomic) JRDidSelectItemBlock didSelectBlock;
@@ -22,8 +22,8 @@ typedef void(^JRDidSelectItemBlock)(NSIndexPath *indexPath, NSData * _Nullable d
 
 /// 设置数据
 /// @param titles 标题
-/// @param objs 数据
-- (void)setTitles:(nonnull NSArray <NSString *>*)titles objs:(nonnull NSArray <NSArray *>*)objs;
+/// @param content 数据
+- (void)setTitles:(nonnull NSArray <NSString *>*)titles contents:(nonnull NSArray <NSArray *>*)contents;
 
 @end
 
