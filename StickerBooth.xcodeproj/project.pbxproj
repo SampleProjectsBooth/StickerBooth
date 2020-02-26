@@ -14,6 +14,19 @@
 		3B897F15240616B000A3E854 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B897F14240616B000A3E854 /* Assets.xcassets */; };
 		3B897F18240616B000A3E854 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B897F16240616B000A3E854 /* LaunchScreen.storyboard */; };
 		3B897F1B240616B000A3E854 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F1A240616B000A3E854 /* main.m */; };
+		66DEB5A4240619A600C770B5 /* LFMEWeakSelectorTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB587240619A600C770B5 /* LFMEWeakSelectorTarget.m */; };
+		66DEB5A5240619A600C770B5 /* LFEditCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB588240619A600C770B5 /* LFEditCollectionView.m */; };
+		66DEB5A6240619A600C770B5 /* LFVideoProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB58A240619A600C770B5 /* LFVideoProgressView.m */; };
+		66DEB5A7240619A600C770B5 /* LFDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB58E240619A600C770B5 /* LFDownloadManager.m */; };
+		66DEB5A8240619A600C770B5 /* LFMEGifView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB58F240619A600C770B5 /* LFMEGifView.m */; };
+		66DEB5A9240619A600C770B5 /* JRTitleShowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB590240619A600C770B5 /* JRTitleShowView.m */; };
+		66DEB5AA240619A600C770B5 /* success.png in Resources */ = {isa = PBXBuildFile; fileRef = 66DEB592240619A600C770B5 /* success.png */; };
+		66DEB5AB240619A600C770B5 /* fail.png in Resources */ = {isa = PBXBuildFile; fileRef = 66DEB593240619A600C770B5 /* fail.png */; };
+		66DEB5AC240619A600C770B5 /* JRCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB596240619A600C770B5 /* JRCollectionViewCell.m */; };
+		66DEB5AD240619A600C770B5 /* JRBaseCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB598240619A600C770B5 /* JRBaseCollectionViewCell.m */; };
+		66DEB5AE240619A600C770B5 /* JRImageCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB59A240619A600C770B5 /* JRImageCollectionViewCell.m */; };
+		66DEB5AF240619A600C770B5 /* JRTitleCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB59E240619A600C770B5 /* JRTitleCollectionViewCell.m */; };
+		66DEB5B0240619A600C770B5 /* JRDataStateManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB5A2240619A600C770B5 /* JRDataStateManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +42,30 @@
 		3B897F17240616B000A3E854 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3B897F19240616B000A3E854 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B897F1A240616B000A3E854 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		66DEB584240619A600C770B5 /* LFMEWeakSelectorTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFMEWeakSelectorTarget.h; sourceTree = "<group>"; };
+		66DEB585240619A600C770B5 /* LFEditCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFEditCollectionView.h; sourceTree = "<group>"; };
+		66DEB586240619A600C770B5 /* LFMEGifView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFMEGifView.h; sourceTree = "<group>"; };
+		66DEB587240619A600C770B5 /* LFMEWeakSelectorTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFMEWeakSelectorTarget.m; sourceTree = "<group>"; };
+		66DEB588240619A600C770B5 /* LFEditCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFEditCollectionView.m; sourceTree = "<group>"; };
+		66DEB58A240619A600C770B5 /* LFVideoProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFVideoProgressView.m; sourceTree = "<group>"; };
+		66DEB58B240619A600C770B5 /* LFVideoProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFVideoProgressView.h; sourceTree = "<group>"; };
+		66DEB58D240619A600C770B5 /* LFDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFDownloadManager.h; sourceTree = "<group>"; };
+		66DEB58E240619A600C770B5 /* LFDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFDownloadManager.m; sourceTree = "<group>"; };
+		66DEB58F240619A600C770B5 /* LFMEGifView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFMEGifView.m; sourceTree = "<group>"; };
+		66DEB590240619A600C770B5 /* JRTitleShowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRTitleShowView.m; sourceTree = "<group>"; };
+		66DEB592240619A600C770B5 /* success.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = success.png; sourceTree = "<group>"; };
+		66DEB593240619A600C770B5 /* fail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fail.png; sourceTree = "<group>"; };
+		66DEB596240619A600C770B5 /* JRCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRCollectionViewCell.m; sourceTree = "<group>"; };
+		66DEB597240619A600C770B5 /* JRCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRCollectionViewCell.h; sourceTree = "<group>"; };
+		66DEB598240619A600C770B5 /* JRBaseCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRBaseCollectionViewCell.m; sourceTree = "<group>"; };
+		66DEB59A240619A600C770B5 /* JRImageCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRImageCollectionViewCell.m; sourceTree = "<group>"; };
+		66DEB59B240619A600C770B5 /* JRImageCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRImageCollectionViewCell.h; sourceTree = "<group>"; };
+		66DEB59C240619A600C770B5 /* JRBaseCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRBaseCollectionViewCell.h; sourceTree = "<group>"; };
+		66DEB59E240619A600C770B5 /* JRTitleCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRTitleCollectionViewCell.m; sourceTree = "<group>"; };
+		66DEB59F240619A600C770B5 /* JRTitleCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRTitleCollectionViewCell.h; sourceTree = "<group>"; };
+		66DEB5A1240619A600C770B5 /* JRDataStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRDataStateManager.h; sourceTree = "<group>"; };
+		66DEB5A2240619A600C770B5 /* JRDataStateManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRDataStateManager.m; sourceTree = "<group>"; };
+		66DEB5A3240619A600C770B5 /* JRTitleShowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRTitleShowView.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +98,7 @@
 		3B897F07240616A900A3E854 /* StickerBooth */ = {
 			isa = PBXGroup;
 			children = (
+				66DEB582240619A600C770B5 /* Class */,
 				3B897F08240616A900A3E854 /* AppDelegate.h */,
 				3B897F09240616A900A3E854 /* AppDelegate.m */,
 				3B897F0B240616A900A3E854 /* SceneDelegate.h */,
@@ -74,6 +112,109 @@
 				3B897F1A240616B000A3E854 /* main.m */,
 			);
 			path = StickerBooth;
+			sourceTree = "<group>";
+		};
+		66DEB582240619A600C770B5 /* Class */ = {
+			isa = PBXGroup;
+			children = (
+				66DEB583240619A600C770B5 /* Vendors */,
+				66DEB590240619A600C770B5 /* JRTitleShowView.m */,
+				66DEB591240619A600C770B5 /* Source */,
+				66DEB594240619A600C770B5 /* Cell */,
+				66DEB5A0240619A600C770B5 /* Manager */,
+				66DEB5A3240619A600C770B5 /* JRTitleShowView.h */,
+			);
+			path = Class;
+			sourceTree = "<group>";
+		};
+		66DEB583240619A600C770B5 /* Vendors */ = {
+			isa = PBXGroup;
+			children = (
+				66DEB584240619A600C770B5 /* LFMEWeakSelectorTarget.h */,
+				66DEB585240619A600C770B5 /* LFEditCollectionView.h */,
+				66DEB586240619A600C770B5 /* LFMEGifView.h */,
+				66DEB587240619A600C770B5 /* LFMEWeakSelectorTarget.m */,
+				66DEB588240619A600C770B5 /* LFEditCollectionView.m */,
+				66DEB589240619A600C770B5 /* LFLoadingView */,
+				66DEB58C240619A600C770B5 /* LFDownloadManager */,
+				66DEB58F240619A600C770B5 /* LFMEGifView.m */,
+			);
+			path = Vendors;
+			sourceTree = "<group>";
+		};
+		66DEB589240619A600C770B5 /* LFLoadingView */ = {
+			isa = PBXGroup;
+			children = (
+				66DEB58A240619A600C770B5 /* LFVideoProgressView.m */,
+				66DEB58B240619A600C770B5 /* LFVideoProgressView.h */,
+			);
+			path = LFLoadingView;
+			sourceTree = "<group>";
+		};
+		66DEB58C240619A600C770B5 /* LFDownloadManager */ = {
+			isa = PBXGroup;
+			children = (
+				66DEB58D240619A600C770B5 /* LFDownloadManager.h */,
+				66DEB58E240619A600C770B5 /* LFDownloadManager.m */,
+			);
+			path = LFDownloadManager;
+			sourceTree = "<group>";
+		};
+		66DEB591240619A600C770B5 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				66DEB592240619A600C770B5 /* success.png */,
+				66DEB593240619A600C770B5 /* fail.png */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		66DEB594240619A600C770B5 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				66DEB595240619A600C770B5 /* CollectionViewCell */,
+				66DEB598240619A600C770B5 /* JRBaseCollectionViewCell.m */,
+				66DEB599240619A600C770B5 /* ImageCell */,
+				66DEB59C240619A600C770B5 /* JRBaseCollectionViewCell.h */,
+				66DEB59D240619A600C770B5 /* TitleCell */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		66DEB595240619A600C770B5 /* CollectionViewCell */ = {
+			isa = PBXGroup;
+			children = (
+				66DEB596240619A600C770B5 /* JRCollectionViewCell.m */,
+				66DEB597240619A600C770B5 /* JRCollectionViewCell.h */,
+			);
+			path = CollectionViewCell;
+			sourceTree = "<group>";
+		};
+		66DEB599240619A600C770B5 /* ImageCell */ = {
+			isa = PBXGroup;
+			children = (
+				66DEB59A240619A600C770B5 /* JRImageCollectionViewCell.m */,
+				66DEB59B240619A600C770B5 /* JRImageCollectionViewCell.h */,
+			);
+			path = ImageCell;
+			sourceTree = "<group>";
+		};
+		66DEB59D240619A600C770B5 /* TitleCell */ = {
+			isa = PBXGroup;
+			children = (
+				66DEB59E240619A600C770B5 /* JRTitleCollectionViewCell.m */,
+				66DEB59F240619A600C770B5 /* JRTitleCollectionViewCell.h */,
+			);
+			path = TitleCell;
+			sourceTree = "<group>";
+		};
+		66DEB5A0240619A600C770B5 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				66DEB5A1240619A600C770B5 /* JRDataStateManager.h */,
+				66DEB5A2240619A600C770B5 /* JRDataStateManager.m */,
+			);
+			path = Manager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -134,8 +275,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B897F18240616B000A3E854 /* LaunchScreen.storyboard in Resources */,
+				66DEB5AB240619A600C770B5 /* fail.png in Resources */,
 				3B897F15240616B000A3E854 /* Assets.xcassets in Resources */,
 				3B897F13240616A900A3E854 /* Main.storyboard in Resources */,
+				66DEB5AA240619A600C770B5 /* success.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,9 +289,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66DEB5A6240619A600C770B5 /* LFVideoProgressView.m in Sources */,
 				3B897F10240616A900A3E854 /* ViewController.m in Sources */,
+				66DEB5A9240619A600C770B5 /* JRTitleShowView.m in Sources */,
+				66DEB5B0240619A600C770B5 /* JRDataStateManager.m in Sources */,
+				66DEB5AD240619A600C770B5 /* JRBaseCollectionViewCell.m in Sources */,
 				3B897F0A240616A900A3E854 /* AppDelegate.m in Sources */,
+				66DEB5AC240619A600C770B5 /* JRCollectionViewCell.m in Sources */,
+				66DEB5A7240619A600C770B5 /* LFDownloadManager.m in Sources */,
 				3B897F1B240616B000A3E854 /* main.m in Sources */,
+				66DEB5AE240619A600C770B5 /* JRImageCollectionViewCell.m in Sources */,
+				66DEB5A8240619A600C770B5 /* LFMEGifView.m in Sources */,
+				66DEB5A4240619A600C770B5 /* LFMEWeakSelectorTarget.m in Sources */,
+				66DEB5AF240619A600C770B5 /* JRTitleCollectionViewCell.m in Sources */,
+				66DEB5A5240619A600C770B5 /* LFEditCollectionView.m in Sources */,
 				3B897F0D240616A900A3E854 /* SceneDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
