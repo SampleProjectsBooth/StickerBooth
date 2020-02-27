@@ -117,6 +117,9 @@ CGFloat const JR_O_margin = 1.5f;
     collectionView.showsVerticalScrollIndicator = NO;
     collectionView.showsHorizontalScrollIndicator = NO;
     collectionView.delegate = self;
+    if (@available(iOS 10.0, *)) {
+        collectionView.prefetchingEnabled = NO;
+    }
     collectionView.backgroundColor = [UIColor clearColor];
     [self addSubview:collectionView];
     self.collectionView = collectionView;
@@ -156,7 +159,7 @@ CGFloat const JR_O_margin = 1.5f;
     
     self.collectionView.frame = CGRectMake(0.f, JR_V_ScrollView_heitht, CGRectGetWidth(self.frame)+10.f, CGRectGetHeight(self.frame) - CGRectGetHeight(self.topCollectionView.frame));
     self.collectionView.itemSize = self.collectionView.frame.size;
-    [self.collectionView invalidateIntrinsicContentSize];
+    [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
 #pragma mark - JRCollectionViewDelegate

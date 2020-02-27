@@ -183,6 +183,36 @@
     return self.collectionView.bounces;
 }
 
+- (void)setContentOffset:(CGPoint)contentOffset
+{
+    self.collectionView.contentOffset = contentOffset;
+}
+
+- (CGPoint)contentOffset
+{
+    return self.collectionView.contentOffset;
+}
+
+- (void)setContentSize:(CGSize)contentSize
+{
+    self.collectionView.contentSize = contentSize;
+}
+
+- (CGSize)contentSize
+{
+    return self.collectionView.contentSize;
+}
+
+- (void)setContentInset:(UIEdgeInsets)contentInset
+{
+    self.collectionView.contentInset = contentInset;
+}
+
+- (UIEdgeInsets)contentInset
+{
+    return self.collectionView.contentInset;
+}
+
 - (void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated
 {
     [self.collectionView setContentOffset:contentOffset animated:animated];
@@ -220,6 +250,16 @@
     return self.collectionView.showsHorizontalScrollIndicator;
 }
 
+- (void)setPrefetchingEnabled:(BOOL)prefetchingEnabled
+{
+    self.collectionView.prefetchingEnabled = prefetchingEnabled;
+}
+
+- (BOOL)isPrefetchingEnabled
+{
+    return self.collectionView.isPrefetchingEnabled;
+}
+
 - (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(UICollectionViewScrollPosition)scrollPosition animated:(BOOL)animated
 {
     [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:scrollPosition animated:animated];
@@ -228,11 +268,6 @@
 - (nullable UICollectionViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     return [self.collectionView cellForItemAtIndexPath:indexPath];
-}
-
-- (void)invalidateIntrinsicContentSize
-{
-    [self.collectionView invalidateIntrinsicContentSize];
 }
 
 - (void)reloadData
