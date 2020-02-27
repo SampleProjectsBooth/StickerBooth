@@ -37,7 +37,7 @@ typedef void (^LFEditCollectionViewDidSelectItemAtIndexPathBlock)(NSIndexPath * 
 
 - (nullable UICollectionViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath;
 
-- (void)invalidateIntrinsicContentSize;
+- (void)invalidateLayout;
 
 - (void)reloadData;
 

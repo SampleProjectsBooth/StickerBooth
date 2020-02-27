@@ -230,9 +230,9 @@
     return [self.collectionView cellForItemAtIndexPath:indexPath];
 }
 
-- (void)invalidateIntrinsicContentSize
+- (void)invalidateLayout
 {
-    [self.collectionView invalidateIntrinsicContentSize];
+    [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
 - (void)reloadData

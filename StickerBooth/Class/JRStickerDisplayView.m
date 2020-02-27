@@ -156,7 +156,7 @@ CGFloat const JR_O_margin = 1.5f;
     
     self.collectionView.frame = CGRectMake(0.f, JR_V_ScrollView_heitht, CGRectGetWidth(self.frame)+10.f, CGRectGetHeight(self.frame) - CGRectGetHeight(self.topCollectionView.frame));
     self.collectionView.itemSize = self.collectionView.frame.size;
-    [self.collectionView invalidateIntrinsicContentSize];
+    [self.collectionView invalidateLayout];
 }
 
 #pragma mark - JRCollectionViewDelegate
