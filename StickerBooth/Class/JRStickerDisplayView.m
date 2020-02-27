@@ -20,7 +20,7 @@ CGFloat const JR_V_Button_width = 80.f;
 /** 按钮在scrollView的间距 */
 CGFloat const JR_O_margin = 1.5f;
 
-@interface JRStickerDisplayView () <JRCollectionViewDelegate, LFEditCollectionViewDelegate>
+@interface JRStickerDisplayView () <JRCollectionViewDelegate, LFEditCollectionViewDelegate, LFEditCollectionViewDelegate>
 
 @property (readonly , nonatomic, nonnull) NSArray <NSString *>*titles;
 

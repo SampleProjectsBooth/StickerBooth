@@ -11,7 +11,7 @@
 #import "LFEditCollectionView.h"
 #import "JRStickerContent.h"
 
-@interface JRCollectionViewCell ()
+@interface JRCollectionViewCell () <LFEditCollectionViewDelegate>
 
 @property (strong, nonatomic) LFEditCollectionView *collectionView;
 
@@ -64,6 +64,10 @@
     flowLayout.sectionInset = UIEdgeInsetsMake(5.f, 5.f, 5.f, 5.f);
     LFEditCollectionView *col = [[LFEditCollectionView alloc] initWithFrame:CGRectZero];
     col.collectionViewLayout = flowLayout;
+    if (@available(iOS 10.0, *)) {
+        col.prefetchingEnabled = NO;
+    }
+    col.delegate = self;
     col.backgroundColor = [UIColor clearColor];
     [self.contentView addSubview:col];
     self.collectionView = col;
@@ -82,6 +86,14 @@
         }
     }];
     
+}
+
+
+#pragma mark - LFEditCollectionViewDelegate
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)cell;
+    imageCell.imageView.data = nil;
 }
 
 @end
