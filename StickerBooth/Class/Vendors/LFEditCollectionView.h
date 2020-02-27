@@ -65,8 +65,7 @@ typedef void (^LFEditCollectionViewDidSelectItemAtIndexPathBlock)(NSIndexPath * 
 
 @end
 
-@protocol LFEditCollectionViewDelegate<NSObject>
-
+@protocol LFEditCollectionViewScrollDelegate<NSObject>
 @optional
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView;                                               // any offset changes
 
@@ -79,6 +78,11 @@ typedef void (^LFEditCollectionViewDidSelectItemAtIndexPathBlock)(NSIndexPath * 
 
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView;   // called on finger up as we are moving
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;      // called when scroll view grinds to a halt
+@end
+
+@protocol LFEditCollectionViewDelegate<LFEditCollectionViewScrollDelegate>
+@optional
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath;
 @end
 
 NS_ASSUME_NONNULL_END
