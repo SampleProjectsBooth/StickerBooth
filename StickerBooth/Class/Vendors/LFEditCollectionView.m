@@ -278,6 +278,11 @@
     return [self.collectionView cellForItemAtIndexPath:indexPath];
 }
 
+- (void)invalidateLayout
+{
+    [self.collectionView.collectionViewLayout invalidateLayout];
+}
+
 - (void)reloadData
 {
     [self.collectionView reloadData];
