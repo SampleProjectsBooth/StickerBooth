@@ -105,6 +105,8 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
         CFRelease(_gifSourceRef);
         _gifSourceRef = nil;
     }
+    _index = 0;
+    _timestamp = 0;
     _durations = nil;
 }
 

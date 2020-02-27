@@ -117,6 +117,9 @@ CGFloat const JR_O_margin = 1.5f;
     collectionView.showsVerticalScrollIndicator = NO;
     collectionView.showsHorizontalScrollIndicator = NO;
     collectionView.delegate = self;
+    if (@available(iOS 10.0, *)) {
+        collectionView.prefetchingEnabled = NO;
+    }
     collectionView.backgroundColor = [UIColor clearColor];
     [self addSubview:collectionView];
     self.collectionView = collectionView;
