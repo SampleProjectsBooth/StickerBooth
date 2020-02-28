@@ -29,6 +29,52 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
     return frameDuration;
 }
 
+inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imageRef, CGSize size)
+{
+    if (!imageRef) return NULL;
+    size_t width = CGImageGetWidth(imageRef);
+    size_t height = CGImageGetHeight(imageRef);
+    if (width == 0 || height == 0) return NULL;
+    
+    if (size.width > 0 && size.height > 0) {
+        float verticalRadio = size.height*1.0/height;
+        float horizontalRadio = size.width*1.0/width;
+        
+        float radio = 1;
+        if(verticalRadio>1 && horizontalRadio>1)
+        {
+            radio = verticalRadio > horizontalRadio ? horizontalRadio : verticalRadio;
+        }
+        else
+        {
+            radio = verticalRadio < horizontalRadio ? verticalRadio : horizontalRadio;
+        }
+        
+        width = roundf(width*radio);
+        height = roundf(height*radio);
+    }
+    
+    CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
+    BOOL hasAlpha = NO;
+    if (alphaInfo == kCGImageAlphaPremultipliedLast ||
+        alphaInfo == kCGImageAlphaPremultipliedFirst ||
+        alphaInfo == kCGImageAlphaLast ||
+        alphaInfo == kCGImageAlphaFirst) {
+        hasAlpha = YES;
+    }
+    // BGRA8888 (premultiplied) or BGRX8888
+    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
+    bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(NULL, width, height, 8, 0, colorSpace, bitmapInfo);
+    CGColorSpaceRelease(colorSpace);
+    if (!context) return NULL;
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
+    CGImageRef newImage = CGBitmapContextCreateImage(context);
+    CFRelease(context);
+    return newImage;
+}
+
 @interface LFMEGifView ()
 {
     CADisplayLink *_displayLink;
@@ -44,6 +90,8 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
 }
 
 @property (readonly, nonatomic, nullable) NSArray<NSNumber *> * durations;
+
+@property (readonly, nonatomic, nullable) NSMutableDictionary<NSNumber *, id> *imageRefs;
 
 @end
 
@@ -85,6 +133,7 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
     self.backgroundColor = [UIColor clearColor];
     _autoPlay = YES;
     _duration = 0.1f;
+    _imageRefs = [NSMutableDictionary dictionary];
 }
 
 - (void)dealloc
@@ -108,6 +157,12 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
     _index = 0;
     _timestamp = 0;
     _durations = nil;
+    
+    for (id object in self.imageRefs) {
+        CGImageRef imageRef = (__bridge CGImageRef)object;
+        CGImageRelease(imageRef);
+    }
+    [self.imageRefs removeAllObjects];
 }
 
 - (void)setImage:(UIImage *)image
@@ -122,7 +177,11 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
                 [self setupDisplayLink];
             } else {
                 [self unsetupDisplayLink];
-                self.layer.contents = (__bridge id _Nullable)(_image.CGImage);
+                CGImageRef imageRef = LFMEGifView_CGImageScaleDecodedFromCopy(_image.CGImage, self.frame.size);
+                self.layer.contents = (__bridge id _Nullable)(imageRef);
+                if (imageRef) {
+                    CGImageRelease(imageRef);
+                }
             }
         } else {
             [self unsetupDisplayLink];
@@ -194,7 +253,11 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
                 [self setupDisplayLink];
             } else {
                 [self unsetupDisplayLink];
-                self.layer.contents = (__bridge id _Nullable)(self.image.CGImage);
+                CGImageRef imageRef = LFMEGifView_CGImageScaleDecodedFromCopy(self.image.CGImage, self.frame.size);
+                self.layer.contents = (__bridge id _Nullable)(imageRef);
+                if (imageRef) {
+                    CGImageRelease(imageRef);
+                }
             }
         } else {
             [self unsetupDisplayLink];
@@ -265,19 +328,27 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
     while (_timestamp >= [self frameDurationAtIndex:_index]) {
         _timestamp -= [self frameDurationAtIndex:_index];
         
-        CGImageRef imageRef = nil;
-        if (_gifSourceRef) {
-            imageRef = CGImageSourceCreateImageAtIndex(_gifSourceRef, _index, NULL);
-        } else if (_image) {
-            imageRef = [[_image.images objectAtIndex:_index] CGImage];
+        CGImageRef imageRef = (__bridge CGImageRef)([self.imageRefs objectForKey:@(_index)]);
+        if (imageRef == NULL) {
+            if (_gifSourceRef) {
+                imageRef = CGImageSourceCreateImageAtIndex(_gifSourceRef, _index, NULL);
+            } else if (_image) {
+                imageRef = [[_image.images objectAtIndex:_index] CGImage];
+            }
+            if (imageRef) {
+                CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(imageRef, self.frame.size);
+                if (_gifSourceRef && imageRef) {
+                    CGImageRelease(imageRef);
+                }
+                [self.imageRefs setObject:(__bridge id _Nullable)(decodeImageRef) forKey:@(_index)];
+                imageRef = decodeImageRef;
+            }
         }
         
         if (imageRef) {
             self.layer.contents = (__bridge id _Nullable)(imageRef);
         }
-        if (_gifSourceRef && imageRef) {
-            CGImageRelease(imageRef);
-        }
+        
         
         _index += 1;
         if (_index == _frameCount) {
