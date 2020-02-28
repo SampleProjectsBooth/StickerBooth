@@ -49,6 +49,7 @@
 #pragma mark - Public Methods
 - (void)setCellData:(id)data
 {
+    [super setCellData:data];
     if ([data isKindOfClass:[NSArray class]]) {
         self.collectionView.dataSources = @[data];
     }
@@ -60,7 +61,7 @@
     NSArray <UICollectionViewCell *>*array = [self.collectionView visibleCells];
     for (UICollectionViewCell *obj in array) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)obj;
-        imageCell.imageView.data = nil;
+        [imageCell clearData];
     }
 }
 #pragma mark - Private Methods
@@ -89,11 +90,16 @@
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
         if (item.state == JRStickerContentState_Success) {
             if ([weakSelf.delegate respondsToSelector:@selector(didSelectObj:index:)]) {
-                [weakSelf.delegate didSelectObj:imageCell.imageView.data index:indexPath.row];
+                [weakSelf.delegate didSelectObj:imageCell.imageData index:indexPath.row];
             }
         }
     }];
     
 }
 
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)cell;
+    [imageCell clearData];
+}
 @end

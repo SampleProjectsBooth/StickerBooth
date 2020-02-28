@@ -7,7 +7,7 @@
 //
 
 #import "JRImageCollectionViewCell.h"
-#import "LFDownloadManager.h"
+#import "UIView+LFDownloadManager.h"
 #import "LFStickerProgressView.h"
 #import <Photos/Photos.h>
 #import <MobileCoreServices/UTCoreTypes.h>
@@ -56,6 +56,10 @@
     self.progressView.hidden = YES;
 }
 
+- (NSData *)imageData
+{
+    return self.imageView.data;
+}
 
 #pragma mark - Public Methods
 - (void)setCellData:(JRStickerContent *)item
@@ -78,7 +82,7 @@
                 self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
             }
         } else {
-            NSData *httplocalData = [[LFDownloadManager shareLFDownloadManager] dataFromSandboxWithURL:dataURL];
+            NSData *httplocalData = [self dataFromCacheWithURL:dataURL];
             if (httplocalData) {
                 item.state = JRStickerContentState_Success;
                 self.imageView.data = httplocalData;
@@ -86,12 +90,11 @@
             }
             self.progressView.hidden = NO;
             __weak typeof(self) weakSelf = self;
-            [[LFDownloadManager shareLFDownloadManager] lf_downloadURL:dataURL progress:^(int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite, NSURL *URL) {
+            [self lf_downloadImageWithURL:dataURL progress:^(CGFloat progress, NSURL * _Nonnull URL) {
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
-                    float progess = totalBytesWritten*1.00f/totalBytesExpectedToWrite*1.00f;
-                    weakSelf.progressView.progress = progess;
+                    weakSelf.progressView.progress = progress;
                 }
-            } completion:^(NSData *downloadData, NSError *error, NSURL *URL) {
+            } completed:^(NSData * _Nonnull downloadData, NSError * _Nonnull error, NSURL * _Nonnull URL) {
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
                     if (error || downloadData == nil) {
                         item.state = JRStickerContentState_Fail;
@@ -102,6 +105,7 @@
                         weakSelf.imageView.data = downloadData;
                     }
                 }
+                
             }];
         }
     } else {
@@ -109,6 +113,11 @@
     }
 }
 
+- (void)clearData
+{
+    self.imageView.data = nil;
+    [self lf_downloadCancel];
+}
 #pragma mark - Private Methods
 - (void)_initSubViewAndDataSources
 {

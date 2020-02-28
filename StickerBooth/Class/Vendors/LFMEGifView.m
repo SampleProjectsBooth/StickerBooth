@@ -8,6 +8,7 @@
 
 #import "LFMEGifView.h"
 #import "LFMEWeakSelectorTarget.h"
+#import "JRTestManager.h"
 
 inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSourceRef imageSource, NSUInteger index)
 {
@@ -281,6 +282,11 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
         
         _index += 1;
         if (_index == _frameCount) {
+            NSString *address = [NSString stringWithFormat:@"%p", self];
+            if (![[[JRTestManager shareInstance] context] containsObject:address]) {
+                [[[JRTestManager shareInstance] context] addObject:address];
+                NSLog(@"play:%ld-%@ %ld", [[[JRTestManager shareInstance] context] indexOfObject:address], address, [[JRTestManager shareInstance] context].count);
+            }
             _index = 0;
             if (_loopCount == ++_loopTimes) {
                 [self stopGif];

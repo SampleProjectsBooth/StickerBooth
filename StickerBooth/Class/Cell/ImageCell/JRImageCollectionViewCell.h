@@ -13,9 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JRImageCollectionViewCell : JRBaseCollectionViewCell
 
-@property (readonly, nonatomic, nonnull) LFMEGifView *imageView;
+@property (readonly, nonatomic, nonnull) NSData *imageData;
 
 - (void)setCellData:(id)data;
+
+- (void)clearData;
 
 @end
 

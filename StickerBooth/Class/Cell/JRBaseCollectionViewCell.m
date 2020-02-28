@@ -8,6 +8,12 @@
 
 #import "JRBaseCollectionViewCell.h"
 
+@interface JRBaseCollectionViewCell ()
+
+@property (strong, nonatomic) id data;
+
+@end
+
 @implementation JRBaseCollectionViewCell
 
 + (NSString *)identifier
@@ -17,6 +23,6 @@
 
 - (void)setCellData:(nullable id)data
 {
-    
+    _data = data;
 }
 @end

@@ -16,6 +16,7 @@
 		3B897F18240616B000A3E854 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B897F16240616B000A3E854 /* LaunchScreen.storyboard */; };
 		3B897F1B240616B000A3E854 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F1A240616B000A3E854 /* main.m */; };
 		3B897F2724065A6D00A3E854 /* JRStickerContent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F2624065A6D00A3E854 /* JRStickerContent.m */; };
+		66B138FE2408F1D0004108B7 /* JRTestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B138FD2408F1D0004108B7 /* JRTestManager.m */; };
 		66DEB5A4240619A600C770B5 /* LFMEWeakSelectorTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB587240619A600C770B5 /* LFMEWeakSelectorTarget.m */; };
 		66DEB5A5240619A600C770B5 /* LFEditCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB588240619A600C770B5 /* LFEditCollectionView.m */; };
 		66DEB5A6240619A600C770B5 /* LFStickerProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB58A240619A600C770B5 /* LFStickerProgressView.m */; };
@@ -47,6 +48,8 @@
 		3B897F1A240616B000A3E854 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3B897F2524065A6D00A3E854 /* JRStickerContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRStickerContent.h; sourceTree = "<group>"; };
 		3B897F2624065A6D00A3E854 /* JRStickerContent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRStickerContent.m; sourceTree = "<group>"; };
+		66B138FC2408F1D0004108B7 /* JRTestManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRTestManager.h; sourceTree = "<group>"; };
+		66B138FD2408F1D0004108B7 /* JRTestManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRTestManager.m; sourceTree = "<group>"; };
 		66DEB584240619A600C770B5 /* LFMEWeakSelectorTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFMEWeakSelectorTarget.h; sourceTree = "<group>"; };
 		66DEB585240619A600C770B5 /* LFEditCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFEditCollectionView.h; sourceTree = "<group>"; };
 		66DEB586240619A600C770B5 /* LFMEGifView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFMEGifView.h; sourceTree = "<group>"; };
@@ -113,6 +116,8 @@
 				3B897F16240616B000A3E854 /* LaunchScreen.storyboard */,
 				3B897F19240616B000A3E854 /* Info.plist */,
 				3B897F1A240616B000A3E854 /* main.m */,
+				66B138FC2408F1D0004108B7 /* JRTestManager.h */,
+				66B138FD2408F1D0004108B7 /* JRTestManager.m */,
 			);
 			path = StickerBooth;
 			sourceTree = "<group>";
@@ -298,6 +303,7 @@
 				3B897F10240616A900A3E854 /* ViewController.m in Sources */,
 				66DEB5A9240619A600C770B5 /* JRStickerDisplayView.m in Sources */,
 				66DEB5AD240619A600C770B5 /* JRBaseCollectionViewCell.m in Sources */,
+				66B138FE2408F1D0004108B7 /* JRTestManager.m in Sources */,
 				3B897F0A240616A900A3E854 /* AppDelegate.m in Sources */,
 				66DEB5AC240619A600C770B5 /* JRCollectionViewCell.m in Sources */,
 				66DEB5A7240619A600C770B5 /* LFDownloadManager.m in Sources */,

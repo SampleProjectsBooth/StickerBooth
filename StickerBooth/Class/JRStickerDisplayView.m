@@ -8,7 +8,6 @@
 
 #import "JRStickerDisplayView.h"
 #import "JRCollectionViewCell.h"
-#import "LFDownloadManager.h"
 #import "LFEditCollectionView.h"
 #import "JRTitleCollectionViewCell.h"
 #import "JRStickerContent.h"
@@ -98,9 +97,9 @@ CGFloat const JR_O_margin = 1.5f;
         JRTitleCollectionViewCell *titleCell = (JRTitleCollectionViewCell *)cell;
         [titleCell setCellData:item];
         titleCell.backgroundColor =  [UIColor clearColor];
-        if ([weakSelf.selectTitle isEqualToString:item]) {
-            titleCell.backgroundColor =  [UIColor orangeColor];
-        }
+//        if ([weakSelf.selectTitle isEqualToString:item]) {
+//            titleCell.backgroundColor =  [UIColor orangeColor];
+//        }
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item) {
         [weakSelf _changeTitle:item];
         [weakSelf.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
@@ -180,11 +179,11 @@ CGFloat const JR_O_margin = 1.5f;
         NSInteger index = scrollView.contentOffset.x / scrollView.frame.size.width;
         if (self.titles.count > index) {
             NSString *string = [self.titles objectAtIndex:index];
-            [self _changeTitle:string];
+//            [self _changeTitle:string];
         }
-        CGFloat value = scrollView.contentOffset.x - scrollView.bounds.size.width;
-        CGFloat animationProgress = value/scrollView.bounds.size.width;
-        NSLog(@"%f", animationProgress);
+//        CGFloat value = fabs(scrollView.contentOffset.x - scrollView.bounds.size.width);
+//        CGFloat animationProgress = value/scrollView.bounds.size.width;
+//        [self _setAnimationProgress:animationProgress];
     }
 }
 
@@ -194,5 +193,28 @@ CGFloat const JR_O_margin = 1.5f;
     [viewCell clearData];
 }
 
+- (void)_setAnimationProgress:(CGFloat)animationProgress {
+    if (animationProgress == 0) {return;}
+    
+    NSInteger selectedIndex = [self.titles indexOfObject:self.selectTitle];
+    //获取下一个index
+    NSInteger targetIndex = animationProgress < 0 ? selectedIndex - 1 : selectedIndex + 1;
+    if (targetIndex > [self.titles count]) {return;}
+    
+    //获取cell
+    JRTitleCollectionViewCell *currentCell = (JRTitleCollectionViewCell *)[self.topCollectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:selectedIndex inSection:0]];
+    JRTitleCollectionViewCell *targetCell = (JRTitleCollectionViewCell *)[self.topCollectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:targetIndex inSection:0]];
+    
+//    //标题颜色过渡
+//    if (self.config.titleColorTransition) {
+//
+    [currentCell showAnimationOfProgress:fabs(animationProgress) select:NO];
+    
+    [targetCell showAnimationOfProgress:fabs(animationProgress) select:YES];
+//    }
+//
+//    //给阴影添加动画
+//    [XLPageViewControllerUtil showAnimationToShadow:self.shadowLine shadowWidth:self.config.shadowLineWidth fromItemRect:currentCell.frame toItemRect:targetCell.frame type:self.config.shadowLineAnimationType progress:animationProgress];
+}
 
 @end
