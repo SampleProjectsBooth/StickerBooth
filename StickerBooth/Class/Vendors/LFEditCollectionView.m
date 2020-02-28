@@ -292,6 +292,17 @@
 {
     [self.collectionView reloadItemsAtIndexPaths:indexPaths];
 }
+
+- (NSArray <UICollectionViewCell *>*)visibleCells
+{
+    return [self.collectionView visibleCells];
+}
+
+- (NSArray <NSIndexPath *>*)indexPathsForVisibleItems
+{
+    return [self.collectionView indexPathsForVisibleItems];
+}
+
 #pragma mark - UICollectionViewFlowLayout setter/getter
 - (void)setCollectionViewLayout:(UICollectionViewLayout *)collectionViewLayout
 {

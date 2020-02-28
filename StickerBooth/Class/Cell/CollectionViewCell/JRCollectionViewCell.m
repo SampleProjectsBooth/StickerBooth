@@ -55,6 +55,14 @@
     [self.collectionView reloadData];
 }
 
+- (void)clearData
+{
+    NSArray <UICollectionViewCell *>*array = [self.collectionView visibleCells];
+    for (UICollectionViewCell *obj in array) {
+        JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)obj;
+        imageCell.imageView.data = nil;
+    }
+}
 #pragma mark - Private Methods
 - (void)_initSubView
 {
@@ -64,9 +72,9 @@
     flowLayout.sectionInset = UIEdgeInsetsMake(5.f, 5.f, 5.f, 5.f);
     LFEditCollectionView *col = [[LFEditCollectionView alloc] initWithFrame:CGRectZero];
     col.collectionViewLayout = flowLayout;
-    if (@available(iOS 10.0, *)) {
-        col.prefetchingEnabled = NO;
-    }
+//    if (@available(iOS 10.0, *)) {
+//        col.prefetchingEnabled = NO;
+//    }
     col.delegate = self;
     col.backgroundColor = [UIColor clearColor];
     [self.contentView addSubview:col];
@@ -86,14 +94,6 @@
         }
     }];
     
-}
-
-
-#pragma mark - LFEditCollectionViewDelegate
-- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)cell;
-    imageCell.imageView.data = nil;
 }
 
 @end

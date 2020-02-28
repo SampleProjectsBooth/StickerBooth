@@ -45,6 +45,10 @@ typedef void (^LFEditCollectionViewDidSelectItemAtIndexPathBlock)(NSIndexPath * 
 
 - (void)reloadItemsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
 
+- (NSArray <UICollectionViewCell *>*)visibleCells;
+
+- (NSArray <NSIndexPath *>*)indexPathsForVisibleItems;
+
 #pragma mark - UICollectionViewFlowLayout
 @property (nonatomic) CGFloat minimumLineSpacing;
 @property (nonatomic) CGFloat minimumInteritemSpacing;

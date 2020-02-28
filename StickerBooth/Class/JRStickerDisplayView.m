@@ -156,7 +156,8 @@ CGFloat const JR_O_margin = 1.5f;
 - (void)_customLayoutSubviews
 {
     self.topCollectionView.frame = CGRectMake(0.f, 0.f, CGRectGetWidth(self.frame), JR_V_ScrollView_heitht + JR_O_margin*2);
-    
+    self.topCollectionView.itemSize = CGSizeMake(CGRectGetWidth(self.topCollectionView.frame)/4, JR_V_ScrollView_heitht);
+    [self.topCollectionView invalidateLayout];
     self.collectionView.frame = CGRectMake(0.f, JR_V_ScrollView_heitht, CGRectGetWidth(self.frame)+10.f, CGRectGetHeight(self.frame) - CGRectGetHeight(self.topCollectionView.frame));
     self.collectionView.itemSize = self.collectionView.frame.size;
     [self.collectionView invalidateLayout];
@@ -181,7 +182,17 @@ CGFloat const JR_O_margin = 1.5f;
             NSString *string = [self.titles objectAtIndex:index];
             [self _changeTitle:string];
         }
+        CGFloat value = scrollView.contentOffset.x - scrollView.bounds.size.width;
+        CGFloat animationProgress = value/scrollView.bounds.size.width;
+        NSLog(@"%f", animationProgress);
     }
 }
+
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    JRCollectionViewCell *viewCell = (JRCollectionViewCell *)cell;
+    [viewCell clearData];
+}
+
 
 @end
