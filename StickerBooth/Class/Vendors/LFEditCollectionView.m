@@ -8,6 +8,28 @@
 
 #import "LFEditCollectionView.h"
 
+// get方法
+#define lfEditCollection_bind_var_getter(varType, varName, target) \
+- (varType)varName \
+{ \
+    return target.varName; \
+}
+
+// set方法
+#define lfEditCollection_bind_var_setter(varType, varName, setterName, target) \
+- (void)setterName:(varType)varName \
+{ \
+    [target setterName:varName]; \
+}
+
+#define lfEditCollection_bind_var(varType, varName, setterName) \
+lfEditCollection_bind_var_getter(varType, varName, self.collectionView) \
+lfEditCollection_bind_var_setter(varType, varName, setterName, self.collectionView)
+
+#define lfEditCollectionFlowLayout_bind_var(varType, varName, setterName) \
+lfEditCollection_bind_var_getter(varType, varName, ((UICollectionViewFlowLayout *)self.collectionViewLayout)) \
+lfEditCollection_bind_var_setter(varType, varName, setterName, ((UICollectionViewFlowLayout *)self.collectionViewLayout))
+
 @interface LFEditCollectionView () <UICollectionViewDelegate, UICollectionViewDataSource>
 
 @property (nonatomic, weak) UICollectionView *collectionView;
@@ -181,45 +203,11 @@
 }
 
 #pragma mark - UIScrollView setter/getter
-- (void)setBounces:(BOOL)bounces
-{
-    self.collectionView.bounces = bounces;
-}
 
-- (BOOL)bounces
-{
-    return self.collectionView.bounces;
-}
-
-- (void)setContentOffset:(CGPoint)contentOffset
-{
-    self.collectionView.contentOffset = contentOffset;
-}
-
-- (CGPoint)contentOffset
-{
-    return self.collectionView.contentOffset;
-}
-
-- (void)setContentSize:(CGSize)contentSize
-{
-    self.collectionView.contentSize = contentSize;
-}
-
-- (CGSize)contentSize
-{
-    return self.collectionView.contentSize;
-}
-
-- (void)setContentInset:(UIEdgeInsets)contentInset
-{
-    self.collectionView.contentInset = contentInset;
-}
-
-- (UIEdgeInsets)contentInset
-{
-    return self.collectionView.contentInset;
-}
+lfEditCollection_bind_var(BOOL, bounces, setBounces);
+lfEditCollection_bind_var(CGPoint, contentOffset, setContentOffset);
+lfEditCollection_bind_var(CGSize, contentSize, setContentSize);
+lfEditCollection_bind_var(UIEdgeInsets, contentInset, setContentInset);
 
 - (void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated
 {
@@ -231,42 +219,11 @@
 }
 
 #pragma mark - UICollectionView setter/getter
-- (void)setPagingEnabled:(BOOL)pagingEnabled
-{
-    self.collectionView.pagingEnabled = pagingEnabled;
-}
-- (BOOL)isPagingEnabled
-{
-    return self.collectionView.isPagingEnabled;
-}
+lfEditCollection_bind_var(BOOL, isPagingEnabled, setPagingEnabled);
+lfEditCollection_bind_var(BOOL, showsVerticalScrollIndicator, setShowsVerticalScrollIndicator);
+lfEditCollection_bind_var(BOOL, showsHorizontalScrollIndicator, setShowsHorizontalScrollIndicator);
+lfEditCollection_bind_var(BOOL, isPrefetchingEnabled, setPrefetchingEnabled);
 
-- (void)setShowsVerticalScrollIndicator:(BOOL)showsVerticalScrollIndicator
-{
-    self.collectionView.showsVerticalScrollIndicator = showsVerticalScrollIndicator;
-}
-- (BOOL)showsVerticalScrollIndicator
-{
-    return self.collectionView.showsVerticalScrollIndicator;
-}
-
-- (void)setShowsHorizontalScrollIndicator:(BOOL)showsHorizontalScrollIndicator
-{
-    self.collectionView.showsHorizontalScrollIndicator = showsHorizontalScrollIndicator;
-}
-- (BOOL)showsHorizontalScrollIndicator
-{
-    return self.collectionView.showsHorizontalScrollIndicator;
-}
-
-- (void)setPrefetchingEnabled:(BOOL)prefetchingEnabled
-{
-    self.collectionView.prefetchingEnabled = prefetchingEnabled;
-}
-
-- (BOOL)isPrefetchingEnabled
-{
-    return self.collectionView.isPrefetchingEnabled;
-}
 
 - (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(UICollectionViewScrollPosition)scrollPosition animated:(BOOL)animated
 {
@@ -276,11 +233,6 @@
 - (nullable UICollectionViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     return [self.collectionView cellForItemAtIndexPath:indexPath];
-}
-
-- (void)invalidateLayout
-{
-    [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
 - (void)reloadData
@@ -313,76 +265,14 @@
         _collectionViewLayout = nil;
     }
 }
-- (void)setMinimumLineSpacing:(CGFloat)minimumLineSpacing
-{
-    ((UICollectionViewFlowLayout *)self.collectionViewLayout).minimumLineSpacing = minimumLineSpacing;
-}
-- (CGFloat)minimumLineSpacing
-{
-    return ((UICollectionViewFlowLayout *)self.collectionViewLayout).minimumLineSpacing;
-}
 
-- (void)setMinimumInteritemSpacing:(CGFloat)minimumInteritemSpacing
-{
-    ((UICollectionViewFlowLayout *)self.collectionViewLayout).minimumInteritemSpacing = minimumInteritemSpacing;
-}
-- (CGFloat)minimumInteritemSpacing
-{
-    return ((UICollectionViewFlowLayout *)self.collectionViewLayout).minimumInteritemSpacing;
-}
-
-- (void)setItemSize:(CGSize)itemSize
-{
-    ((UICollectionViewFlowLayout *)self.collectionViewLayout).itemSize = itemSize;
-}
-- (CGSize)itemSize
-{
-    return ((UICollectionViewFlowLayout *)self.collectionViewLayout).itemSize;
-}
-
-- (void)setEstimatedItemSize:(CGSize)estimatedItemSize
-{
-    ((UICollectionViewFlowLayout *)self.collectionViewLayout).estimatedItemSize = estimatedItemSize;
-}
-- (CGSize)estimatedItemSize
-{
-    return ((UICollectionViewFlowLayout *)self.collectionViewLayout).estimatedItemSize;
-}
-
-- (void)setScrollDirection:(UICollectionViewScrollDirection)scrollDirection
-{
-    ((UICollectionViewFlowLayout *)self.collectionViewLayout).scrollDirection = scrollDirection;
-}
-- (UICollectionViewScrollDirection)scrollDirection
-{
-    return ((UICollectionViewFlowLayout *)self.collectionViewLayout).scrollDirection;
-}
-
-- (void)setHeaderReferenceSize:(CGSize)headerReferenceSize
-{
-    ((UICollectionViewFlowLayout *)self.collectionViewLayout).headerReferenceSize = headerReferenceSize;
-}
-- (CGSize)headerReferenceSize
-{
-    return ((UICollectionViewFlowLayout *)self.collectionViewLayout).headerReferenceSize;
-}
-
-- (void)setFooterReferenceSize:(CGSize)footerReferenceSize
-{
-    ((UICollectionViewFlowLayout *)self.collectionViewLayout).footerReferenceSize = footerReferenceSize;
-}
-- (CGSize)footerReferenceSize
-{
-    return ((UICollectionViewFlowLayout *)self.collectionViewLayout).footerReferenceSize;
-}
-
-- (void)setSectionInset:(UIEdgeInsets)sectionInset
-{
-    ((UICollectionViewFlowLayout *)self.collectionViewLayout).sectionInset = sectionInset;
-}
-- (UIEdgeInsets)sectionInset
-{
-    return ((UICollectionViewFlowLayout *)self.collectionViewLayout).sectionInset;
-}
+lfEditCollectionFlowLayout_bind_var(CGFloat, minimumLineSpacing, setMinimumLineSpacing)
+lfEditCollectionFlowLayout_bind_var(CGFloat, minimumInteritemSpacing, setMinimumInteritemSpacing)
+lfEditCollectionFlowLayout_bind_var(CGSize, itemSize, setItemSize)
+lfEditCollectionFlowLayout_bind_var(CGSize, estimatedItemSize, setEstimatedItemSize)
+lfEditCollectionFlowLayout_bind_var(UICollectionViewScrollDirection, scrollDirection, setScrollDirection)
+lfEditCollectionFlowLayout_bind_var(CGSize, headerReferenceSize, setHeaderReferenceSize)
+lfEditCollectionFlowLayout_bind_var(CGSize, footerReferenceSize, setFooterReferenceSize)
+lfEditCollectionFlowLayout_bind_var(UIEdgeInsets, sectionInset, setSectionInset)
 
 @end
