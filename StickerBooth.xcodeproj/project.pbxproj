@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B7ACD4C2408A2DC0074DC40 /* UIView+LFDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B7ACD4B2408A2DC0074DC40 /* UIView+LFDownloadManager.m */; };
 		3B897F0A240616A900A3E854 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F09240616A900A3E854 /* AppDelegate.m */; };
 		3B897F0D240616A900A3E854 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F0C240616A900A3E854 /* SceneDelegate.m */; };
 		3B897F10240616A900A3E854 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F0F240616A900A3E854 /* ViewController.m */; };
@@ -30,6 +31,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3B7ACD4A2408A2DC0074DC40 /* UIView+LFDownloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+LFDownloadManager.h"; sourceTree = "<group>"; };
+		3B7ACD4B2408A2DC0074DC40 /* UIView+LFDownloadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+LFDownloadManager.m"; sourceTree = "<group>"; };
 		3B897F05240616A900A3E854 /* StickerBooth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StickerBooth.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B897F08240616A900A3E854 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		3B897F09240616A900A3E854 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -165,6 +168,8 @@
 			children = (
 				66DEB58D240619A600C770B5 /* LFDownloadManager.h */,
 				66DEB58E240619A600C770B5 /* LFDownloadManager.m */,
+				3B7ACD4A2408A2DC0074DC40 /* UIView+LFDownloadManager.h */,
+				3B7ACD4B2408A2DC0074DC40 /* UIView+LFDownloadManager.m */,
 			);
 			path = LFDownloadManager;
 			sourceTree = "<group>";
@@ -303,6 +308,7 @@
 				66DEB5A4240619A600C770B5 /* LFMEWeakSelectorTarget.m in Sources */,
 				66DEB5AF240619A600C770B5 /* JRTitleCollectionViewCell.m in Sources */,
 				66DEB5A5240619A600C770B5 /* LFEditCollectionView.m in Sources */,
+				3B7ACD4C2408A2DC0074DC40 /* UIView+LFDownloadManager.m in Sources */,
 				3B897F0D240616A900A3E854 /* SceneDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

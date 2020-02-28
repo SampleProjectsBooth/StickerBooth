@@ -14,23 +14,11 @@
 
 #pragma mark - //////////////   LFDownloadInfo
 
-@interface LFDownloadInfo : NSObject
-
-@property (nonatomic, assign) NSInteger downloadTimes;
-@property (nonatomic, strong) NSURL *downloadURL;
-
-@property (nonatomic, readonly) BOOL reDownload;
-
-@property (nonatomic, copy) lf_progressBlock progress;
-@property (nonatomic, copy) lf_completeBlock complete;
-
-@end
-
 @implementation LFDownloadInfo
 
-+ (LFDownloadInfo *)lf_downloadInfoWithURL:(NSURL *)downloadURL
++ (instancetype)lf_downloadInfoWithURL:(NSURL *)downloadURL
 {
-    LFDownloadInfo *info = [[LFDownloadInfo alloc] init];
+    LFDownloadInfo *info = [[[self class] alloc] init];
     info.downloadURL = downloadURL;
     return info;
 }
@@ -219,7 +207,7 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
     return share;
 }
 
-- (NSMutableDictionary <NSURL *, LFDownloadInfo *>*)downloadDictionary {
+- (NSMutableDictionary <NSURL *,  NSMutableArray<LFDownloadInfo *>*>*)downloadDictionary {
     
     if (!_downloadDictionary) {
         _downloadDictionary = @{}.mutableCopy;
@@ -295,21 +283,45 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
 - (void)lf_downloadURL:(NSURL *)URL progress:(lf_progressBlock)progress completion:(lf_completeBlock)completion
 {
     LFDownloadInfo *info = [LFDownloadInfo lf_downloadInfoWithURL:URL];
-    info.progress = [progress copy];
-    info.complete = [completion copy];
-    self.downloadDictionary[URL] = info;
-    
-    [self downloadInfo:info];
+    [self lf_downloadInfo:info progress:progress completion:completion];
 }
 
-- (BOOL)redownloadInfo:(LFDownloadInfo *)info
+- (void)lf_downloadInfo:(LFDownloadInfo *)info progress:(lf_progressBlock)progress completion:(lf_completeBlock)completion
 {
-    NSInteger downloadTimes = info.downloadTimes;
-    if (self.repeatCountWhenDownloadFailed > downloadTimes) {
-        info.downloadTimes++;
+    NSURL *URL = info.downloadURL;
+    info.progress = [progress copy];
+    info.complete = [completion copy];
+    NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
+    if (downloadList == nil) {
+        downloadList = [NSMutableArray array];
+        [downloadList addObject:info];
+        self.downloadDictionary[URL] = downloadList;
         [self downloadInfo:info];
+    } else {
+        [downloadList addObject:info];
+    }
+}
+
+- (BOOL)redownloadURL:(NSURL *)URL
+{
+    NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
+    
+    for (NSInteger i=0; i<downloadList.count; i++) {
+        LFDownloadInfo *info = downloadList[i];
+        NSInteger downloadTimes = info.downloadTimes;
+        if (self.repeatCountWhenDownloadFailed > downloadTimes) {
+            info.downloadTimes++;
+        } else {
+            [downloadList removeObject:info];
+            i--;
+        }
+    }
+    
+    if (downloadList.count) {
+        [self downloadInfo:downloadList.firstObject];
         return YES;
     }
+    
     return NO;
 }
 
@@ -318,14 +330,18 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
     NSURL *URL = info.downloadURL;
     NSData *data = [self dataFromSandboxWithURL:URL];
     if (data) {
-        if (info.progress) {
-            info.progress(data.length, data.length, info.downloadURL);
+        NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
+        for (LFDownloadInfo *info in downloadList) {
+            if (info.progress) {
+                info.progress(data.length, data.length, info.downloadURL);
+            }
+            if (info.complete) {
+                info.complete(data, nil, info.downloadURL);
+            }
+            info.complete = nil;
+            info.progress = nil;
         }
-        if (info.complete) {
-            info.complete(data, nil, info.downloadURL);
-        }
-        info.complete = nil;
-        info.progress = nil;
+        [self.downloadDictionary removeObjectForKey:URL];
         return;
     }
     
@@ -333,6 +349,20 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
     LFURLSessionOperation *operation = [[LFURLSessionOperation alloc] initWithDownloadSession:self.session URL:URL];
     // 3、执行任务
     [self.queue addOperation:operation];
+}
+
+- (void)lf_downloadCancelInfo:(LFDownloadInfo *)info
+{
+    if (info == nil) {
+        return;
+    }
+    NSURL *URL = info.downloadURL;
+    NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
+    if ([downloadList containsObject:info]) {
+        [downloadList removeObject:info];
+        info.complete = nil;
+        info.progress = nil;
+    }
 }
 
 + (void)lf_clearCached {
@@ -359,9 +389,11 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
 //    self.progressView.progress = 1.0 * totalBytesWritten / totalBytesExpectedToWrite;
     NSURL *URL = downloadTask.currentRequest.URL;
     
-    LFDownloadInfo *info = self.downloadDictionary[URL];
-    if (info.progress) {
-        info.progress(totalBytesWritten, totalBytesExpectedToWrite, info.downloadURL);
+    NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
+    for (LFDownloadInfo *info in downloadList) {
+        if (info.progress) {
+            info.progress(totalBytesWritten, totalBytesExpectedToWrite, info.downloadURL);
+        }
     }
 }
 
@@ -377,23 +409,25 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
     [downloadTask.lf_operation completeOperation];
     NSURL *URL = downloadTask.currentRequest.URL;
     
-    LFDownloadInfo *info = self.downloadDictionary[URL];
+    
     NSData *data = [NSData dataWithContentsOfURL:location];
     if (self.cacheData) {
         //1、生成的Caches地址
-        NSString *cacepath = LFDownloadManagerDirectorAppending([self sandboxNameWithURL:info.downloadURL]);
+        NSString *cacepath = LFDownloadManagerDirectorAppending([self sandboxNameWithURL:URL]);
         //2、移动图片的存储地址
         NSFileManager *manager = [NSFileManager defaultManager];
         [manager moveItemAtURL:location toURL:[NSURL fileURLWithPath:cacepath] error:nil];
     }
     
-    [self.downloadDictionary removeObjectForKey:URL];
-    
-    if (info.complete) {
-        info.complete(data, nil, info.downloadURL);
+    NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
+    for (LFDownloadInfo *info in downloadList) {
+        if (info.complete) {
+            info.complete(data, nil, info.downloadURL);
+        }
+        info.complete = nil;
+        info.progress = nil;
     }
-    info.complete = nil;
-    info.progress = nil;
+    [self.downloadDictionary removeObjectForKey:URL];
 }
 
 /*
@@ -406,21 +440,27 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
     if (error) {
         NSURL *URL = task.currentRequest.URL;
         if (task.state == NSURLSessionTaskStateCanceling) {
-            LFDownloadInfo *info = self.downloadDictionary[URL];
+            NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
+            for (LFDownloadInfo *info in downloadList) {
+                info.complete = nil;
+                info.progress = nil;
+            }
             [self.downloadDictionary removeObjectForKey:URL];
-            info.complete = nil;
-            info.progress = nil;
             return;
         }
         
-        LFDownloadInfo *info = self.downloadDictionary[URL];
-        if (![self redownloadInfo:info]) {
-            [self.downloadDictionary removeObjectForKey:URL];
-            if (info.complete) {
-                info.complete(nil, error, info.downloadURL);
+        
+        if (![self redownloadURL:URL]) {
+            
+            NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
+            for (LFDownloadInfo *info in downloadList) {
+                if (info.complete) {
+                    info.complete(nil, error, info.downloadURL);
+                }
+                info.complete = nil;
+                info.progress = nil;
             }
-            info.complete = nil;
-            info.progress = nil;
+            [self.downloadDictionary removeObjectForKey:URL];
         }
     }
 }
