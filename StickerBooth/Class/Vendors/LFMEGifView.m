@@ -30,7 +30,7 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
     return frameDuration;
 }
 
-inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imageRef, CGSize size)
+inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imageRef, CGSize size, UIViewContentMode contentMode)
 {
     if (!imageRef) return NULL;
     size_t width = CGImageGetWidth(imageRef);
@@ -41,12 +41,27 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
         float verticalRadio = size.height*1.0/height;
         float horizontalRadio = size.width*1.0/width;
         
+        
         float radio = 1;
-        if(verticalRadio > horizontalRadio){
-            radio = verticalRadio;
-        }
-        else{
-            radio = horizontalRadio;
+        if (contentMode == UIViewContentModeScaleAspectFill) {
+            if(verticalRadio > horizontalRadio)
+            {
+                radio = verticalRadio;
+            }
+            else
+            {
+                radio = horizontalRadio;
+            }
+        } else {
+            if(verticalRadio>1 && horizontalRadio>1)
+            {
+                radio = verticalRadio > horizontalRadio ? horizontalRadio : verticalRadio;
+            }
+            else
+            {
+                radio = verticalRadio < horizontalRadio ? verticalRadio : horizontalRadio;
+            }
+
         }
         
         width = roundf(width*radio);
@@ -151,7 +166,7 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
     _loopTimes = 0;
     if (_gifSourceRef) {
         CFRelease(_gifSourceRef);
-        _gifSourceRef = nil;
+        _gifSourceRef = NULL;
     }
     _index = 0;
     _timestamp = 0;
@@ -176,7 +191,7 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
                 [self setupDisplayLink];
             } else {
                 [self unsetupDisplayLink];
-                CGImageRef imageRef = LFMEGifView_CGImageScaleDecodedFromCopy(_image.CGImage, self.frame.size);
+                CGImageRef imageRef = LFMEGifView_CGImageScaleDecodedFromCopy(_image.CGImage, self.frame.size, self.contentMode);
                 self.layer.contents = (__bridge id _Nullable)(imageRef);
                 if (imageRef) {
                     CGImageRelease(imageRef);
@@ -252,7 +267,7 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
                 [self setupDisplayLink];
             } else {
                 [self unsetupDisplayLink];
-                CGImageRef imageRef = LFMEGifView_CGImageScaleDecodedFromCopy(self.image.CGImage, self.frame.size);
+                CGImageRef imageRef = LFMEGifView_CGImageScaleDecodedFromCopy(self.image.CGImage, self.frame.size, self.contentMode);
                 self.layer.contents = (__bridge id _Nullable)(imageRef);
                 if (imageRef) {
                     CGImageRelease(imageRef);
@@ -335,7 +350,7 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
                 imageRef = [[_image.images objectAtIndex:_index] CGImage];
             }
             if (imageRef) {
-                CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(imageRef, self.frame.size);
+                CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(imageRef, self.frame.size, self.contentMode);
                 if (_gifSourceRef && imageRef) {
                     CGImageRelease(imageRef);
                 }
