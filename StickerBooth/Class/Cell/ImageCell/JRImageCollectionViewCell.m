@@ -140,6 +140,8 @@
     self.contentView.backgroundColor = [UIColor clearColor];
 
     LFMEGifView *imageView = [[LFMEGifView alloc] initWithFrame:CGRectZero];
+    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    imageView.clipsToBounds = YES;
     [self.contentView addSubview:imageView];
     self.imageView = imageView;
     self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"success" ofType:@"png"]];
