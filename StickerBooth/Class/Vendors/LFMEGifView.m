@@ -172,7 +172,7 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
         [self freeData];
         _image = image;
         if (image) {
-            if (_image.images.count) {
+            if (_image.images.count > 1) {
                 _frameCount = _image.images.count;
                 _duration = _image.duration / _image.images.count;
                 [self setupDisplayLink];
@@ -196,7 +196,7 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
         
         if (self.data) {
             
-            if (_frameCount) {
+            if (_frameCount > 1) {
                 NSMutableArray *images = [NSMutableArray array];
                 NSTimeInterval duration = 0.0f;
                 
@@ -243,7 +243,7 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
             _gifSourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)(data), NULL);
             _frameCount = CGImageSourceGetCount(_gifSourceRef);
             
-            if (_frameCount) {
+            if (_frameCount > 1) {
                 NSInteger index = 0;
                 NSMutableArray *durations = [NSMutableArray array];
                 while (index < _frameCount) {

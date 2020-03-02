@@ -70,6 +70,7 @@
         return;
     }
     id data = item.content;
+    __weak typeof(self) weakSelf = self;
     if ([data isKindOfClass:[NSURL class]]) {
         NSURL *dataURL = (NSURL *)data;
         if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
@@ -89,7 +90,6 @@
                 return;
             }
             self.progressView.hidden = NO;
-            __weak typeof(self) weakSelf = self;
             [self lf_downloadImageWithURL:dataURL progress:^(CGFloat progress, NSURL * _Nonnull URL) {
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
                     weakSelf.progressView.progress = progress;
@@ -109,7 +109,17 @@
             }];
         }
     } else {
-        
+        [self getPhotoDataWithAsset:data completion:^(NSData *reslutData, NSDictionary *info, BOOL isDegraded) {
+            if (!reslutData) {
+                item.state = JRStickerContentState_Fail;
+                self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
+            } else {
+                item.state = JRStickerContentState_Success;
+                weakSelf.imageView.data = reslutData;
+            }
+        } progressHandler:^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
+            
+        }];
     }
 }
 

@@ -10,6 +10,7 @@
 #import "JRStickerDisplayView.h"
 #import "LFMEGifView.h"
 #import "JRTestManager.h"
+#import <Photos/Photos.h>
 
 @interface ViewController ()
 
@@ -48,7 +49,7 @@
         
     __weak typeof(self) weakSelf = self;
     NSArray *array1 = @[[NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/677/w400h277/20200219/4639-iprtayz5721379.gif"], [NSURL URLWithString:@"https://f.sinaimg.cn/tech/transform/40/w420h420/20200214/b778-ipmxpvz6387339.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/362/w244h118/20200214/d095-ipmxpvz6380936.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/552/w315h237/20200214/75d2-ipmxpvz6380604.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/538/w350h188/20200214/49ef-ipmxpvz6378358.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/18/w536h282/20200213/256b-ipmxpvz2333375.gif"], [NSURL URLWithString:@"https://f.sinaimg.cn/tech/transform/755/w280h475/20200213/ae28-ipmxpvz2324934.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/704/w351h353/20200213/34b7-ipmxpvz2320937.gif"], [NSURL URLWithString:@"https://f.sinaimg.cn/tech/transform/474/w308h166/20200213/3554-ipmxpvz2313851.gif"]];
-    NSArray *objs = @[array1, a1, @[[NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/677/w400h277/20200219/4639-iprtayz5721379.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/468/w300h168/20200219/8dea-iprtayz5718598.gif"], [NSURL URLWithString:@"https://f.sinaimg.cn/tech/transform/160/w480h480/20200220/d36d-ipvnszc8464062.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/168/w393h575/20200218/baab-iprtayz1354632.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/168/w393h575/20200218/1b0e-iprtayz1353680.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/69/w382h487/20200218/157c-iprtayz1351773.gif"], [NSURL URLWithString:@"https://f.sinaimg.cn/tech/transform/0/w400h400/20200218/67c5-iprtayz1348076.gif"]]];
+    NSArray *objs = @[array1, a1, [self _getasset]];
     [self.myView setTitles:@[@"1", @"2", @"3", @"4"] contents:objs];
     self.myView.didSelectBlock = ^(NSIndexPath * _Nonnull indexPath, NSData * _Nullable data) {
         NSLog(@"%@", [[objs objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]);
@@ -93,5 +94,30 @@
 - (IBAction)_clearPlayAction:(id)sender
 {
     [[[JRTestManager shareInstance] context] removeAllObjects];
+}
+
+- (NSArray *)_getasset
+{
+    NSMutableArray *stickers = [NSMutableArray arrayWithCapacity:1];
+    if (@available(iOS 8.0, *)){
+        PHFetchOptions *option = [[PHFetchOptions alloc] init];
+        option.predicate = [NSPredicate predicateWithFormat:@"mediaType == %ld", PHAssetMediaTypeImage];
+        option.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
+        PHFetchResult *smartAlbums = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeSmartAlbumUserLibrary options:nil];
+        
+        PHFetchResult *fetchResult = nil;
+        for (PHAssetCollection *collection in smartAlbums) {
+            // 有可能是PHCollectionList类的的对象，过滤掉
+            if (![collection isKindOfClass:[PHAssetCollection class]]) continue;
+            fetchResult = [PHAsset fetchAssetsInAssetCollection:collection options:option];
+            break;
+        }
+        
+        for (PHAsset *asset in fetchResult) {
+            [stickers addObject:asset];
+        }
+        
+    }
+    return [stickers copy];
 }
 @end

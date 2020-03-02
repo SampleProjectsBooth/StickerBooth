@@ -25,6 +25,14 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>bbbb</string>
+	<key>NSCameraUsageDescription</key>
+	<string>aaaa</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>ddddd</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>cccc</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
