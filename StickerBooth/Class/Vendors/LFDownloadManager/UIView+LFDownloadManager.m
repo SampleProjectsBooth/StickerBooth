@@ -21,7 +21,7 @@ static const char * LFDownloadViewInfoKey = "LFDownloadViewInfoKey";
 
 - (void)setLf_downloadInfo:(LFDownloadInfo *)lf_downloadInfo
 {
-    objc_setAssociatedObject(self, LFDownloadViewInfoKey, lf_downloadInfo, OBJC_ASSOCIATION_ASSIGN);
+    objc_setAssociatedObject(self, LFDownloadViewInfoKey, lf_downloadInfo, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (void)lf_downloadImageWithURL:(NSURL *)url progress:(LFDownloadImageProgressBlock)progressBlock completed:(LFDownloadImageCompletionBlock)completedBlock
@@ -32,12 +32,13 @@ static const char * LFDownloadViewInfoKey = "LFDownloadViewInfoKey";
     self.lf_downloadInfo = info;
     
     [[LFDownloadManager shareLFDownloadManager] lf_downloadInfo:info progress:^(int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite, NSURL *downloadURL) {
-        if (progressBlock && [url.absoluteString isEqualToString:downloadURL.absoluteString]) {
+        if (progressBlock && [self.lf_downloadInfo.downloadURL.absoluteString isEqualToString:downloadURL.absoluteString]) {
             float progress = totalBytesWritten*1.00f/totalBytesExpectedToWrite*1.00f;
             progressBlock(progress, downloadURL);
         }
     } completion:^(NSData *downloadData, NSError *error, NSURL *downloadURL) {
-        if (completedBlock && [url.absoluteString isEqualToString:downloadURL.absoluteString]) {
+        if (completedBlock && [self.lf_downloadInfo.downloadURL.absoluteString isEqualToString:downloadURL.absoluteString]) {
+            self.lf_downloadInfo = nil;
             completedBlock(downloadData, error, downloadURL);
         }
     }];

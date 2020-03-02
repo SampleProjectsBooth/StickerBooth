@@ -152,14 +152,14 @@
 		66DEB583240619A600C770B5 /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
-				66DEB584240619A600C770B5 /* LFMEWeakSelectorTarget.h */,
+				66DEB58C240619A600C770B5 /* LFDownloadManager */,
 				66DEB585240619A600C770B5 /* LFEditCollectionView.h */,
-				66DEB586240619A600C770B5 /* LFMEGifView.h */,
-				66DEB587240619A600C770B5 /* LFMEWeakSelectorTarget.m */,
 				66DEB588240619A600C770B5 /* LFEditCollectionView.m */,
 				66DEB589240619A600C770B5 /* LFLoadingView */,
-				66DEB58C240619A600C770B5 /* LFDownloadManager */,
+				66DEB586240619A600C770B5 /* LFMEGifView.h */,
 				66DEB58F240619A600C770B5 /* LFMEGifView.m */,
+				66DEB584240619A600C770B5 /* LFMEWeakSelectorTarget.h */,
+				66DEB587240619A600C770B5 /* LFMEWeakSelectorTarget.m */,
 			);
 			path = Vendors;
 			sourceTree = "<group>";
