@@ -42,13 +42,11 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
         float horizontalRadio = size.width*1.0/width;
         
         float radio = 1;
-        if(verticalRadio>1 && horizontalRadio>1)
-        {
-            radio = verticalRadio > horizontalRadio ? horizontalRadio : verticalRadio;
+        if(verticalRadio > horizontalRadio){
+            radio = verticalRadio;
         }
-        else
-        {
-            radio = verticalRadio < horizontalRadio ? verticalRadio : horizontalRadio;
+        else{
+            radio = horizontalRadio;
         }
         
         width = roundf(width*radio);
