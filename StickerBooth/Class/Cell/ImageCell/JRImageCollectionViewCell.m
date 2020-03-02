@@ -56,6 +56,11 @@
     self.progressView.hidden = YES;
 }
 
+- (void)dealloc
+{
+    [self.imageView setData:nil];
+}
+
 - (NSData *)imageData
 {
     return self.imageView.data;
@@ -90,6 +95,7 @@
                 return;
             }
             self.progressView.hidden = NO;
+            self.progressView.progress = 0.f;
             [self lf_downloadImageWithURL:dataURL progress:^(CGFloat progress, NSURL * _Nonnull URL) {
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
                     weakSelf.progressView.progress = progress;

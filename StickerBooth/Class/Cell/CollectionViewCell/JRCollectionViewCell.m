@@ -32,7 +32,7 @@
 {
     [super layoutSubviews];
     self.collectionView.frame = self.contentView.bounds;
-    CGFloat width = (CGRectGetWidth(self.contentView.bounds) - 5.f*8)/4;
+    CGFloat width = (CGRectGetWidth(self.contentView.bounds) - 5.f*6)/3;
     self.collectionView.itemSize = CGSizeMake(width, width);
     [self.collectionView invalidateIntrinsicContentSize];
 }
@@ -44,6 +44,11 @@
         self.collectionView.dataSources = @[];
         [self.collectionView reloadData];
     }
+}
+
+- (void)dealloc
+{
+    [self.collectionView removeFromSuperview];
 }
 
 #pragma mark - Public Methods

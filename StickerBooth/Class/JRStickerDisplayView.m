@@ -49,6 +49,12 @@ CGFloat const JR_O_margin = 1.5f;
     [self _customLayoutSubviews];
 }
 
+- (void)dealloc
+{
+    [self.topCollectionView removeFromSuperview];
+    [self.collectionView removeFromSuperview];
+}
+
 #pragma mark - Public Methods
 - (void)setTitles:(NSArray *)titles contents:(NSArray<NSArray *> *)contents
 {
@@ -97,9 +103,6 @@ CGFloat const JR_O_margin = 1.5f;
         JRTitleCollectionViewCell *titleCell = (JRTitleCollectionViewCell *)cell;
         [titleCell setCellData:item];
         titleCell.backgroundColor =  [UIColor clearColor];
-//        if ([weakSelf.selectTitle isEqualToString:item]) {
-//            titleCell.backgroundColor =  [UIColor orangeColor];
-//        }
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item) {
         [weakSelf _changeTitle:item];
         [weakSelf.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
@@ -133,7 +136,7 @@ CGFloat const JR_O_margin = 1.5f;
         if (weakSelf.contents.count > indexPath.row) {
             [imageCell setCellData:[weakSelf.contents objectAtIndex:indexPath.row]];
         }
-        imageCell.delegate = self;
+        imageCell.delegate = weakSelf;
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item) {
         
     }];
