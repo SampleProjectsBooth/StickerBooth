@@ -213,11 +213,17 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
                 [self setupDisplayLink];
             } else {
                 [self unsetupDisplayLink];
-                CGImageRef imageRef = LFMEGifView_CGImageScaleDecodedFromCopy(_image.CGImage, self.frame.size, self.contentMode);
-                self.layer.contents = (__bridge id _Nullable)(imageRef);
-                if (imageRef) {
-                    CGImageRelease(imageRef);
-                }
+                CGSize size = self.frame.size;
+                UIViewContentMode mode = self.contentMode;
+                dispatch_async(self.serialQueue, ^{
+                    CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(image.CGImage, size, mode);
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.layer.contents = (__bridge id _Nullable)(decodeImageRef);
+                        if (decodeImageRef) {
+                            CGImageRelease(decodeImageRef);
+                        }
+                    });
+                });
             }
         } else {
             [self unsetupDisplayLink];
