@@ -8,6 +8,8 @@
 
 #import "LFMEGifView.h"
 #import "LFMEWeakSelectorTarget.h"
+#import <ImageIO/ImageIO.h>
+
 #import "JRTestManager.h"
 
 inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSourceRef imageSource, NSUInteger index)
@@ -89,6 +91,20 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
     return newImage;
 }
 
+inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSInteger value) {
+    switch (value) {
+        case kCGImagePropertyOrientationUp: return UIImageOrientationUp;
+        case kCGImagePropertyOrientationDown: return UIImageOrientationDown;
+        case kCGImagePropertyOrientationLeft: return UIImageOrientationLeft;
+        case kCGImagePropertyOrientationRight: return UIImageOrientationRight;
+        case kCGImagePropertyOrientationUpMirrored: return UIImageOrientationUpMirrored;
+        case kCGImagePropertyOrientationDownMirrored: return UIImageOrientationDownMirrored;
+        case kCGImagePropertyOrientationLeftMirrored: return UIImageOrientationLeftMirrored;
+        case kCGImagePropertyOrientationRightMirrored: return UIImageOrientationRightMirrored;
+        default: return UIImageOrientationUp;
+    }
+}
+
 @interface LFMEGifView ()
 {
     CADisplayLink *_displayLink;
@@ -106,6 +122,10 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
 @property (readonly, nonatomic, nullable) NSArray<NSNumber *> * durations;
 
 @property (readonly, nonatomic, nullable) NSMutableDictionary<NSNumber *, id> *imageRefs;
+
+@property (nonatomic, assign) UIImageOrientation orientation;
+
+@property (nonatomic, strong) dispatch_queue_t serialQueue;
 
 @end
 
@@ -148,6 +168,8 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
     _autoPlay = YES;
     _duration = 0.1f;
     _imageRefs = [NSMutableDictionary dictionary];
+    _orientation = UIImageOrientationUp;
+    _serialQueue = dispatch_queue_create("LFMEGifViewSerial", DISPATCH_QUEUE_SERIAL);
 }
 
 - (void)dealloc
@@ -159,6 +181,7 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
 - (void)freeData
 {
     [self unsetupDisplayLink];
+    _orientation = 0;
     _image = nil;
     _data = nil;
     _frameCount = 0;
@@ -185,6 +208,7 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
         [self freeData];
         _image = image;
         if (image) {
+            _orientation = image.imageOrientation;
             if (_image.images.count > 1) {
                 _frameCount = _image.images.count;
                 _duration = _image.duration / _image.images.count;
@@ -214,14 +238,14 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
                 NSTimeInterval duration = 0.0f;
                 
                 for (size_t i = 0; i < _frameCount; i++) {
-                    CGImageRef imageRef = CGImageSourceCreateImageAtIndex(_gifSourceRef, i, NULL);
+                    CGImageRef imageRef = CGImageSourceCreateImageAtIndex(_gifSourceRef, i, (CFDictionaryRef)@{(id)kCGImageSourceShouldCache:@(YES)});
                     if (!imageRef) {
                         continue;
                     }
                     
                     duration += [_durations[i] floatValue];
                     
-                    [images addObject:[UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp]];
+                    [images addObject:[UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:self.orientation]];
                     
                     CGImageRelease(imageRef);
                 }
@@ -232,8 +256,8 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
                 
                 _image = [UIImage animatedImageWithImages:images duration:duration];
             } else {
-                CGImageRef imageRef = CGImageSourceCreateImageAtIndex(_gifSourceRef, 0, NULL);
-                UIImage *image = [UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
+                CGImageRef imageRef = CGImageSourceCreateImageAtIndex(_gifSourceRef, 0, (CFDictionaryRef)@{(id)kCGImageSourceShouldCache:@(YES)});
+                UIImage *image = [UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:self.orientation];
                 if (imageRef) {
                     CGImageRelease(imageRef);
                 }
@@ -256,6 +280,22 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
             _gifSourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)(data), NULL);
             _frameCount = CGImageSourceGetCount(_gifSourceRef);
             
+            //exifInfo 包含了很多信息,有兴趣的可以打印看看,我们只需要Orientation这个字段
+            CFDictionaryRef exifInfo = CGImageSourceCopyPropertiesAtIndex(_gifSourceRef, 0,NULL);
+            
+            //判断Orientation这个字段,如果图片经过PS等处理,exif信息可能会丢失
+            if(CFDictionaryContainsKey(exifInfo, kCGImagePropertyOrientation)){
+                CFNumberRef orientation = CFDictionaryGetValue(exifInfo, kCGImagePropertyOrientation);
+                NSInteger orientationValue = 0;
+                CFNumberGetValue(orientation, kCFNumberIntType, &orientationValue);
+                _orientation = LFMEGifView_UIImageOrientationFromEXIFValue(orientationValue);
+                if (_orientation != UIImageOrientationUp) {
+                    
+                }
+            }
+            CFRelease(exifInfo);
+            
+            
             if (_frameCount > 1) {
                 NSInteger index = 0;
                 NSMutableArray *durations = [NSMutableArray array];
@@ -267,11 +307,21 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
                 [self setupDisplayLink];
             } else {
                 [self unsetupDisplayLink];
-                CGImageRef imageRef = LFMEGifView_CGImageScaleDecodedFromCopy(self.image.CGImage, self.frame.size, self.contentMode);
-                self.layer.contents = (__bridge id _Nullable)(imageRef);
-                if (imageRef) {
-                    CGImageRelease(imageRef);
-                }
+                CGSize size = self.frame.size;
+                UIViewContentMode mode = self.contentMode;
+                dispatch_async(self.serialQueue, ^{
+                    CGImageRef imageRef = CGImageSourceCreateImageAtIndex(self->_gifSourceRef, 0, (CFDictionaryRef)@{(id)kCGImageSourceShouldCache:@(YES)});
+                    CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(imageRef, size, mode);
+                    if (imageRef) {
+                        CGImageRelease(imageRef);
+                    }
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.layer.contents = (__bridge id _Nullable)(decodeImageRef);
+                        if (decodeImageRef) {
+                            CGImageRelease(decodeImageRef);
+                        }
+                    });
+                });
             }
         } else {
             [self unsetupDisplayLink];
@@ -345,7 +395,7 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
         CGImageRef imageRef = (__bridge CGImageRef)([self.imageRefs objectForKey:@(_index)]);
         if (imageRef == NULL) {
             if (_gifSourceRef) {
-                imageRef = CGImageSourceCreateImageAtIndex(_gifSourceRef, _index, NULL);
+                imageRef = CGImageSourceCreateImageAtIndex(_gifSourceRef, _index, (CFDictionaryRef)@{(id)kCGImageSourceShouldCache:@(YES)});
             } else if (_image) {
                 imageRef = [[_image.images objectAtIndex:_index] CGImage];
             }
