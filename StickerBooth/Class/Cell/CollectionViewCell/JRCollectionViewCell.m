@@ -11,6 +11,10 @@
 #import "LFEditCollectionView.h"
 #import "JRStickerContent.h"
 
+
+CGFloat const JR_O_stickerSize = 80;
+CGFloat const JR_O_stickerMargin = 10;
+
 @interface JRCollectionViewCell () <LFEditCollectionViewDelegate>
 
 @property (strong, nonatomic) LFEditCollectionView *collectionView;
@@ -32,9 +36,7 @@
 {
     [super layoutSubviews];
     self.collectionView.frame = self.contentView.bounds;
-    CGFloat width = (CGRectGetWidth(self.contentView.bounds) - 5.f*6)/3;
-    self.collectionView.itemSize = CGSizeMake(width, width);
-    [self.collectionView invalidateIntrinsicContentSize];
+    [self.collectionView invalidateLayout];
 }
 
 - (void)prepareForReuse
@@ -55,6 +57,7 @@
 - (void)setCellData:(id)data
 {
     [super setCellData:data];
+    self.collectionView.dataSources = @[];
     if ([data isKindOfClass:[NSArray class]]) {
         self.collectionView.dataSources = @[data];
     }
@@ -73,14 +76,14 @@
 - (void)_initSubView
 {
     __weak typeof(self) weakSelf = self;
-    UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
-    flowLayout.minimumLineSpacing = 5.f;
-    flowLayout.sectionInset = UIEdgeInsetsMake(5.f, 5.f, 5.f, 5.f);
+//    UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
+//    flowLayout.minimumLineSpacing = 5.f;
+//    flowLayout.sectionInset = UIEdgeInsetsMake(5.f, 5.f, 5.f, 5.f);
     LFEditCollectionView *col = [[LFEditCollectionView alloc] initWithFrame:CGRectZero];
-    col.collectionViewLayout = flowLayout;
-//    if (@available(iOS 10.0, *)) {
-//        col.prefetchingEnabled = NO;
-//    }
+    col.minimumInteritemSpacing = 0.f;
+    col.minimumLineSpacing = 0.f;
+    col.itemSize = CGSizeMake(JR_O_stickerSize, JR_O_stickerSize);
+    col.sectionInset = UIEdgeInsetsMake(JR_O_stickerMargin, JR_O_stickerMargin, JR_O_stickerMargin, JR_O_stickerMargin);
     col.delegate = self;
     col.backgroundColor = [UIColor clearColor];
     [self.contentView addSubview:col];

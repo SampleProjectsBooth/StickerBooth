@@ -31,6 +31,8 @@ CGFloat const JR_O_margin = 1.5f;
 
 @property (copy, nonatomic) NSString *selectTitle;
 
+@property (assign, nonatomic) BOOL stopAnimation;
+
 @end
 
 @implementation JRStickerDisplayView
@@ -54,7 +56,7 @@ CGFloat const JR_O_margin = 1.5f;
     [self.topCollectionView removeFromSuperview];
     [self.collectionView removeFromSuperview];
 }
-
+    
 #pragma mark - Public Methods
 - (void)setTitles:(NSArray *)titles contents:(NSArray<NSArray *> *)contents
 {
@@ -98,16 +100,31 @@ CGFloat const JR_O_margin = 1.5f;
     [self.topCollectionView registerClass:[JRTitleCollectionViewCell class] forCellWithReuseIdentifier:[JRTitleCollectionViewCell identifier]];
 
     [self.topCollectionView callbackCellIdentifier:^NSString * _Nonnull(NSIndexPath * _Nonnull indexPath) {
-        return [JRTitleCollectionViewCell identifier];
+        NSString *identifier = [JRTitleCollectionViewCell identifier];
+        return identifier;
     } configureCell:^(NSIndexPath * _Nonnull indexPath, NSString *  _Nonnull item, UICollectionViewCell * _Nonnull cell) {
         JRTitleCollectionViewCell *titleCell = (JRTitleCollectionViewCell *)cell;
         [titleCell setCellData:item];
         titleCell.backgroundColor =  [UIColor clearColor];
+        [titleCell showAnimationOfProgress:1.f select:NO];
+        if ([weakSelf.selectTitle isEqualToString:item]) {
+            [titleCell showAnimationOfProgress:1.f select:YES];
+        }
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item) {
         [weakSelf _changeTitle:item];
-        [weakSelf.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+        [weakSelf.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
         
     }];
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
     flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
@@ -126,10 +143,14 @@ CGFloat const JR_O_margin = 1.5f;
     [self addSubview:collectionView];
     self.collectionView = collectionView;
     [self.collectionView setDataSources:@[_titles]];
-    [self.collectionView registerClass:[JRCollectionViewCell class] forCellWithReuseIdentifier:[JRCollectionViewCell identifier]];
+    for (NSUInteger i = 0; i < _titles.count; i ++) {
+        NSString *identifier = [NSString stringWithFormat:@"%@abc%ld", [JRTitleCollectionViewCell identifier], i];
+        [self.collectionView registerClass:[JRCollectionViewCell class] forCellWithReuseIdentifier:identifier];
+    }
 
     [self.collectionView callbackCellIdentifier:^NSString * _Nonnull(NSIndexPath * _Nonnull indexPath) {
-        return [JRCollectionViewCell identifier];
+        NSString *identifier = [NSString stringWithFormat:@"%@abc%ld", [JRTitleCollectionViewCell identifier], indexPath.row];
+        return identifier;
     } configureCell:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item, UICollectionViewCell * _Nonnull cell) {
         JRCollectionViewCell *imageCell = (JRCollectionViewCell *)cell;
         imageCell.backgroundColor = [UIColor clearColor];
@@ -148,6 +169,7 @@ CGFloat const JR_O_margin = 1.5f;
     if ([self.selectTitle isEqualToString:string]) {
         return;
     }
+    self.stopAnimation = YES;
     NSUInteger oldIndex = [self.titles indexOfObject:_selectTitle];
     NSUInteger selectIndex = [self.titles indexOfObject:string];
     self.selectTitle = string;
@@ -162,7 +184,25 @@ CGFloat const JR_O_margin = 1.5f;
     [self.topCollectionView.collectionViewLayout invalidateLayout];
     self.collectionView.frame = CGRectMake(0.f, JR_V_ScrollView_heitht, CGRectGetWidth(self.frame)+10.f, CGRectGetHeight(self.frame) - CGRectGetHeight(self.topCollectionView.frame));
     self.collectionView.itemSize = self.collectionView.frame.size;
-    [self.collectionView.collectionViewLayout invalidateLayout];
+    [self.collectionView invalidateLayout];
+}
+
+- (void)_changeTitleAnimotionProgress:(CGFloat)progress
+{
+    NSUInteger _selectedIndex = [self.titles indexOfObject:self.selectTitle];
+    //获取下一个index
+    NSInteger targetIndex = progress < 0 ? _selectedIndex - 1 : _selectedIndex + 1;
+    if (targetIndex < 0 || targetIndex >= [self.titles count]) return;
+
+    //获取cell
+    JRTitleCollectionViewCell *currentCell = (JRTitleCollectionViewCell *)[self.topCollectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:_selectedIndex inSection:0]];
+    JRTitleCollectionViewCell *targetCell = (JRTitleCollectionViewCell *)[self.topCollectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:targetIndex inSection:0]];
+    
+    [currentCell showAnimationOfProgress:progress select:NO];
+    
+    [targetCell showAnimationOfProgress:progress select:YES];
+
+
 }
 
 #pragma mark - JRCollectionViewDelegate
@@ -175,49 +215,52 @@ CGFloat const JR_O_margin = 1.5f;
     }
 }
 
-#pragma mark - LFEditCollectionViewDelegate
+#pragma mark - LFEditCollectionViewScrollDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     if ([scrollView.superview isEqual:self.collectionView]) {
-        NSInteger index = scrollView.contentOffset.x / scrollView.frame.size.width;
-        if (self.titles.count > index) {
-            NSString *string = [self.titles objectAtIndex:index];
-//            [self _changeTitle:string];
+        if (self.stopAnimation) {
+            return;
         }
-//        CGFloat value = fabs(scrollView.contentOffset.x - scrollView.bounds.size.width);
-//        CGFloat animationProgress = value/scrollView.bounds.size.width;
-//        [self _setAnimationProgress:animationProgress];
+        CGFloat value = scrollView.contentOffset.x/scrollView.bounds.size.width - [self.titles indexOfObject:self.selectTitle];
+        [self _changeTitleAnimotionProgress:value];
+        self.selectTitle = [self.titles objectAtIndex:scrollView.contentOffset.x/scrollView.bounds.size.width];
     }
 }
 
+//更新执行动画状态
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+    if ([scrollView.superview isEqual:self.collectionView]) {
+        self.stopAnimation = false;
+    }
+}
+
+////更新执行动画状态
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if ([scrollView.superview isEqual:self.collectionView]) {
+        self.stopAnimation = false;
+    }
+}
+
+//更新执行动画状态
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if ([scrollView.superview isEqual:self.collectionView]) {
+        self.stopAnimation = false;
+    }
+}
+
+//更新执行动画状态
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if ([scrollView.superview isEqual:self.collectionView]) {
+        self.stopAnimation = false;
+    }
+}
+
+#pragma mark - LFEditCollectionViewDelegate
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
 {
     JRCollectionViewCell *viewCell = (JRCollectionViewCell *)cell;
     [viewCell clearData];
-}
-
-- (void)_setAnimationProgress:(CGFloat)animationProgress {
-    if (animationProgress == 0) {return;}
-    
-    NSInteger selectedIndex = [self.titles indexOfObject:self.selectTitle];
-    //获取下一个index
-    NSInteger targetIndex = animationProgress < 0 ? selectedIndex - 1 : selectedIndex + 1;
-    if (targetIndex > [self.titles count]) {return;}
-    
-    //获取cell
-    JRTitleCollectionViewCell *currentCell = (JRTitleCollectionViewCell *)[self.topCollectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:selectedIndex inSection:0]];
-    JRTitleCollectionViewCell *targetCell = (JRTitleCollectionViewCell *)[self.topCollectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:targetIndex inSection:0]];
-    
-//    //标题颜色过渡
-//    if (self.config.titleColorTransition) {
-//
-    [currentCell showAnimationOfProgress:fabs(animationProgress) select:NO];
-    
-    [targetCell showAnimationOfProgress:fabs(animationProgress) select:YES];
-//    }
-//
-//    //给阴影添加动画
-//    [XLPageViewControllerUtil showAnimationToShadow:self.shadowLine shadowWidth:self.config.shadowLineWidth fromItemRect:currentCell.frame toItemRect:targetCell.frame type:self.config.shadowLineAnimationType progress:animationProgress];
 }
 
 @end

@@ -255,6 +255,11 @@ lfEditCollection_bind_var(BOOL, isPrefetchingEnabled, setPrefetchingEnabled);
     return [self.collectionView indexPathsForVisibleItems];
 }
 
+- (void)invalidateLayout
+{
+    [self.collectionView.collectionViewLayout invalidateLayout];
+}
+
 #pragma mark - UICollectionViewFlowLayout setter/getter
 - (void)setCollectionViewLayout:(UICollectionViewLayout *)collectionViewLayout
 {
