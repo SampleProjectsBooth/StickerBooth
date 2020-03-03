@@ -11,6 +11,7 @@
 #import "LFStickerProgressView.h"
 #import "JRStickerContent.h"
 #import "JRPHAssetManager.h"
+
 @interface JRImageCollectionViewCell ()
 
 @property (strong, nonatomic) LFMEGifView *imageView;
@@ -116,11 +117,11 @@
         self.progressView.hidden = NO;
         self.progressView.progress = 0.f;
         __weak typeof(self) weakSelf = self;
-        [JRPHAssetManager getPhotoDataWithAsset:data completion:^(NSData *reslutData, NSDictionary *info, BOOL isDegraded) {
+        [JRPHAssetManager jr_GetPhotoDataWithAsset:data completion:^(NSData *reslutData, NSDictionary *info, BOOL isDegraded) {
             weakSelf.progressView.hidden = YES;
             if (!reslutData) {
                 item.state = JRStickerContentState_Fail;
-                self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
+                weakSelf.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
             } else {
                 item.state = JRStickerContentState_Success;
                 weakSelf.imageView.data = reslutData;

@@ -53,6 +53,7 @@ CGFloat const JR_O_margin = 1.5f;
 
 - (void)dealloc
 {
+    NSLog(@"lll");
     [self.topCollectionView removeFromSuperview];
     [self.collectionView removeFromSuperview];
 }
@@ -136,9 +137,9 @@ CGFloat const JR_O_margin = 1.5f;
     collectionView.showsVerticalScrollIndicator = NO;
     collectionView.showsHorizontalScrollIndicator = NO;
     collectionView.delegate = self;
-    if (@available(iOS 10.0, *)) {
-        collectionView.prefetchingEnabled = NO;
-    }
+//    if (@available(iOS 10.0, *)) {
+//        collectionView.prefetchingEnabled = NO;
+//    }
     collectionView.backgroundColor = [UIColor clearColor];
     [self addSubview:collectionView];
     self.collectionView = collectionView;
@@ -260,7 +261,7 @@ CGFloat const JR_O_margin = 1.5f;
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
 {
     JRCollectionViewCell *viewCell = (JRCollectionViewCell *)cell;
-    [viewCell clearData];
+//    [viewCell clearData];
 }
 
 @end
