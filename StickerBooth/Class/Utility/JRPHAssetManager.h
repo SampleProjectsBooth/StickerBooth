@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)jr_GetAllPhotos:(void(^)(NSArray <PHAsset *>*photos))completeBlock;
 
++ (PHImageRequestID)getPhotoDataWithAsset:(id)asset completion:(void (^)(NSData *data,NSDictionary *info,BOOL isDegraded))completion progressHandler:(void (^)(double progress, NSError *error, BOOL *stop, NSDictionary *info))progressHandler;
+
 @end
 
 NS_ASSUME_NONNULL_END
