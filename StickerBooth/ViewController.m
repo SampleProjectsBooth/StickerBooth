@@ -62,17 +62,8 @@
 {
     __weak typeof(self) weakSelf = self;
     [self.myView setTitles:tites contents:contents];
-    self.myView.didSelectBlock = ^(NSIndexPath * _Nonnull indexPath, NSData * _Nullable data) {
-        NSLog(@"%@", [[contents objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]);
-        if (data) {
-            [weakSelf _createShowView];
-            weakSelf.showView.frame = weakSelf.view.bounds;
-            weakSelf.showView.backgroundColor = [UIColor blackColor];
-            weakSelf.showView.data = data;
-            [weakSelf.view bringSubviewToFront:weakSelf.showView];
-            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:weakSelf action:@selector(_hiddenShowView)];
-            [weakSelf.showView addGestureRecognizer:tap];
-        }
+    self.myView.didSelectBlock = ^(NSData * _Nullable data, UIImage * _Nullable image) {
+        
     };
 }
 

@@ -53,7 +53,6 @@ CGFloat const JR_O_margin = 1.5f;
 
 - (void)dealloc
 {
-    NSLog(@"lll");
     [self.topCollectionView removeFromSuperview];
     [self.collectionView removeFromSuperview];
 }
@@ -121,7 +120,7 @@ CGFloat const JR_O_margin = 1.5f;
         }
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, id  _Nonnull item) {
         [weakSelf _changeTitle:item];
-        [weakSelf.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
+        [weakSelf.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
         
     }];
     

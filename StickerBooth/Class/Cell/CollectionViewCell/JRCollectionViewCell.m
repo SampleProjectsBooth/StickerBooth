@@ -74,8 +74,8 @@
 {
     __weak typeof(self) weakSelf = self;
     LFEditCollectionView *col = [[LFEditCollectionView alloc] initWithFrame:CGRectZero];
-    col.minimumInteritemSpacing = 0.f;
-    col.minimumLineSpacing = 0.f;
+//    col.minimumInteritemSpacing = 10.f;
+//    col.minimumLineSpacing = 10.f;
     col.itemSize = [JRConfigTool shareInstance].itemCellSize;
     col.sectionInset = [JRConfigTool shareInstance].itemCellInset;
     col.delegate = self;
@@ -91,8 +91,8 @@
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, JRStickerContent * _Nonnull item) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
         if (item.state == JRStickerContentState_Success) {
-            if ([weakSelf.delegate respondsToSelector:@selector(didSelectObj:index:)]) {
-                [weakSelf.delegate didSelectObj:imageCell.imageData index:indexPath.row];
+            if ([weakSelf.delegate respondsToSelector:@selector(didSelectData:image:index:)]) {
+                [weakSelf.delegate didSelectData:imageCell.data image:imageCell.image index:indexPath.row];
             }
         }
     }];

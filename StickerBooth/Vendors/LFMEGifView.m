@@ -9,6 +9,7 @@
 #import "LFMEGifView.h"
 #import "LFMEWeakSelectorTarget.h"
 #import <ImageIO/ImageIO.h>
+#import "JRTestManager.h"
 
 inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSourceRef imageSource, NSUInteger index)
 {
@@ -240,6 +241,11 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
 }
 
 - (void)commonInit {
+    
+    NSString *address = [NSString stringWithFormat:@"%p", self];
+    if (![[[JRTestManager shareInstance] cells] containsObject:address]) {
+        [[JRTestManager shareInstance].cells addObject:address];
+    }
     self.backgroundColor = [UIColor clearColor];
     _autoPlay = YES;
     _duration = 0.1f;
@@ -252,10 +258,17 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
 {
     [self freeData];
     [self unsetupDisplayLink];
+    NSString *address = [NSString stringWithFormat:@"%p", self];
+    if ([[[JRTestManager shareInstance] cells] containsObject:address]) {
+        [[JRTestManager shareInstance].cells removeObject:address];
+    }
 }
 
 - (void)freeData
 {
+    if (_data) {
+        [JRTestManager shareInstance].count = [JRTestManager shareInstance].count - 1;
+    }
     [self unsetupDisplayLink];
     _orientation = 0;
     _image = nil;
@@ -359,6 +372,7 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
         [self freeData];
         _data = data;
         if (data) {
+            [JRTestManager shareInstance].count = [JRTestManager shareInstance].count + 1;
             _gifSourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)(data), NULL);
             _frameCount = CGImageSourceGetCount(_gifSourceRef);
             

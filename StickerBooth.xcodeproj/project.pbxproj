@@ -31,6 +31,7 @@
 		66DEB5AE240619A600C770B5 /* JRImageCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB59A240619A600C770B5 /* JRImageCollectionViewCell.m */; };
 		66DEB5AF240619A600C770B5 /* JRTitleCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB59E240619A600C770B5 /* JRTitleCollectionViewCell.m */; };
 		66EBAAD0240E071A004E52B9 /* JRConfigTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBAACF240E071A004E52B9 /* JRConfigTool.m */; };
+		66EBAAD3240E380F004E52B9 /* JRTestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBAAD2240E380F004E52B9 /* JRTestManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +79,8 @@
 		66DEB5A3240619A600C770B5 /* JRStickerDisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRStickerDisplayView.h; sourceTree = "<group>"; };
 		66EBAACE240E071A004E52B9 /* JRConfigTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRConfigTool.h; sourceTree = "<group>"; };
 		66EBAACF240E071A004E52B9 /* JRConfigTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRConfigTool.m; sourceTree = "<group>"; };
+		66EBAAD1240E380F004E52B9 /* JRTestManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRTestManager.h; sourceTree = "<group>"; };
+		66EBAAD2240E380F004E52B9 /* JRTestManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRTestManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +129,8 @@
 				3B897F1A240616B000A3E854 /* main.m */,
 				661DAA4E240C92C600C2D074 /* RootViewController.h */,
 				661DAA4F240C92C600C2D074 /* RootViewController.m */,
+				66EBAAD1240E380F004E52B9 /* JRTestManager.h */,
+				66EBAAD2240E380F004E52B9 /* JRTestManager.m */,
 			);
 			path = StickerBooth;
 			sourceTree = "<group>";
@@ -338,6 +343,7 @@
 				3B897F2724065A6D00A3E854 /* JRStickerContent.m in Sources */,
 				66DEB5AE240619A600C770B5 /* JRImageCollectionViewCell.m in Sources */,
 				66DEB5A8240619A600C770B5 /* LFMEGifView.m in Sources */,
+				66EBAAD3240E380F004E52B9 /* JRTestManager.m in Sources */,
 				66DEB5A4240619A600C770B5 /* LFMEWeakSelectorTarget.m in Sources */,
 				66DEB5AF240619A600C770B5 /* JRTitleCollectionViewCell.m in Sources */,
 				661DAA50240C92C600C2D074 /* RootViewController.m in Sources */,

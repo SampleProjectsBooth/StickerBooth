@@ -15,7 +15,7 @@
 
 @interface JRImageCollectionViewCell ()
 
-@property (strong, nonatomic) LFMEGifView *imageView;
+@property (weak, nonatomic) LFMEGifView *imageView;
 
 @property (weak, nonatomic) LFStickerProgressView *progressView;
 
@@ -66,31 +66,37 @@
     return self.imageView.data;
 }
 
-#pragma mark - Public Methods
-- (void)setCellData:(JRStickerContent *)item
+- (UIImage *)image
 {
-    [super setCellData:item];
-    if (item.state == JRStickerContentState_Fail) {
+    return self.imageView.image;
+}
+
+#pragma mark - Public Methods
+- (void)setCellData:(id)data
+{
+    [super setCellData:data];
+    __block JRStickerContent *obj = (JRStickerContent *)data;
+    if (obj.state == JRStickerContentState_Fail) {
         self.imageView.image = [JRConfigTool shareInstance].failureImage;
         return;
     }
-    id data = item.content;
+    id itemData = obj.content;
     __weak typeof(self) weakSelf = self;
-    if ([data isKindOfClass:[NSURL class]]) {
-        NSURL *dataURL = (NSURL *)data;
+    if ([itemData isKindOfClass:[NSURL class]]) {
+        NSURL *dataURL = (NSURL *)itemData;
         if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
             NSData *localData = [NSData dataWithContentsOfURL:dataURL];
             if (localData) {
-                item.state = JRStickerContentState_Success;
+                obj.state = JRStickerContentState_Success;
                 self.imageView.data = localData;
             } else {
-                item.state = JRStickerContentState_Fail;
+                obj.state = JRStickerContentState_Fail;
                 self.imageView.image = [JRConfigTool shareInstance].failureImage;
             }
         } else {
             NSData *httplocalData = [self dataFromCacheWithURL:dataURL];
             if (httplocalData) {
-                item.state = JRStickerContentState_Success;
+                obj.state = JRStickerContentState_Success;
                 self.imageView.data = httplocalData;
                 return;
             }
@@ -103,10 +109,10 @@
             } completed:^(NSData * _Nonnull downloadData, NSError * _Nonnull error, NSURL * _Nonnull URL) {
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
                     if (error || downloadData == nil) {
-                        item.state = JRStickerContentState_Fail;
+                        obj.state = JRStickerContentState_Fail;
                         self.imageView.image = [JRConfigTool shareInstance].failureImage;
                     } else {
-                        item.state = JRStickerContentState_Success;
+                        obj.state = JRStickerContentState_Success;
                         weakSelf.progressView.hidden = YES;
                         weakSelf.imageView.data = downloadData;
                     }
@@ -114,22 +120,39 @@
                 
             }];
         }
-    } else {
+    } else if ([itemData isKindOfClass:[PHAsset class]]){
         self.progressView.hidden = NO;
         self.progressView.progress = 0.f;
         __weak typeof(self) weakSelf = self;
-        [JRPHAssetManager jr_GetPhotoDataWithAsset:data completion:^(NSData *reslutData, NSDictionary *info, BOOL isDegraded) {
-            weakSelf.progressView.hidden = YES;
-            if (!reslutData) {
-                item.state = JRStickerContentState_Fail;
-                self.imageView.image = [JRConfigTool shareInstance].failureImage;
-            } else {
-                item.state = JRStickerContentState_Success;
-                weakSelf.imageView.data = reslutData;
-            }
-        } progressHandler:^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
-            weakSelf.progressView.progress = progress;
-        }];
+        
+        if ([JRPHAssetManager jr_IsGif:itemData]) {
+            [JRPHAssetManager jr_GetGifDataWithAsset:itemData completion:^(NSData *reslutData, NSDictionary *info, BOOL isDegraded) {
+                weakSelf.progressView.hidden = YES;
+                if (!reslutData) {
+                    obj.state = JRStickerContentState_Fail;
+                    self.imageView.image = [JRConfigTool shareInstance].failureImage;
+                } else {
+                    obj.state = JRStickerContentState_Success;
+                    weakSelf.imageView.data = reslutData;
+                }
+            } progressHandler:^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
+                weakSelf.progressView.progress = progress;
+            }];
+        } else {
+            [JRPHAssetManager jr_GetPhotoWithAsset:itemData completion:^(UIImage * _Nonnull result, NSDictionary * _Nonnull info, BOOL isDegraded) {
+                weakSelf.progressView.hidden = YES;
+                if (!result) {
+                    obj.state = JRStickerContentState_Fail;
+                    self.imageView.image = [JRConfigTool shareInstance].failureImage;
+                } else {
+                    obj.state = JRStickerContentState_Success;
+                    weakSelf.imageView.image = result;
+                }
+            } progressHandler:^(double progress, NSError * _Nonnull error, BOOL * _Nonnull stop, NSDictionary * _Nonnull info) {
+                weakSelf.progressView.progress = progress;
+            }];
+        }
+        
     }
 }
 

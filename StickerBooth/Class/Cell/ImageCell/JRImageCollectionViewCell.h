@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, nonatomic, nonnull) NSData *imageData;
 
+@property (readonly, nonatomic, nonnull) UIImage *image;
+
 - (void)setCellData:(id)data;
 
 - (void)clearData;
