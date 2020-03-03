@@ -10,10 +10,7 @@
 #import "JRImageCollectionViewCell.h"
 #import "LFEditCollectionView.h"
 #import "JRStickerContent.h"
-
-
-CGFloat const JR_O_stickerSize = 80;
-CGFloat const JR_O_stickerMargin = 10;
+#import "JRConfigTool.h"
 
 @interface JRCollectionViewCell () <LFEditCollectionViewDelegate>
 
@@ -76,14 +73,11 @@ CGFloat const JR_O_stickerMargin = 10;
 - (void)_initSubView
 {
     __weak typeof(self) weakSelf = self;
-//    UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
-//    flowLayout.minimumLineSpacing = 5.f;
-//    flowLayout.sectionInset = UIEdgeInsetsMake(5.f, 5.f, 5.f, 5.f);
     LFEditCollectionView *col = [[LFEditCollectionView alloc] initWithFrame:CGRectZero];
     col.minimumInteritemSpacing = 0.f;
     col.minimumLineSpacing = 0.f;
-    col.itemSize = CGSizeMake(JR_O_stickerSize, JR_O_stickerSize);
-    col.sectionInset = UIEdgeInsetsMake(JR_O_stickerMargin, JR_O_stickerMargin, JR_O_stickerMargin, JR_O_stickerMargin);
+    col.itemSize = [JRConfigTool shareInstance].itemCellSize;
+    col.sectionInset = [JRConfigTool shareInstance].itemCellInset;
     col.delegate = self;
     col.backgroundColor = [UIColor clearColor];
     [self.contentView addSubview:col];
@@ -110,4 +104,5 @@ CGFloat const JR_O_stickerMargin = 10;
     JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)cell;
     [imageCell clearData];
 }
+
 @end

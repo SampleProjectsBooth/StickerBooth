@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JRConfigTool.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,6 +17,9 @@ typedef void(^JRDidSelectItemBlock)(NSIndexPath *indexPath, NSData * _Nullable d
 
 /** 点击返回data */
 @property (copy , nonatomic) JRDidSelectItemBlock didSelectBlock;
+
+/** 全局，只要有地方设置就可以了，不用设置回来 */
+@property (strong , nonatomic) JRConfigTool *configTool;
 
 
 /// 设置数据

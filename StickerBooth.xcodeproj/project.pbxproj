@@ -30,6 +30,7 @@
 		66DEB5AD240619A600C770B5 /* JRBaseCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB598240619A600C770B5 /* JRBaseCollectionViewCell.m */; };
 		66DEB5AE240619A600C770B5 /* JRImageCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB59A240619A600C770B5 /* JRImageCollectionViewCell.m */; };
 		66DEB5AF240619A600C770B5 /* JRTitleCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB59E240619A600C770B5 /* JRTitleCollectionViewCell.m */; };
+		66EBAAD0240E071A004E52B9 /* JRConfigTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBAACF240E071A004E52B9 /* JRConfigTool.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +76,8 @@
 		66DEB59E240619A600C770B5 /* JRTitleCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRTitleCollectionViewCell.m; sourceTree = "<group>"; };
 		66DEB59F240619A600C770B5 /* JRTitleCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRTitleCollectionViewCell.h; sourceTree = "<group>"; };
 		66DEB5A3240619A600C770B5 /* JRStickerDisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRStickerDisplayView.h; sourceTree = "<group>"; };
+		66EBAACE240E071A004E52B9 /* JRConfigTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRConfigTool.h; sourceTree = "<group>"; };
+		66EBAACF240E071A004E52B9 /* JRConfigTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRConfigTool.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +110,8 @@
 		3B897F07240616A900A3E854 /* StickerBooth */ = {
 			isa = PBXGroup;
 			children = (
+				66DEB591240619A600C770B5 /* Source */,
+				66DEB583240619A600C770B5 /* Vendors */,
 				66DEB582240619A600C770B5 /* Class */,
 				3B897F08240616A900A3E854 /* AppDelegate.h */,
 				3B897F09240616A900A3E854 /* AppDelegate.m */,
@@ -137,6 +142,7 @@
 		661DAA54240CE80D00C2D074 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				66EBAACD240E070C004E52B9 /* Config */,
 				661DAA55240DF35700C2D074 /* JRPHAssetManager.h */,
 				661DAA56240DF35700C2D074 /* JRPHAssetManager.m */,
 			);
@@ -147,8 +153,6 @@
 			isa = PBXGroup;
 			children = (
 				661DAA54240CE80D00C2D074 /* Utility */,
-				66DEB583240619A600C770B5 /* Vendors */,
-				66DEB591240619A600C770B5 /* Source */,
 				66DEB594240619A600C770B5 /* Cell */,
 				3B897F2424065A4D00A3E854 /* Model */,
 				66DEB5A3240619A600C770B5 /* JRStickerDisplayView.h */,
@@ -240,6 +244,15 @@
 			path = TitleCell;
 			sourceTree = "<group>";
 		};
+		66EBAACD240E070C004E52B9 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				66EBAACE240E071A004E52B9 /* JRConfigTool.h */,
+				66EBAACF240E071A004E52B9 /* JRConfigTool.m */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -312,6 +325,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66EBAAD0240E071A004E52B9 /* JRConfigTool.m in Sources */,
 				661DAA57240DF35700C2D074 /* JRPHAssetManager.m in Sources */,
 				66DEB5A6240619A600C770B5 /* LFStickerProgressView.m in Sources */,
 				3B897F10240616A900A3E854 /* ViewController.m in Sources */,

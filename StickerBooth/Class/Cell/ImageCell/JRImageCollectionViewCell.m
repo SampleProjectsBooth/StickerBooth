@@ -11,6 +11,7 @@
 #import "LFStickerProgressView.h"
 #import "JRStickerContent.h"
 #import "JRPHAssetManager.h"
+#import "JRConfigTool.h"
 
 @interface JRImageCollectionViewCell ()
 
@@ -50,7 +51,7 @@
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-    self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"success" ofType:@"png"]];
+    self.imageView.image = [JRConfigTool shareInstance].normalImage;
     self.progressView.progress = 0;
     self.progressView.hidden = YES;
 }
@@ -70,7 +71,7 @@
 {
     [super setCellData:item];
     if (item.state == JRStickerContentState_Fail) {
-        self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
+        self.imageView.image = [JRConfigTool shareInstance].failureImage;
         return;
     }
     id data = item.content;
@@ -84,7 +85,7 @@
                 self.imageView.data = localData;
             } else {
                 item.state = JRStickerContentState_Fail;
-                self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
+                self.imageView.image = [JRConfigTool shareInstance].failureImage;
             }
         } else {
             NSData *httplocalData = [self dataFromCacheWithURL:dataURL];
@@ -103,7 +104,7 @@
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
                     if (error || downloadData == nil) {
                         item.state = JRStickerContentState_Fail;
-                        weakSelf.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
+                        self.imageView.image = [JRConfigTool shareInstance].failureImage;
                     } else {
                         item.state = JRStickerContentState_Success;
                         weakSelf.progressView.hidden = YES;
@@ -121,7 +122,7 @@
             weakSelf.progressView.hidden = YES;
             if (!reslutData) {
                 item.state = JRStickerContentState_Fail;
-                weakSelf.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
+                self.imageView.image = [JRConfigTool shareInstance].failureImage;
             } else {
                 item.state = JRStickerContentState_Success;
                 weakSelf.imageView.data = reslutData;
@@ -147,8 +148,8 @@
     imageView.clipsToBounds = YES;
     [self.contentView addSubview:imageView];
     self.imageView = imageView;
-    self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"success" ofType:@"png"]];
-    
+    self.imageView.image = [JRConfigTool shareInstance].normalImage;
+
     LFStickerProgressView *view1 = [[LFStickerProgressView alloc] initWithFrame:CGRectZero];
     [self.contentView addSubview:view1];
     [self.contentView bringSubviewToFront:view1];

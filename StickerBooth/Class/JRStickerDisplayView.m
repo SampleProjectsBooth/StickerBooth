@@ -58,6 +58,14 @@ CGFloat const JR_O_margin = 1.5f;
     [self.collectionView removeFromSuperview];
 }
     
+- (JRConfigTool *)configTool
+{
+    if (!_configTool) {
+        _configTool = [JRConfigTool shareInstance];
+    }
+    return _configTool;
+}
+
 #pragma mark - Public Methods
 - (void)setTitles:(NSArray *)titles contents:(NSArray<NSArray *> *)contents
 {
