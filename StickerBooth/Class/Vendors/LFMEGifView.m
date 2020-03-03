@@ -30,7 +30,54 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
     return frameDuration;
 }
 
-inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imageRef, CGSize size, UIViewContentMode contentMode)
+inline static CGAffineTransform LFMEGifView_CGAffineTransformExchangeOrientation(UIImageOrientation imageOrientation, CGSize size)
+{
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    
+    switch (imageOrientation) {
+        case UIImageOrientationDown:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, size.width, size.height);
+            transform = CGAffineTransformRotate(transform, M_PI);
+            break;
+            
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+            transform = CGAffineTransformTranslate(transform, size.width, 0);
+            transform = CGAffineTransformRotate(transform, M_PI_2);
+            break;
+            
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, 0, size.height);
+            transform = CGAffineTransformRotate(transform, -M_PI_2);
+            break;
+            
+        default:
+            break;
+    }
+    
+    switch (imageOrientation) {
+        case UIImageOrientationUpMirrored:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, size.width, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+            
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, size.height, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+            
+        default:
+            break;
+    }
+    
+    return transform;
+}
+
+inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imageRef, CGSize size, UIViewContentMode contentMode, UIImageOrientation orientation)
 {
     if (!imageRef) return NULL;
     size_t width = CGImageGetWidth(imageRef);
@@ -76,6 +123,24 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
         alphaInfo == kCGImageAlphaFirst) {
         hasAlpha = YES;
     }
+    
+    switch (orientation) {
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            // Grr...
+        {
+            CGFloat tmpWidth = width;
+            width = height;
+            height = tmpWidth;
+        }
+            break;
+        default:
+            break;
+    }
+    
+    CGAffineTransform transform = LFMEGifView_CGAffineTransformExchangeOrientation(orientation, CGSizeMake(width, height));
     // BGRA8888 (premultiplied) or BGRX8888
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
     bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
@@ -83,9 +148,22 @@ inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imag
     CGContextRef context = CGBitmapContextCreate(NULL, width, height, 8, 0, colorSpace, bitmapInfo);
     CGColorSpaceRelease(colorSpace);
     if (!context) return NULL;
+    CGContextConcatCTM(context, transform);
+    switch (orientation) {
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            // Grr...
+            CGContextDrawImage(context, CGRectMake(0, 0, height, width), imageRef); // decode
+            break;
+        default:
+            CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
+            break;
+    }
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
     CGImageRef newImage = CGBitmapContextCreateImage(context);
-    CFRelease(context);
+    CGContextRelease(context);
     return newImage;
 }
 
@@ -215,8 +293,9 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
                 [self unsetupDisplayLink];
                 CGSize size = self.frame.size;
                 UIViewContentMode mode = self.contentMode;
+                UIImageOrientation orientation = self.orientation;
                 dispatch_async(self.serialQueue, ^{
-                    CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(image.CGImage, size, mode);
+                    CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(image.CGImage, size, mode, orientation);
                     dispatch_async(dispatch_get_main_queue(), ^{
                         self.layer.contents = (__bridge id _Nullable)(decodeImageRef);
                         if (decodeImageRef) {
@@ -236,7 +315,6 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
     if (_image == nil) {
         
         if (self.data) {
-            
             if (_frameCount > 1) {
                 NSMutableArray *images = [NSMutableArray array];
                 NSTimeInterval duration = 0.0f;
@@ -293,9 +371,6 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
                 NSInteger orientationValue = 0;
                 CFNumberGetValue(orientation, kCFNumberIntType, &orientationValue);
                 _orientation = LFMEGifView_UIImageOrientationFromEXIFValue(orientationValue);
-                if (_orientation != UIImageOrientationUp) {
-                    
-                }
             }
             CFRelease(exifInfo);
             
@@ -313,9 +388,10 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
                 [self unsetupDisplayLink];
                 CGSize size = self.frame.size;
                 UIViewContentMode mode = self.contentMode;
+                UIImageOrientation orientation = self.orientation;
                 dispatch_async(self.serialQueue, ^{
                     CGImageRef imageRef = CGImageSourceCreateImageAtIndex(self->_gifSourceRef, 0, (CFDictionaryRef)@{(id)kCGImageSourceShouldCache:@(YES)});
-                    CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(imageRef, size, mode);
+                    CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(imageRef, size, mode, orientation);
                     if (imageRef) {
                         CGImageRelease(imageRef);
                     }
@@ -404,7 +480,7 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
                 imageRef = [[_image.images objectAtIndex:_index] CGImage];
             }
             if (imageRef) {
-                CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(imageRef, self.frame.size, self.contentMode);
+                CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(imageRef, self.frame.size, self.contentMode, self.orientation);
                 if (_gifSourceRef && imageRef) {
                     CGImageRelease(imageRef);
                 }
