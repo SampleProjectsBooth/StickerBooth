@@ -9,7 +9,7 @@
 #import "LFMEGifView.h"
 #import "LFMEWeakSelectorTarget.h"
 #import <ImageIO/ImageIO.h>
-#import "JRTestManager.h"
+#import "LFImageCoder.h"
 
 inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSourceRef imageSource, NSUInteger index)
 {
@@ -29,146 +29,6 @@ inline static NSTimeInterval LFMEGifView_CGImageSourceGetGifFrameDelay(CGImageSo
         frameDuration = .1;
     }
     return frameDuration;
-}
-
-inline static CGAffineTransform LFMEGifView_CGAffineTransformExchangeOrientation(UIImageOrientation imageOrientation, CGSize size)
-{
-    CGAffineTransform transform = CGAffineTransformIdentity;
-    
-    switch (imageOrientation) {
-        case UIImageOrientationDown:
-        case UIImageOrientationDownMirrored:
-            transform = CGAffineTransformTranslate(transform, size.width, size.height);
-            transform = CGAffineTransformRotate(transform, M_PI);
-            break;
-            
-        case UIImageOrientationLeft:
-        case UIImageOrientationLeftMirrored:
-            transform = CGAffineTransformTranslate(transform, size.width, 0);
-            transform = CGAffineTransformRotate(transform, M_PI_2);
-            break;
-            
-        case UIImageOrientationRight:
-        case UIImageOrientationRightMirrored:
-            transform = CGAffineTransformTranslate(transform, 0, size.height);
-            transform = CGAffineTransformRotate(transform, -M_PI_2);
-            break;
-            
-        default:
-            break;
-    }
-    
-    switch (imageOrientation) {
-        case UIImageOrientationUpMirrored:
-        case UIImageOrientationDownMirrored:
-            transform = CGAffineTransformTranslate(transform, size.width, 0);
-            transform = CGAffineTransformScale(transform, -1, 1);
-            break;
-            
-        case UIImageOrientationLeftMirrored:
-        case UIImageOrientationRightMirrored:
-            transform = CGAffineTransformTranslate(transform, size.height, 0);
-            transform = CGAffineTransformScale(transform, -1, 1);
-            break;
-            
-        default:
-            break;
-    }
-    
-    return transform;
-}
-
-inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imageRef, CGSize size, UIViewContentMode contentMode, UIImageOrientation orientation)
-{
-    CGImageRef newImage = NULL;
-    @autoreleasepool {
-        if (!imageRef) return NULL;
-        size_t width = CGImageGetWidth(imageRef);
-        size_t height = CGImageGetHeight(imageRef);
-        if (width == 0 || height == 0) return NULL;
-        
-        if (size.width > 0 && size.height > 0) {
-            float verticalRadio = size.height*1.0/height;
-            float horizontalRadio = size.width*1.0/width;
-            
-            
-            float radio = 1;
-            if (contentMode == UIViewContentModeScaleAspectFill) {
-                if(verticalRadio > horizontalRadio)
-                {
-                    radio = verticalRadio;
-                }
-                else
-                {
-                    radio = horizontalRadio;
-                }
-            } else {
-                if(verticalRadio>1 && horizontalRadio>1)
-                {
-                    radio = verticalRadio > horizontalRadio ? horizontalRadio : verticalRadio;
-                }
-                else
-                {
-                    radio = verticalRadio < horizontalRadio ? verticalRadio : horizontalRadio;
-                }
-                
-            }
-            
-            width = roundf(width*radio);
-            height = roundf(height*radio);
-        }
-        
-        CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
-        BOOL hasAlpha = NO;
-        if (alphaInfo == kCGImageAlphaPremultipliedLast ||
-            alphaInfo == kCGImageAlphaPremultipliedFirst ||
-            alphaInfo == kCGImageAlphaLast ||
-            alphaInfo == kCGImageAlphaFirst) {
-            hasAlpha = YES;
-        }
-        
-        switch (orientation) {
-            case UIImageOrientationLeft:
-            case UIImageOrientationLeftMirrored:
-            case UIImageOrientationRight:
-            case UIImageOrientationRightMirrored:
-                // Grr...
-            {
-                CGFloat tmpWidth = width;
-                width = height;
-                height = tmpWidth;
-            }
-                break;
-            default:
-                break;
-        }
-        
-        CGAffineTransform transform = LFMEGifView_CGAffineTransformExchangeOrientation(orientation, CGSizeMake(width, height));
-        // BGRA8888 (premultiplied) or BGRX8888
-        CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
-        bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
-        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-        CGContextRef context = CGBitmapContextCreate(NULL, width, height, 8, 0, colorSpace, bitmapInfo);
-        CGColorSpaceRelease(colorSpace);
-        if (!context) return NULL;
-        CGContextConcatCTM(context, transform);
-        switch (orientation) {
-            case UIImageOrientationLeft:
-            case UIImageOrientationLeftMirrored:
-            case UIImageOrientationRight:
-            case UIImageOrientationRightMirrored:
-                // Grr...
-                CGContextDrawImage(context, CGRectMake(0, 0, height, width), imageRef); // decode
-                break;
-            default:
-                CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
-                break;
-        }
-        CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
-        newImage = CGBitmapContextCreateImage(context);
-        CGContextRelease(context);
-    }
-    return newImage;
 }
 
 inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSInteger value) {
@@ -243,11 +103,6 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
 }
 
 - (void)commonInit {
-    
-    NSString *address = [NSString stringWithFormat:@"%p", self];
-    if (![[[JRTestManager shareInstance] cells] containsObject:address]) {
-        [[JRTestManager shareInstance].cells addObject:address];
-    }
     self.backgroundColor = [UIColor clearColor];
     _duration = 0.1f;
     _imageRefs = [NSMutableDictionary dictionary];
@@ -259,17 +114,10 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
 {
     [self freeData];
     [self unsetupDisplayLink];
-    NSString *address = [NSString stringWithFormat:@"%p", self];
-    if ([[[JRTestManager shareInstance] cells] containsObject:address]) {
-        [[JRTestManager shareInstance].cells removeObject:address];
-    }
 }
 
 - (void)freeData
 {
-    if (_data) {
-        [JRTestManager shareInstance].count = [JRTestManager shareInstance].count - 1;
-    }
     [self unsetupDisplayLink];
     _orientation = 0;
     _image = nil;
@@ -308,7 +156,7 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
                 UIViewContentMode mode = self.contentMode;
                 UIImageOrientation orientation = self.orientation;
                 dispatch_async(self.serialQueue, ^{
-                    CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(image.CGImage, size, mode, orientation);
+                    CGImageRef decodeImageRef = LFIC_CGImageScaleDecodedFromCopy(image.CGImage, size, mode, orientation);
                     dispatch_async(dispatch_get_main_queue(), ^{
                         self.layer.contents = (__bridge id _Nullable)(decodeImageRef);
                         if (decodeImageRef) {
@@ -372,7 +220,6 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
         [self freeData];
         _data = data;
         if (data) {
-            [JRTestManager shareInstance].count = [JRTestManager shareInstance].count + 1;
             _gifSourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)(data), NULL);
             _frameCount = CGImageSourceGetCount(_gifSourceRef);
             
@@ -389,23 +236,23 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
             CFRelease(exifInfo);
             
             
-//            if (_frameCount > 1) {
-//                NSInteger index = 0;
-//                NSMutableArray *durations = [NSMutableArray array];
-//                while (index < _frameCount) {
-//                    [durations addObject:@(LFMEGifView_CGImageSourceGetGifFrameDelay(_gifSourceRef, index))];
-//                    index ++;
-//                }
-//                _durations = [durations copy];
-//                [self setupDisplayLink];
-//            } else {
+            if (_frameCount > 1) {
+                NSInteger index = 0;
+                NSMutableArray *durations = [NSMutableArray array];
+                while (index < _frameCount) {
+                    [durations addObject:@(LFMEGifView_CGImageSourceGetGifFrameDelay(_gifSourceRef, index))];
+                    index ++;
+                }
+                _durations = [durations copy];
+                [self setupDisplayLink];
+            } else {
                 [self unsetupDisplayLink];
                 CGSize size = self.frame.size;
                 UIViewContentMode mode = self.contentMode;
                 UIImageOrientation orientation = self.orientation;
                 dispatch_async(self.serialQueue, ^{
                     CGImageRef imageRef = CGImageSourceCreateImageAtIndex(self->_gifSourceRef, 0, (CFDictionaryRef)@{(id)kCGImageSourceShouldCache:@(YES)});
-                    CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(imageRef, size, mode, orientation);
+                    CGImageRef decodeImageRef = LFIC_CGImageScaleDecodedFromCopy(imageRef, size, mode, orientation);
                     if (imageRef) {
                         CGImageRelease(imageRef);
                     }
@@ -416,7 +263,7 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
                         }
                     });
                 });
-//            }
+            }
         } else {
             [self unsetupDisplayLink];
         }
@@ -480,7 +327,7 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
                 imageRef = [[_image.images objectAtIndex:_index] CGImage];
             }
             if (imageRef) {
-                CGImageRef decodeImageRef = LFMEGifView_CGImageScaleDecodedFromCopy(imageRef, self.frame.size, self.contentMode, self.orientation);
+                CGImageRef decodeImageRef = LFIC_CGImageScaleDecodedFromCopy(imageRef, self.frame.size, self.contentMode, self.orientation);
                 if (_gifSourceRef && imageRef) {
                     CGImageRelease(imageRef);
                 }

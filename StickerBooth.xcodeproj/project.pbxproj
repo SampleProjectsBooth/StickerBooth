@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3B7ACD4C2408A2DC0074DC40 /* UIView+LFDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B7ACD4B2408A2DC0074DC40 /* UIView+LFDownloadManager.m */; };
+		3B7ACD66240F52310074DC40 /* LFImageCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B7ACD65240F52310074DC40 /* LFImageCoder.m */; };
 		3B897F0A240616A900A3E854 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F09240616A900A3E854 /* AppDelegate.m */; };
 		3B897F0D240616A900A3E854 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F0C240616A900A3E854 /* SceneDelegate.m */; };
 		3B897F10240616A900A3E854 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F0F240616A900A3E854 /* ViewController.m */; };
@@ -37,6 +38,8 @@
 /* Begin PBXFileReference section */
 		3B7ACD4A2408A2DC0074DC40 /* UIView+LFDownloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+LFDownloadManager.h"; sourceTree = "<group>"; };
 		3B7ACD4B2408A2DC0074DC40 /* UIView+LFDownloadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+LFDownloadManager.m"; sourceTree = "<group>"; };
+		3B7ACD64240F52310074DC40 /* LFImageCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFImageCoder.h; sourceTree = "<group>"; };
+		3B7ACD65240F52310074DC40 /* LFImageCoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFImageCoder.m; sourceTree = "<group>"; };
 		3B897F05240616A900A3E854 /* StickerBooth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StickerBooth.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B897F08240616A900A3E854 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		3B897F09240616A900A3E854 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -95,6 +98,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3B7ACD63240F52310074DC40 /* LFImageCoder */ = {
+			isa = PBXGroup;
+			children = (
+				3B7ACD64240F52310074DC40 /* LFImageCoder.h */,
+				3B7ACD65240F52310074DC40 /* LFImageCoder.m */,
+			);
+			path = LFImageCoder;
+			sourceTree = "<group>";
+		};
 		3B897EFC240616A900A3E854 = {
 			isa = PBXGroup;
 			children = (
@@ -171,6 +183,7 @@
 		66DEB583240619A600C770B5 /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				3B7ACD63240F52310074DC40 /* LFImageCoder */,
 				66DEB58C240619A600C770B5 /* LFDownloadManager */,
 				66DEB585240619A600C770B5 /* LFEditCollectionView.h */,
 				66DEB588240619A600C770B5 /* LFEditCollectionView.m */,
@@ -337,6 +350,7 @@
 				66DEB5A6240619A600C770B5 /* LFStickerProgressView.m in Sources */,
 				3B897F10240616A900A3E854 /* ViewController.m in Sources */,
 				66DEB5A9240619A600C770B5 /* JRStickerDisplayView.m in Sources */,
+				3B7ACD66240F52310074DC40 /* LFImageCoder.m in Sources */,
 				66DEB5AD240619A600C770B5 /* JRBaseCollectionViewCell.m in Sources */,
 				3B897F0A240616A900A3E854 /* AppDelegate.m in Sources */,
 				66DEB5AC240619A600C770B5 /* JRCollectionViewCell.m in Sources */,

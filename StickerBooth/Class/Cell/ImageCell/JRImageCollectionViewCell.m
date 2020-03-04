@@ -125,33 +125,18 @@
         self.progressView.progress = 0.f;
         __weak typeof(self) weakSelf = self;
         
-//        if ([JRPHAssetManager jr_IsGif:itemData]) {
-//            [JRPHAssetManager jr_GetGifDataWithAsset:itemData completion:^(NSData *reslutData, NSDictionary *info, BOOL isDegraded) {
-//                weakSelf.progressView.hidden = YES;
-//                if (!reslutData) {
-//                    obj.state = JRStickerContentState_Fail;
-//                    self.imageView.image = [JRConfigTool shareInstance].failureImage;
-//                } else {
-//                    obj.state = JRStickerContentState_Success;
-//                    weakSelf.imageView.data = reslutData;
-//                }
-//            } progressHandler:^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
-//                weakSelf.progressView.progress = progress;
-//            }];
-//        } else {
-            [JRPHAssetManager jr_GetPhotoWithAsset:itemData completion:^(UIImage * _Nonnull result, NSDictionary * _Nonnull info, BOOL isDegraded) {
-                weakSelf.progressView.hidden = YES;
-                if (!result) {
-                    obj.state = JRStickerContentState_Fail;
-                    self.imageView.image = [JRConfigTool shareInstance].failureImage;
-                } else {
-                    obj.state = JRStickerContentState_Success;
-                    weakSelf.imageView.image = result;
-                }
-            } progressHandler:^(double progress, NSError * _Nonnull error, BOOL * _Nonnull stop, NSDictionary * _Nonnull info) {
-                weakSelf.progressView.progress = progress;
-            }];
-//        }
+        [JRPHAssetManager jr_GetPhotoWithAsset:itemData completion:^(UIImage * _Nonnull result, NSDictionary * _Nonnull info, BOOL isDegraded) {
+            weakSelf.progressView.hidden = YES;
+            if (!result) {
+                obj.state = JRStickerContentState_Fail;
+                self.imageView.image = [JRConfigTool shareInstance].failureImage;
+            } else {
+                obj.state = JRStickerContentState_Success;
+                weakSelf.imageView.image = result;
+            }
+        } progressHandler:^(double progress, NSError * _Nonnull error, BOOL * _Nonnull stop, NSDictionary * _Nonnull info) {
+            weakSelf.progressView.progress = progress;
+        }];
         
     }
 }
