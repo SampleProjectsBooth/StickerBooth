@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "JRConfigTool.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,8 +17,21 @@ typedef void(^JRDidSelectItemBlock)(NSData * _Nullable data, UIImage * _Nullable
 /** 点击返回data */
 @property (copy , nonatomic) JRDidSelectItemBlock didSelectBlock;
 
-/** 全局，只要有地方设置就可以了，不用设置回来 */
-@property (strong , nonatomic) JRConfigTool *configTool;
+@property (nonatomic) UIColor *selectTitleColor;
+
+@property (nonatomic) UIColor *normalTitleColor;
+
+@property (nonatomic) CGSize itemCellSize;
+
+@property (nonatomic) CGFloat itemMargin;
+
+/** 占位图，为nil不显示 */
+@property (nonatomic, nullable) UIImage *normalImage;
+
+/** 加载失败图，为nil不显示 */
+@property (nonatomic, nullable) UIImage *failureImage;
+
+@property (nonatomic, readonly, nonnull) NSIndexPath *selectIndexPath;
 
 
 /// 设置数据
