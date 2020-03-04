@@ -145,6 +145,21 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		66024875240F579C00F561D1 /* Category */ = {
+			isa = PBXGroup;
+			children = (
+				66024876240F57AB00F561D1 /* UIImageView */,
+			);
+			path = Category;
+			sourceTree = "<group>";
+		};
+		66024876240F57AB00F561D1 /* UIImageView */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = UIImageView;
+			sourceTree = "<group>";
+		};
 		661DAA54240CE80D00C2D074 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
@@ -158,6 +173,7 @@
 		66DEB582240619A600C770B5 /* Class */ = {
 			isa = PBXGroup;
 			children = (
+				66024875240F579C00F561D1 /* Category */,
 				661DAA54240CE80D00C2D074 /* Utility */,
 				66DEB594240619A600C770B5 /* Cell */,
 				3B897F2424065A4D00A3E854 /* Model */,
