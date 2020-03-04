@@ -11,6 +11,12 @@
 #import "LFEditCollectionView.h"
 #import "JRTitleCollectionViewCell.h"
 #import "JRStickerContent.h"
+#import "JRConfigTool.h"
+#import "JRStickerHeader.h"
+
+#define JRStickerDisplayView_bind_var(varType, varName, setterName) \
+JRSticker_bind_var_getter(varType, varName, [JRConfigTool shareInstance]) \
+JRSticker_bind_var_setter(varType, varName, setterName, [JRConfigTool shareInstance])
 
 /** title高度 */
 CGFloat const JR_V_ScrollView_heitht = 50.f;
@@ -32,6 +38,8 @@ CGFloat const JR_O_margin = 1.5f;
 @property (copy, nonatomic) NSString *selectTitle;
 
 @property (assign, nonatomic) BOOL stopAnimation;
+
+@property (strong, nonatomic, nullable) NSIndexPath *selectIndexPath;
 
 @end
 
@@ -57,13 +65,12 @@ CGFloat const JR_O_margin = 1.5f;
     [self.collectionView removeFromSuperview];
 }
     
-- (JRConfigTool *)configTool
-{
-    if (!_configTool) {
-        _configTool = [JRConfigTool shareInstance];
-    }
-    return _configTool;
-}
+JRStickerDisplayView_bind_var(UIColor *, selectTitleColor, setSelectTitleColor);
+JRStickerDisplayView_bind_var(UIColor *, normalTitleColor, setNormalTitleColor);
+JRStickerDisplayView_bind_var(CGSize, itemCellSize, setItemCellSize);
+JRStickerDisplayView_bind_var(CGFloat, itemMargin, setItemMargin);
+JRStickerDisplayView_bind_var(UIImage *, normalImage, setNormalImage);
+JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
 
 #pragma mark - Public Methods
 - (void)setTitles:(NSArray *)titles contents:(NSArray<NSArray *> *)contents
@@ -144,9 +151,9 @@ CGFloat const JR_O_margin = 1.5f;
     collectionView.showsVerticalScrollIndicator = NO;
     collectionView.showsHorizontalScrollIndicator = NO;
     collectionView.delegate = self;
-//    if (@available(iOS 10.0, *)) {
-//        collectionView.prefetchingEnabled = NO;
-//    }
+    if (@available(iOS 10.0, *)) {
+        collectionView.prefetchingEnabled = NO;
+    }
     collectionView.backgroundColor = [UIColor clearColor];
     [self addSubview:collectionView];
     self.collectionView = collectionView;
@@ -190,7 +197,7 @@ CGFloat const JR_O_margin = 1.5f;
     self.topCollectionView.frame = CGRectMake(0.f, 0.f, CGRectGetWidth(self.frame), JR_V_ScrollView_heitht + JR_O_margin*2);
     self.topCollectionView.itemSize = CGSizeMake(CGRectGetWidth(self.topCollectionView.frame)/4, JR_V_ScrollView_heitht);
     [self.topCollectionView.collectionViewLayout invalidateLayout];
-    self.collectionView.frame = CGRectMake(0.f, JR_V_ScrollView_heitht, CGRectGetWidth(self.frame)+10.f, CGRectGetHeight(self.frame) - CGRectGetHeight(self.topCollectionView.frame));
+    self.collectionView.frame = CGRectMake(0.f, JR_V_ScrollView_heitht, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame) - CGRectGetHeight(self.topCollectionView.frame));
     self.collectionView.itemSize = self.collectionView.frame.size;
     [self.collectionView invalidateLayout];
 }
@@ -214,13 +221,14 @@ CGFloat const JR_O_margin = 1.5f;
 }
 
 #pragma mark - JRCollectionViewDelegate
-- (void)didSelectObj:(id)obj index:(NSInteger)index
+- (void)didSelectData:(NSData *)data image:(UIImage *)image index:(NSInteger)index
 {
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:[self.titles indexOfObject:self.selectTitle]];
-    
+    _selectIndexPath = indexPath;
     if (self.didSelectBlock) {
-        self.didSelectBlock(indexPath, obj);
+        self.didSelectBlock(data, image);
     }
+    _selectIndexPath = nil;
 }
 
 #pragma mark - LFEditCollectionViewScrollDelegate
@@ -267,7 +275,7 @@ CGFloat const JR_O_margin = 1.5f;
 #pragma mark - LFEditCollectionViewDelegate
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    JRCollectionViewCell *viewCell = (JRCollectionViewCell *)cell;
+//    JRCollectionViewCell *viewCell = (JRCollectionViewCell *)cell;
 //    [viewCell clearData];
 }
 

@@ -54,18 +54,14 @@
     NSArray *array1 = @[[NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/677/w400h277/20200219/4639-iprtayz5721379.gif"], [NSURL URLWithString:@"https://f.sinaimg.cn/tech/transform/40/w420h420/20200214/b778-ipmxpvz6387339.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/362/w244h118/20200214/d095-ipmxpvz6380936.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/552/w315h237/20200214/75d2-ipmxpvz6380604.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/538/w350h188/20200214/49ef-ipmxpvz6378358.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/18/w536h282/20200213/256b-ipmxpvz2333375.gif"], [NSURL URLWithString:@"https://f.sinaimg.cn/tech/transform/755/w280h475/20200213/ae28-ipmxpvz2324934.gif"], [NSURL URLWithString:@"https://n.sinaimg.cn/tech/transform/704/w351h353/20200213/34b7-ipmxpvz2320937.gif"], [NSURL URLWithString:@"https://f.sinaimg.cn/tech/transform/474/w308h166/20200213/3554-ipmxpvz2313851.gif"]];
     
     NSArray *objs = @[a2, a1, array1, [ViewController jr_GetAllPhotos]];
+    self.myView.selectTitleColor = [UIColor blueColor];
     [self.myView setTitles:@[@"1", @"2", @"3", @"4"] contents:objs];
-            
+    self.myView.didSelectBlock = ^(NSData * _Nullable data, UIImage * _Nullable image) {
+        NSLog(@"%@", [[objs objectAtIndex:weakSelf.myView.selectIndexPath.section] objectAtIndex:weakSelf.myView.selectIndexPath.row]);
+    };
+
 }
 
-- (void)_createviewWithTitles:(NSArray *)tites contents:(NSArray *)contents
-{
-    __weak typeof(self) weakSelf = self;
-    [self.myView setTitles:tites contents:contents];
-    self.myView.didSelectBlock = ^(NSData * _Nullable data, UIImage * _Nullable image) {
-        
-    };
-}
 
 - (void)_hiddenShowView
 {

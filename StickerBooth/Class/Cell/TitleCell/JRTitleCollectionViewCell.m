@@ -7,7 +7,7 @@
 //
 
 #import "JRTitleCollectionViewCell.h"
-
+#import "JRConfigTool.h"
 @interface JRTitleCollectionViewCell ()
 
 @property (weak, nonatomic) UILabel *label;
@@ -48,9 +48,9 @@
 - (void)showAnimationOfProgress:(CGFloat)progress select:(BOOL)select
 {
     if (select) {
-        self.label.textColor = [JRTitleCollectionViewCell colorTransformFrom:[UIColor whiteColor] to:[UIColor redColor] progress:progress];
+        self.label.textColor = [JRTitleCollectionViewCell colorTransformFrom:[JRConfigTool shareInstance].normalTitleColor to:[JRConfigTool shareInstance].selectTitleColor progress:progress];
     } else {
-        self.label.textColor = [JRTitleCollectionViewCell colorTransformFrom:[UIColor redColor] to:[UIColor whiteColor] progress:progress];
+        self.label.textColor = [JRTitleCollectionViewCell colorTransformFrom:[JRConfigTool shareInstance].selectTitleColor to:[JRConfigTool shareInstance].normalTitleColor progress:progress];
     }
 }
 
