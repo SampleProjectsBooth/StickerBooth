@@ -80,91 +80,94 @@ inline static CGAffineTransform LFMEGifView_CGAffineTransformExchangeOrientation
 
 inline static CGImageRef LFMEGifView_CGImageScaleDecodedFromCopy(CGImageRef imageRef, CGSize size, UIViewContentMode contentMode, UIImageOrientation orientation)
 {
-    if (!imageRef) return NULL;
-    size_t width = CGImageGetWidth(imageRef);
-    size_t height = CGImageGetHeight(imageRef);
-    if (width == 0 || height == 0) return NULL;
-    
-    if (size.width > 0 && size.height > 0) {
-        float verticalRadio = size.height*1.0/height;
-        float horizontalRadio = size.width*1.0/width;
+    CGImageRef newImage = NULL;
+    @autoreleasepool {
+        if (!imageRef) return NULL;
+        size_t width = CGImageGetWidth(imageRef);
+        size_t height = CGImageGetHeight(imageRef);
+        if (width == 0 || height == 0) return NULL;
         
-        
-        float radio = 1;
-        if (contentMode == UIViewContentModeScaleAspectFill) {
-            if(verticalRadio > horizontalRadio)
-            {
-                radio = verticalRadio;
+        if (size.width > 0 && size.height > 0) {
+            float verticalRadio = size.height*1.0/height;
+            float horizontalRadio = size.width*1.0/width;
+            
+            
+            float radio = 1;
+            if (contentMode == UIViewContentModeScaleAspectFill) {
+                if(verticalRadio > horizontalRadio)
+                {
+                    radio = verticalRadio;
+                }
+                else
+                {
+                    radio = horizontalRadio;
+                }
+            } else {
+                if(verticalRadio>1 && horizontalRadio>1)
+                {
+                    radio = verticalRadio > horizontalRadio ? horizontalRadio : verticalRadio;
+                }
+                else
+                {
+                    radio = verticalRadio < horizontalRadio ? verticalRadio : horizontalRadio;
+                }
+                
             }
-            else
-            {
-                radio = horizontalRadio;
-            }
-        } else {
-            if(verticalRadio>1 && horizontalRadio>1)
-            {
-                radio = verticalRadio > horizontalRadio ? horizontalRadio : verticalRadio;
-            }
-            else
-            {
-                radio = verticalRadio < horizontalRadio ? verticalRadio : horizontalRadio;
-            }
-
+            
+            width = roundf(width*radio);
+            height = roundf(height*radio);
         }
         
-        width = roundf(width*radio);
-        height = roundf(height*radio);
-    }
-    
-    CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
-    BOOL hasAlpha = NO;
-    if (alphaInfo == kCGImageAlphaPremultipliedLast ||
-        alphaInfo == kCGImageAlphaPremultipliedFirst ||
-        alphaInfo == kCGImageAlphaLast ||
-        alphaInfo == kCGImageAlphaFirst) {
-        hasAlpha = YES;
-    }
-    
-    switch (orientation) {
-        case UIImageOrientationLeft:
-        case UIImageOrientationLeftMirrored:
-        case UIImageOrientationRight:
-        case UIImageOrientationRightMirrored:
-            // Grr...
-        {
-            CGFloat tmpWidth = width;
-            width = height;
-            height = tmpWidth;
+        CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
+        BOOL hasAlpha = NO;
+        if (alphaInfo == kCGImageAlphaPremultipliedLast ||
+            alphaInfo == kCGImageAlphaPremultipliedFirst ||
+            alphaInfo == kCGImageAlphaLast ||
+            alphaInfo == kCGImageAlphaFirst) {
+            hasAlpha = YES;
         }
-            break;
-        default:
-            break;
+        
+        switch (orientation) {
+            case UIImageOrientationLeft:
+            case UIImageOrientationLeftMirrored:
+            case UIImageOrientationRight:
+            case UIImageOrientationRightMirrored:
+                // Grr...
+            {
+                CGFloat tmpWidth = width;
+                width = height;
+                height = tmpWidth;
+            }
+                break;
+            default:
+                break;
+        }
+        
+        CGAffineTransform transform = LFMEGifView_CGAffineTransformExchangeOrientation(orientation, CGSizeMake(width, height));
+        // BGRA8888 (premultiplied) or BGRX8888
+        CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
+        bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGContextRef context = CGBitmapContextCreate(NULL, width, height, 8, 0, colorSpace, bitmapInfo);
+        CGColorSpaceRelease(colorSpace);
+        if (!context) return NULL;
+        CGContextConcatCTM(context, transform);
+        switch (orientation) {
+            case UIImageOrientationLeft:
+            case UIImageOrientationLeftMirrored:
+            case UIImageOrientationRight:
+            case UIImageOrientationRightMirrored:
+                // Grr...
+                CGContextDrawImage(context, CGRectMake(0, 0, height, width), imageRef); // decode
+                break;
+            default:
+                CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
+                break;
+        }
+        CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
+        newImage = CGBitmapContextCreateImage(context);
+        CGContextRelease(context);
     }
-    
-    CGAffineTransform transform = LFMEGifView_CGAffineTransformExchangeOrientation(orientation, CGSizeMake(width, height));
-    // BGRA8888 (premultiplied) or BGRX8888
-    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
-    bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(NULL, width, height, 8, 0, colorSpace, bitmapInfo);
-    CGColorSpaceRelease(colorSpace);
-    if (!context) return NULL;
-    CGContextConcatCTM(context, transform);
-    switch (orientation) {
-        case UIImageOrientationLeft:
-        case UIImageOrientationLeftMirrored:
-        case UIImageOrientationRight:
-        case UIImageOrientationRightMirrored:
-            // Grr...
-            CGContextDrawImage(context, CGRectMake(0, 0, height, width), imageRef); // decode
-            break;
-        default:
-            CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
-            break;
-    }
-    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
-    CGImageRef newImage = CGBitmapContextCreateImage(context);
-    CGContextRelease(context);
     return newImage;
 }
 
@@ -189,7 +192,6 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
     NSInteger _index;
     NSInteger _frameCount;
     CGFloat _timestamp;
-    NSUInteger _loopTimes;
     
     CGImageSourceRef _gifSourceRef;
     
@@ -247,7 +249,6 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
         [[JRTestManager shareInstance].cells addObject:address];
     }
     self.backgroundColor = [UIColor clearColor];
-    _autoPlay = YES;
     _duration = 0.1f;
     _imageRefs = [NSMutableDictionary dictionary];
     _orientation = UIImageOrientationUp;
@@ -275,7 +276,6 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
     _data = nil;
     _frameCount = 0;
     _duration = 0.1f;
-    _loopTimes = 0;
     if (_gifSourceRef) {
         CFRelease(_gifSourceRef);
         _gifSourceRef = NULL;
@@ -389,16 +389,16 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
             CFRelease(exifInfo);
             
             
-            if (_frameCount > 1) {
-                NSInteger index = 0;
-                NSMutableArray *durations = [NSMutableArray array];
-                while (index < _frameCount) {
-                    [durations addObject:@(LFMEGifView_CGImageSourceGetGifFrameDelay(_gifSourceRef, index))];
-                    index ++;
-                }
-                _durations = [durations copy];
-                [self setupDisplayLink];
-            } else {
+//            if (_frameCount > 1) {
+//                NSInteger index = 0;
+//                NSMutableArray *durations = [NSMutableArray array];
+//                while (index < _frameCount) {
+//                    [durations addObject:@(LFMEGifView_CGImageSourceGetGifFrameDelay(_gifSourceRef, index))];
+//                    index ++;
+//                }
+//                _durations = [durations copy];
+//                [self setupDisplayLink];
+//            } else {
                 [self unsetupDisplayLink];
                 CGSize size = self.frame.size;
                 UIViewContentMode mode = self.contentMode;
@@ -416,20 +416,10 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
                         }
                     });
                 });
-            }
+//            }
         } else {
             [self unsetupDisplayLink];
         }
-    }
-}
-
-- (void)setAutoPlay:(BOOL)autoPlay
-{
-    _autoPlay = autoPlay;
-    if (autoPlay) {
-        [self playGif];
-    } else {
-        [self stopGif];
     }
 }
 
@@ -454,11 +444,7 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
         
         [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
         
-        if (!_autoPlay) {
-            [self stopGif];
-        } else {
-            [self playGif];
-        }
+        [self playGif];
     }
 }
 
@@ -511,10 +497,6 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
         _index += 1;
         if (_index == _frameCount) {
             _index = 0;
-            if (_loopCount == ++_loopTimes) {
-                [self stopGif];
-                return;
-            }
         }
     }
 }
