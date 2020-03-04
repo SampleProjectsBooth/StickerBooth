@@ -73,11 +73,8 @@
 - (void)_initSubView
 {
     __weak typeof(self) weakSelf = self;
-    LFEditCollectionView *col = [[LFEditCollectionView alloc] initWithFrame:CGRectZero];
-//    col.minimumInteritemSpacing = 10.f;
-//    col.minimumLineSpacing = 10.f;
+    LFEditCollectionView *col = [[LFEditCollectionView alloc] initWithFrame:self.contentView.bounds];
     col.itemSize = [JRConfigTool shareInstance].itemCellSize;
-    col.sectionInset = [JRConfigTool shareInstance].itemCellInset;
     col.delegate = self;
     col.backgroundColor = [UIColor clearColor];
     [self.contentView addSubview:col];
@@ -103,6 +100,25 @@
 {
     JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)cell;
     [imageCell clearData];
+}
+
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
+{
+    int count = collectionView.frame.size.width / ([JRConfigTool shareInstance].itemCellSize.width + [JRConfigTool shareInstance].itemMargin);
+    CGFloat margin = (collectionView.frame.size.width - [JRConfigTool shareInstance].itemCellSize.width * count) / (count + 1);
+    return UIEdgeInsetsMake(margin, margin, margin, margin);
+}
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
+{
+    int count = collectionView.frame.size.width / ([JRConfigTool shareInstance].itemCellSize.width + [JRConfigTool shareInstance].itemMargin);
+    CGFloat margin = (collectionView.frame.size.width - [JRConfigTool shareInstance].itemCellSize.width * count) / (count + 1);
+    return margin;
+}
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
+{
+    int count = collectionView.frame.size.width / ([JRConfigTool shareInstance].itemCellSize.width + [JRConfigTool shareInstance].itemMargin);
+    CGFloat margin = (collectionView.frame.size.width - [JRConfigTool shareInstance].itemCellSize.width * count) / (count + 1);
+    return margin;
 }
 
 @end
