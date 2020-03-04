@@ -55,17 +55,12 @@
     
     NSArray *objs = @[a2, a1, array1, [ViewController jr_GetAllPhotos]];
     [self.myView setTitles:@[@"1", @"2", @"3", @"4"] contents:objs];
-            
+    self.myView.didSelectBlock = ^(NSData * _Nullable data, UIImage * _Nullable image) {
+        NSLog(@"%@", [[objs objectAtIndex:weakSelf.myView.selectIndexPath.section] objectAtIndex:weakSelf.myView.selectIndexPath.row]);
+    };
+
 }
 
-- (void)_createviewWithTitles:(NSArray *)tites contents:(NSArray *)contents
-{
-    __weak typeof(self) weakSelf = self;
-    [self.myView setTitles:tites contents:contents];
-    self.myView.didSelectBlock = ^(NSData * _Nullable data, UIImage * _Nullable image) {
-        
-    };
-}
 
 - (void)_hiddenShowView
 {
