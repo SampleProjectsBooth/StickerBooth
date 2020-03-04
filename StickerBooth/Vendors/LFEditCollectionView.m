@@ -30,7 +30,7 @@ lfEditCollection_bind_var_setter(varType, varName, setterName, self.collectionVi
 lfEditCollection_bind_var_getter(varType, varName, ((UICollectionViewFlowLayout *)self.collectionViewLayout)) \
 lfEditCollection_bind_var_setter(varType, varName, setterName, ((UICollectionViewFlowLayout *)self.collectionViewLayout))
 
-@interface LFEditCollectionView () <UICollectionViewDelegate, UICollectionViewDataSource>
+@interface LFEditCollectionView () <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
 @property (nonatomic, weak) UICollectionView *collectionView;
 
@@ -200,6 +200,50 @@ lfEditCollection_bind_var_setter(varType, varName, setterName, ((UICollectionVie
     if ([self.delegate respondsToSelector:@selector(collectionView:didEndDisplayingCell:forItemAtIndexPath:)]) {
         [self.delegate collectionView:collectionView didEndDisplayingCell:cell forItemAtIndexPath:indexPath];
     }
+}
+
+#pragma mark - UICollectionViewDelegateFlowLayout
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self.delegate respondsToSelector:@selector(collectionView:layout:sizeForItemAtIndexPath:)]) {
+        return [(id <LFEditCollectionViewDelegateFlowLayout>)self.delegate collectionView:collectionView layout:collectionViewLayout sizeForItemAtIndexPath:indexPath];
+    }
+    return [(UICollectionViewFlowLayout *)self.collectionViewLayout itemSize];
+}
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
+{
+    if ([self.delegate respondsToSelector:@selector(collectionView:layout:insetForSectionAtIndex:)]) {
+        return [(id <LFEditCollectionViewDelegateFlowLayout>)self.delegate collectionView:collectionView layout:collectionViewLayout insetForSectionAtIndex:section];
+    }
+    return [(UICollectionViewFlowLayout *)self.collectionViewLayout sectionInset];
+}
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
+{
+    if ([self.delegate respondsToSelector:@selector(collectionView:layout:minimumLineSpacingForSectionAtIndex:)]) {
+        return [(id <LFEditCollectionViewDelegateFlowLayout>)self.delegate collectionView:collectionView layout:collectionViewLayout minimumLineSpacingForSectionAtIndex:section];
+    }
+    return [(UICollectionViewFlowLayout *)self.collectionViewLayout minimumLineSpacing];
+}
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
+{
+    if ([self.delegate respondsToSelector:@selector(collectionView:layout:minimumInteritemSpacingForSectionAtIndex:)]) {
+        return [(id <LFEditCollectionViewDelegateFlowLayout>)self.delegate collectionView:collectionView layout:collectionViewLayout minimumInteritemSpacingForSectionAtIndex:section];
+    }
+    return [(UICollectionViewFlowLayout *)self.collectionViewLayout minimumInteritemSpacing];
+}
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
+{
+    if ([self.delegate respondsToSelector:@selector(collectionView:layout:referenceSizeForHeaderInSection:)]) {
+        return [(id <LFEditCollectionViewDelegateFlowLayout>)self.delegate collectionView:collectionView layout:collectionViewLayout referenceSizeForHeaderInSection:section];
+    }
+    return [(UICollectionViewFlowLayout *)self.collectionViewLayout headerReferenceSize];
+}
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section
+{
+    if ([self.delegate respondsToSelector:@selector(collectionView:layout:referenceSizeForFooterInSection:)]) {
+        return [(id <LFEditCollectionViewDelegateFlowLayout>)self.delegate collectionView:collectionView layout:collectionViewLayout referenceSizeForFooterInSection:section];
+    }
+    return [(UICollectionViewFlowLayout *)self.collectionViewLayout footerReferenceSize];
 }
 
 #pragma mark - UIScrollView setter/getter

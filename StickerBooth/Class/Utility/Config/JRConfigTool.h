@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) CGSize itemCellSize;
 
-@property (nonatomic) UIEdgeInsets itemCellInset;
+@property (nonatomic) CGFloat itemMargin;
 
 /** 占位图，为nil不显示 */
 @property (nonatomic, nullable) UIImage *normalImage;

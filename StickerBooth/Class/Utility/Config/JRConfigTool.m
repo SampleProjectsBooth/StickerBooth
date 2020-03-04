@@ -55,7 +55,7 @@ static JRConfigTool *_tool = nil;
     _selectTitleColor = [UIColor redColor];
     _normalTitleColor = [UIColor whiteColor];
     _itemCellSize = CGSizeMake(80.f, 80.f);
-    _itemCellInset = UIEdgeInsetsMake(10.f, 10.f, 10.f, 10.f);
+    _itemMargin = 10.f;
     _normalImage = nil;
     _failureImage = nil;
 }
