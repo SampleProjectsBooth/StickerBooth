@@ -33,7 +33,6 @@ typedef void(^JRDidSelectItemBlock)(NSData * _Nullable data, UIImage * _Nullable
 
 @property (nonatomic, readonly, nonnull) NSIndexPath *selectIndexPath;
 
-
 /// 设置数据
 /// @param titles 标题
 /// @param contents 数据

@@ -51,6 +51,7 @@
 		3B897F1A240616B000A3E854 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3B897F2524065A6D00A3E854 /* JRStickerContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRStickerContent.h; sourceTree = "<group>"; };
 		3B897F2624065A6D00A3E854 /* JRStickerContent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRStickerContent.m; sourceTree = "<group>"; };
+		66024874240F3C9A00F561D1 /* JRStickerHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRStickerHeader.h; sourceTree = "<group>"; };
 		661DAA4E240C92C600C2D074 /* RootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
 		661DAA4F240C92C600C2D074 /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		661DAA55240DF35700C2D074 /* JRPHAssetManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRPHAssetManager.h; sourceTree = "<group>"; };
@@ -162,6 +163,7 @@
 				3B897F2424065A4D00A3E854 /* Model */,
 				66DEB5A3240619A600C770B5 /* JRStickerDisplayView.h */,
 				66DEB590240619A600C770B5 /* JRStickerDisplayView.m */,
+				66024874240F3C9A00F561D1 /* JRStickerHeader.h */,
 			);
 			path = Class;
 			sourceTree = "<group>";

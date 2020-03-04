@@ -12,6 +12,11 @@
 #import "JRTitleCollectionViewCell.h"
 #import "JRStickerContent.h"
 #import "JRConfigTool.h"
+#import "JRStickerHeader.h"
+
+#define JRStickerDisplayView_bind_var(varType, varName, setterName) \
+JRSticker_bind_var_getter(varType, varName, [JRConfigTool shareInstance]) \
+JRSticker_bind_var_setter(varType, varName, setterName, [JRConfigTool shareInstance])
 
 /** title高度 */
 CGFloat const JR_V_ScrollView_heitht = 50.f;
@@ -60,6 +65,13 @@ CGFloat const JR_O_margin = 1.5f;
     [self.collectionView removeFromSuperview];
 }
     
+JRStickerDisplayView_bind_var(UIColor *, selectTitleColor, setSelectTitleColor);
+JRStickerDisplayView_bind_var(UIColor *, normalTitleColor, setNormalTitleColor);
+JRStickerDisplayView_bind_var(CGSize, itemCellSize, setItemCellSize);
+JRStickerDisplayView_bind_var(CGFloat, itemMargin, setItemMargin);
+JRStickerDisplayView_bind_var(UIImage *, normalImage, setNormalImage);
+JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
+
 #pragma mark - Public Methods
 - (void)setTitles:(NSArray *)titles contents:(NSArray<NSArray *> *)contents
 {
@@ -139,9 +151,9 @@ CGFloat const JR_O_margin = 1.5f;
     collectionView.showsVerticalScrollIndicator = NO;
     collectionView.showsHorizontalScrollIndicator = NO;
     collectionView.delegate = self;
-//    if (@available(iOS 10.0, *)) {
-//        collectionView.prefetchingEnabled = NO;
-//    }
+    if (@available(iOS 10.0, *)) {
+        collectionView.prefetchingEnabled = NO;
+    }
     collectionView.backgroundColor = [UIColor clearColor];
     [self addSubview:collectionView];
     self.collectionView = collectionView;
