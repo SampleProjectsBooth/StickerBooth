@@ -47,8 +47,6 @@ typedef void (^LFEditCollectionViewDidSelectItemAtIndexPathBlock)(NSIndexPath * 
 
 - (NSArray <NSIndexPath *>*)indexPathsForVisibleItems;
 
-- (void)invalidateLayout;
-
 - (nullable NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point;
 
 #pragma mark - UICollectionViewFlowLayout

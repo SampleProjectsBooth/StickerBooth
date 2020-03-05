@@ -35,7 +35,7 @@
 {
     [super layoutSubviews];
     self.collectionView.frame = self.contentView.bounds;
-    [self.collectionView invalidateLayout];
+    [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
 - (void)prepareForReuse
