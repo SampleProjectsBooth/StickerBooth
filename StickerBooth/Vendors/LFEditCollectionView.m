@@ -268,7 +268,6 @@ lfEditCollection_bind_var(BOOL, showsVerticalScrollIndicator, setShowsVerticalSc
 lfEditCollection_bind_var(BOOL, showsHorizontalScrollIndicator, setShowsHorizontalScrollIndicator);
 lfEditCollection_bind_var(BOOL, isPrefetchingEnabled, setPrefetchingEnabled);
 
-
 - (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(UICollectionViewScrollPosition)scrollPosition animated:(BOOL)animated
 {
     [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:scrollPosition animated:animated];
@@ -302,6 +301,11 @@ lfEditCollection_bind_var(BOOL, isPrefetchingEnabled, setPrefetchingEnabled);
 - (void)invalidateLayout
 {
     [self.collectionView.collectionViewLayout invalidateLayout];
+}
+
+- (nullable NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point
+{
+    return [self.collectionView indexPathForItemAtPoint:point];
 }
 
 #pragma mark - UICollectionViewFlowLayout setter/getter

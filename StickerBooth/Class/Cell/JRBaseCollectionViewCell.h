@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JRBaseCollectionViewCell : UICollectionViewCell
 
-@property (readonly, nonatomic) id data;
+@property (readonly, nonatomic) id cellData;
 
 + (NSString *)identifier;
 

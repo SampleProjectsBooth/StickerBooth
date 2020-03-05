@@ -72,6 +72,7 @@ JRStickerDisplayView_bind_var(CGFloat, itemMargin, setItemMargin);
 JRStickerDisplayView_bind_var(UIImage *, normalImage, setNormalImage);
 JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
 
+
 #pragma mark - Public Methods
 - (void)setTitles:(NSArray *)titles contents:(NSArray<NSArray *> *)contents
 {
@@ -151,9 +152,6 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     collectionView.showsVerticalScrollIndicator = NO;
     collectionView.showsHorizontalScrollIndicator = NO;
     collectionView.delegate = self;
-    if (@available(iOS 10.0, *)) {
-        collectionView.prefetchingEnabled = NO;
-    }
     collectionView.backgroundColor = [UIColor clearColor];
     [self addSubview:collectionView];
     self.collectionView = collectionView;
