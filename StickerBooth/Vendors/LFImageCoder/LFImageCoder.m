@@ -143,7 +143,6 @@ CGImageRef LFIC_CGImageScaleDecodedFromCopy(CGImageRef imageRef, CGSize size, UI
                 CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
                 break;
         }
-        CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
         newImage = CGBitmapContextCreateImage(context);
         CGContextRelease(context);
     }
