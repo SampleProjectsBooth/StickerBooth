@@ -74,26 +74,28 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
 {
     JRStickerContent *obj = (JRStickerContent *)self.cellData;
     id itemData = obj.content;
-    if ([itemData isKindOfClass:[NSURL class]]) {
-        NSURL *dataURL = (NSURL *)itemData;
-        NSData *resultData = nil;
-        if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
-            resultData = [NSData dataWithContentsOfURL:dataURL];
-        } else {
-            resultData = [self dataFromCacheWithURL:dataURL];
-        }
-        if (completeBlock) {
-            completeBlock(resultData, self.image);
-        }
-    } else if ([itemData isKindOfClass:[PHAsset class]]) {
-        __weak typeof(self) weakSelf = self;
-        [JRPHAssetManager jr_GetPhotoDataWithAsset:itemData completion:^(NSData * _Nonnull data, NSDictionary * _Nonnull info, BOOL isDegraded) {
-            if (completeBlock) {
-                completeBlock(data, weakSelf.image);
+    if (obj.state == JRStickerContentState_Success) {
+        if ([itemData isKindOfClass:[NSURL class]]) {
+            NSURL *dataURL = (NSURL *)itemData;
+            NSData *resultData = nil;
+            if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
+                resultData = [NSData dataWithContentsOfURL:dataURL];
+            } else {
+                resultData = [self dataFromCacheWithURL:dataURL];
             }
-        } progressHandler:^(double progress, NSError * _Nonnull error, BOOL * _Nonnull stop, NSDictionary * _Nonnull info) {
-            
-        }];
+            if (completeBlock) {
+                completeBlock(resultData, self.image);
+            }
+        } else if ([itemData isKindOfClass:[PHAsset class]]) {
+            __weak typeof(self) weakSelf = self;
+            [JRPHAssetManager jr_GetPhotoDataWithAsset:itemData completion:^(NSData * _Nonnull data, NSDictionary * _Nonnull info, BOOL isDegraded) {
+                if (completeBlock) {
+                    completeBlock(data, weakSelf.image);
+                }
+            } progressHandler:^(double progress, NSError * _Nonnull error, BOOL * _Nonnull stop, NSDictionary * _Nonnull info) {
+                
+            }];
+        }
     }
 }
 

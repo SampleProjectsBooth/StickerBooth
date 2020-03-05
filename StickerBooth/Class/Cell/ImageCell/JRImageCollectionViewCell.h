@@ -13,8 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JRImageCollectionViewCell : JRBaseCollectionViewCell
 
-//@property (copy, nonatomic, nullable) NSData * _Nullable (^imageDataBlock)(void);
-
 @property (readonly, nonatomic, nonnull) UIImage *image;
 
 @property (assign, nonatomic) BOOL longpress;
@@ -23,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)clearData;
 
-- (void)jr_getImageData:(void(^)(NSData *data, UIImage *image))completeBlock;
+- (void)jr_getImageData:(void(^)(NSData * _Nullable data, UIImage * _Nullable image))completeBlock;
 
 @end
 

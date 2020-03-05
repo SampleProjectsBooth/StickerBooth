@@ -212,7 +212,7 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     }
     topViewR.size.width = CGRectGetWidth(self.frame);
     self.topCollectionView.frame = topViewR;
-    self.topCollectionView.itemSize = CGSizeMake(CGRectGetWidth(self.topCollectionView.frame)/4, JR_V_ScrollView_heitht);
+    self.topCollectionView.itemSize = CGSizeMake((CGRectGetWidth(self.topCollectionView.frame)-JR_O_margin * 5)/4, JR_V_ScrollView_heitht);
     [self.topCollectionView.collectionViewLayout invalidateLayout];
     
     CGRect collectionViewR = self.collectionView.frame;
