@@ -12,14 +12,21 @@
 #import "JRStickerContent.h"
 #import "JRPHAssetManager.h"
 #import "JRConfigTool.h"
+#import "JRDataImageView.h"
 
+
+CGFloat const JR_kVideoBoomHeight = 25.f;
 @interface JRImageCollectionViewCell ()
 
-@property (weak, nonatomic) LFMEGifView *imageView;
+@property (weak, nonatomic) JRDataImageView *imageView;
 
 @property (weak, nonatomic) LFStickerProgressView *progressView;
 
-@property (weak, nonatomic) id item;
+@property (weak, nonatomic) UIView *bottomView;
+
+@property (weak, nonatomic) UILabel *bottomLab;
+
+@property (strong, nonatomic) CAShapeLayer *maskLayer;
 
 @end
 
@@ -46,6 +53,8 @@
     [super layoutSubviews];
     self.imageView.frame = self.contentView.bounds;
     self.progressView.center = self.contentView.center;
+    self.bottomView.frame = CGRectMake(0, CGRectGetHeight(self.contentView.bounds) - JR_kVideoBoomHeight, CGRectGetWidth(self.contentView.bounds), JR_kVideoBoomHeight);
+    self.bottomLab.frame = CGRectInset(self.bottomView.bounds, 2.5f, 5.f);
 }
 
 - (void)prepareForReuse
@@ -58,12 +67,34 @@
 
 - (void)dealloc
 {
-    [self.imageView setData:nil];
+    
 }
 
-- (NSData *)imageData
+- (void)jr_getImageData:(void(^)(NSData *data, UIImage *image))completeBlock
 {
-    return self.imageView.data;
+    JRStickerContent *obj = (JRStickerContent *)self.cellData;
+    id itemData = obj.content;
+    if ([itemData isKindOfClass:[NSURL class]]) {
+        NSURL *dataURL = (NSURL *)itemData;
+        NSData *resultData = nil;
+        if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
+            resultData = [NSData dataWithContentsOfURL:dataURL];
+        } else {
+            resultData = [self dataFromCacheWithURL:dataURL];
+        }
+        if (completeBlock) {
+            completeBlock(resultData, self.image);
+        }
+    } else if ([itemData isKindOfClass:[PHAsset class]]) {
+        __weak typeof(self) weakSelf = self;
+        [JRPHAssetManager jr_GetPhotoDataWithAsset:itemData completion:^(NSData * _Nonnull data, NSDictionary * _Nonnull info, BOOL isDegraded) {
+            if (completeBlock) {
+                completeBlock(data, weakSelf.image);
+            }
+        } progressHandler:^(double progress, NSError * _Nonnull error, BOOL * _Nonnull stop, NSDictionary * _Nonnull info) {
+            
+        }];
+    }
 }
 
 - (UIImage *)image
@@ -75,6 +106,7 @@
 - (void)setCellData:(id)data
 {
     [super setCellData:data];
+    self.bottomView.hidden = YES;
     __block JRStickerContent *obj = (JRStickerContent *)data;
     if (obj.state == JRStickerContentState_Fail) {
         self.imageView.image = [JRConfigTool shareInstance].failureImage;
@@ -82,13 +114,15 @@
     }
     id itemData = obj.content;
     __weak typeof(self) weakSelf = self;
+    
     if ([itemData isKindOfClass:[NSURL class]]) {
         NSURL *dataURL = (NSURL *)itemData;
         if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
             NSData *localData = [NSData dataWithContentsOfURL:dataURL];
             if (localData) {
+                
                 obj.state = JRStickerContentState_Success;
-                self.imageView.data = localData;
+                self.bottomView.hidden =  ![self.imageView jr_dataForImageAndIsGif:localData];
             } else {
                 obj.state = JRStickerContentState_Fail;
                 self.imageView.image = [JRConfigTool shareInstance].failureImage;
@@ -97,7 +131,7 @@
             NSData *httplocalData = [self dataFromCacheWithURL:dataURL];
             if (httplocalData) {
                 obj.state = JRStickerContentState_Success;
-                self.imageView.data = httplocalData;
+                self.bottomView.hidden =  ![self.imageView jr_dataForImageAndIsGif:httplocalData];
                 return;
             }
             self.progressView.hidden = NO;
@@ -110,11 +144,11 @@
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
                     if (error || downloadData == nil) {
                         obj.state = JRStickerContentState_Fail;
-                        self.imageView.image = [JRConfigTool shareInstance].failureImage;
+                        weakSelf.imageView.image = [JRConfigTool shareInstance].failureImage;
                     } else {
                         obj.state = JRStickerContentState_Success;
                         weakSelf.progressView.hidden = YES;
-                        weakSelf.imageView.data = downloadData;
+                        weakSelf.bottomView.hidden = ![weakSelf.imageView jr_dataForImageAndIsGif:downloadData];
                     }
                 }
                 
@@ -123,13 +157,13 @@
     } else if ([itemData isKindOfClass:[PHAsset class]]){
         self.progressView.hidden = NO;
         self.progressView.progress = 0.f;
+        self.bottomView.hidden = ![JRPHAssetManager jr_IsGif:itemData];
         __weak typeof(self) weakSelf = self;
-        
         [JRPHAssetManager jr_GetPhotoWithAsset:itemData completion:^(UIImage * _Nonnull result, NSDictionary * _Nonnull info, BOOL isDegraded) {
             weakSelf.progressView.hidden = YES;
             if (!result) {
                 obj.state = JRStickerContentState_Fail;
-                self.imageView.image = [JRConfigTool shareInstance].failureImage;
+                weakSelf.imageView.image = [JRConfigTool shareInstance].failureImage;
             } else {
                 obj.state = JRStickerContentState_Success;
                 weakSelf.imageView.image = result;
@@ -137,21 +171,29 @@
         } progressHandler:^(double progress, NSError * _Nonnull error, BOOL * _Nonnull stop, NSDictionary * _Nonnull info) {
             weakSelf.progressView.progress = progress;
         }];
-        
     }
 }
 
 - (void)clearData
 {
-    self.imageView.data = nil;
     [self lf_downloadCancel];
 }
+
+-(void)setLongpress:(BOOL)longpress
+{
+    _longpress = longpress;
+    self.bottomLab.textColor = [UIColor whiteColor];
+    if (_longpress) {
+        self.bottomLab.textColor = [UIColor redColor];
+    }
+}
+
 #pragma mark - Private Methods
 - (void)_initSubViewAndDataSources
 {
     self.contentView.backgroundColor = [UIColor clearColor];
 
-    LFMEGifView *imageView = [[LFMEGifView alloc] initWithFrame:CGRectZero];
+    JRDataImageView *imageView = [[JRDataImageView alloc] initWithFrame:CGRectZero];
     imageView.contentMode = UIViewContentModeScaleAspectFill;
     imageView.clipsToBounds = YES;
     [self.contentView addSubview:imageView];
@@ -161,7 +203,31 @@
     LFStickerProgressView *view1 = [[LFStickerProgressView alloc] initWithFrame:CGRectZero];
     [self.contentView addSubview:view1];
     [self.contentView bringSubviewToFront:view1];
-    self.progressView = view1;    
+    self.progressView = view1;
+    
+    /** 底部状态栏 */
+    UIView *bottomView = [[UIView alloc] init];
+    bottomView.frame = CGRectMake(0, self.contentView.frame.size.height - JR_kVideoBoomHeight, self.contentView.frame.size.width, JR_kVideoBoomHeight);
+    [self.contentView addSubview:bottomView];
+    CAGradientLayer* gradientLayer = [CAGradientLayer layer];
+    gradientLayer.frame = bottomView.bounds;
+    gradientLayer.colors = [NSArray arrayWithObjects:(id)[[UIColor colorWithWhite:0.0f alpha:.0f] CGColor], (id)[[UIColor colorWithWhite:0.0f alpha:0.8f] CGColor], nil];
+    [bottomView.layer insertSublayer:gradientLayer atIndex:0];
+    self.bottomView = bottomView;
+    
+    UILabel *lab = [[UILabel alloc] initWithFrame:CGRectInset(bottomView.bounds, 2.5f, 5.f)];
+    lab.textAlignment = NSTextAlignmentRight;
+    lab.text = @"GIF";
+    lab.textColor = [UIColor whiteColor];
+    [self.bottomView addSubview:lab];
+    self.bottomLab = lab;
+    
+    CAShapeLayer *maskLayer = [CAShapeLayer layer];
+    maskLayer.bounds = self.contentView.bounds;
+    maskLayer.hidden = YES;
+    maskLayer.backgroundColor = (__bridge CGColorRef _Nullable)([UIColor redColor]);
+    [self.imageView.layer addSublayer:maskLayer];
+    self.maskLayer = maskLayer;
 }
 
 

@@ -10,7 +10,7 @@
 
 @interface JRBaseCollectionViewCell ()
 
-@property (strong, nonatomic) id data;
+@property (strong, nonatomic) id cellData;
 
 @end
 
@@ -23,6 +23,12 @@
 
 - (void)setCellData:(nullable id)data
 {
-    _data = data;
+    _cellData = data;
+}
+
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+    _cellData = nil;
 }
 @end

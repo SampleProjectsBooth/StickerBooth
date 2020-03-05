@@ -49,6 +49,8 @@ typedef void (^LFEditCollectionViewDidSelectItemAtIndexPathBlock)(NSIndexPath * 
 
 - (void)invalidateLayout;
 
+- (nullable NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point;
+
 #pragma mark - UICollectionViewFlowLayout
 @property (nonatomic) CGFloat minimumLineSpacing;
 @property (nonatomic) CGFloat minimumInteritemSpacing;
