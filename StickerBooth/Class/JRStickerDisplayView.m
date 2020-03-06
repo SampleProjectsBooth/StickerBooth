@@ -13,6 +13,7 @@
 #import "JRConfigTool.h"
 #import "JRStickerHeader.h"
 #import "NSString+JRSize.h"
+#import "UIView+JRLayer.h"
 
 #define JRStickerDisplayView_bind_var(varType, varName, setterName) \
 JRSticker_bind_var_getter(varType, varName, [JRConfigTool shareInstance]) \
@@ -216,6 +217,8 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     if (self.titles.count) {
         [self.collectionView setContentOffset:CGPointMake((self.collectionView.frame.size.width) * currentIndex, 0) animated:NO];
     }
+    
+    [self.titleCollectionView jr_addBorder:JRBoardDirection_Bottom color:[UIColor colorWithWhite:.5f alpha:.8f] borderWidth:1.f];
 }
 
 #pragma mark - @JRCollectionViewDelegate

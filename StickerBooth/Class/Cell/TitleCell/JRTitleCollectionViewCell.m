@@ -8,7 +8,6 @@
 
 #import "JRTitleCollectionViewCell.h"
 #import "JRConfigTool.h"
-#import "UIView+JRLayer.h"
 #import "UIColor+JRColor.h"
 
 @interface JRTitleCollectionViewCell ()
@@ -32,7 +31,6 @@
 {
     [super layoutSubviews];
     self.label.frame = self.contentView.bounds;
-    [self.label jr_addBorder:3 color:[UIColor whiteColor] borderWidth:1.f borderLine:CGRectGetHeight(self.label.frame)/2];
 }
 
 - (void)prepareForReuse
