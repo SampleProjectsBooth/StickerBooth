@@ -81,6 +81,15 @@ CGImageRef LFIC_CGImageScaleDecodedFromCopy(CGImageRef imageRef, CGSize size, UI
                 {
                     radio = horizontalRadio;
                 }
+            } else if (contentMode == UIViewContentModeScaleAspectFit) {
+                if(verticalRadio < horizontalRadio)
+                {
+                    radio = verticalRadio;
+                }
+                else
+                {
+                    radio = horizontalRadio;
+                }
             } else {
                 if(verticalRadio>1 && horizontalRadio>1)
                 {
