@@ -19,6 +19,9 @@
 		3B897F2724065A6D00A3E854 /* JRStickerContent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F2624065A6D00A3E854 /* JRStickerContent.m */; };
 		661DAA50240C92C600C2D074 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 661DAA4F240C92C600C2D074 /* RootViewController.m */; };
 		661DAA57240DF35700C2D074 /* JRPHAssetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 661DAA56240DF35700C2D074 /* JRPHAssetManager.m */; };
+		662F1FD5241234BA006ECB2A /* NSString+JRSize.m in Sources */ = {isa = PBXBuildFile; fileRef = 662F1FD4241234BA006ECB2A /* NSString+JRSize.m */; };
+		663B314D2411FA61006F8639 /* UIView+JRLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 663B314C2411FA61006F8639 /* UIView+JRLayer.m */; };
+		663B3151241221E8006F8639 /* UIColor+JRColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 663B3150241221E8006F8639 /* UIColor+JRColor.m */; };
 		668350A0240F81D000089728 /* JRDataImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6683509F240F81D000089728 /* JRDataImageView.m */; };
 		66DEB5A4240619A600C770B5 /* LFMEWeakSelectorTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB587240619A600C770B5 /* LFMEWeakSelectorTarget.m */; };
 		66DEB5A5240619A600C770B5 /* LFEditCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB588240619A600C770B5 /* LFEditCollectionView.m */; };
@@ -60,6 +63,12 @@
 		661DAA4F240C92C600C2D074 /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		661DAA55240DF35700C2D074 /* JRPHAssetManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRPHAssetManager.h; sourceTree = "<group>"; };
 		661DAA56240DF35700C2D074 /* JRPHAssetManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRPHAssetManager.m; sourceTree = "<group>"; };
+		662F1FD3241234B9006ECB2A /* NSString+JRSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+JRSize.h"; sourceTree = "<group>"; };
+		662F1FD4241234BA006ECB2A /* NSString+JRSize.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+JRSize.m"; sourceTree = "<group>"; };
+		663B314B2411FA61006F8639 /* UIView+JRLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+JRLayer.h"; sourceTree = "<group>"; };
+		663B314C2411FA61006F8639 /* UIView+JRLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+JRLayer.m"; sourceTree = "<group>"; };
+		663B314F241221E8006F8639 /* UIColor+JRColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+JRColor.h"; sourceTree = "<group>"; };
+		663B3150241221E8006F8639 /* UIColor+JRColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+JRColor.m"; sourceTree = "<group>"; };
 		6683509E240F81D000089728 /* JRDataImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRDataImageView.h; sourceTree = "<group>"; };
 		6683509F240F81D000089728 /* JRDataImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRDataImageView.m; sourceTree = "<group>"; };
 		66DEB584240619A600C770B5 /* LFMEWeakSelectorTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFMEWeakSelectorTarget.h; sourceTree = "<group>"; };
@@ -163,28 +172,58 @@
 		66024875240F579C00F561D1 /* Category */ = {
 			isa = PBXGroup;
 			children = (
-				66024876240F57AB00F561D1 /* UIImageView */,
+				662F1FD22412349B006ECB2A /* NSString */,
+				663B3152241222D3006F8639 /* UIView */,
+				663B314E241221D5006F8639 /* UIColor */,
 			);
 			path = Category;
 			sourceTree = "<group>";
 		};
-		66024876240F57AB00F561D1 /* UIImageView */ = {
+		66024876240F57AB00F561D1 /* UIView */ = {
 			isa = PBXGroup;
 			children = (
 				6683509E240F81D000089728 /* JRDataImageView.h */,
 				6683509F240F81D000089728 /* JRDataImageView.m */,
 			);
-			path = UIImageView;
+			path = UIView;
 			sourceTree = "<group>";
 		};
 		661DAA54240CE80D00C2D074 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				66024876240F57AB00F561D1 /* UIView */,
 				66EBAACD240E070C004E52B9 /* Config */,
 				661DAA55240DF35700C2D074 /* JRPHAssetManager.h */,
 				661DAA56240DF35700C2D074 /* JRPHAssetManager.m */,
 			);
 			path = Utility;
+			sourceTree = "<group>";
+		};
+		662F1FD22412349B006ECB2A /* NSString */ = {
+			isa = PBXGroup;
+			children = (
+				662F1FD3241234B9006ECB2A /* NSString+JRSize.h */,
+				662F1FD4241234BA006ECB2A /* NSString+JRSize.m */,
+			);
+			path = NSString;
+			sourceTree = "<group>";
+		};
+		663B314E241221D5006F8639 /* UIColor */ = {
+			isa = PBXGroup;
+			children = (
+				663B314F241221E8006F8639 /* UIColor+JRColor.h */,
+				663B3150241221E8006F8639 /* UIColor+JRColor.m */,
+			);
+			path = UIColor;
+			sourceTree = "<group>";
+		};
+		663B3152241222D3006F8639 /* UIView */ = {
+			isa = PBXGroup;
+			children = (
+				663B314B2411FA61006F8639 /* UIView+JRLayer.h */,
+				663B314C2411FA61006F8639 /* UIView+JRLayer.m */,
+			);
+			path = UIView;
 			sourceTree = "<group>";
 		};
 		66DEB582240619A600C770B5 /* Class */ = {
@@ -368,11 +407,13 @@
 			files = (
 				66EBAAD0240E071A004E52B9 /* JRConfigTool.m in Sources */,
 				661DAA57240DF35700C2D074 /* JRPHAssetManager.m in Sources */,
+				662F1FD5241234BA006ECB2A /* NSString+JRSize.m in Sources */,
 				668350A0240F81D000089728 /* JRDataImageView.m in Sources */,
 				66DEB5A6240619A600C770B5 /* LFStickerProgressView.m in Sources */,
 				3B897F10240616A900A3E854 /* ViewController.m in Sources */,
 				66DEB5A9240619A600C770B5 /* JRStickerDisplayView.m in Sources */,
 				3B7ACD66240F52310074DC40 /* LFImageCoder.m in Sources */,
+				663B3151241221E8006F8639 /* UIColor+JRColor.m in Sources */,
 				66DEB5AD240619A600C770B5 /* JRBaseCollectionViewCell.m in Sources */,
 				3B897F0A240616A900A3E854 /* AppDelegate.m in Sources */,
 				66DEB5AC240619A600C770B5 /* JRCollectionViewCell.m in Sources */,
@@ -380,6 +421,7 @@
 				3B897F1B240616B000A3E854 /* main.m in Sources */,
 				3B897F2724065A6D00A3E854 /* JRStickerContent.m in Sources */,
 				66DEB5AE240619A600C770B5 /* JRImageCollectionViewCell.m in Sources */,
+				663B314D2411FA61006F8639 /* UIView+JRLayer.m in Sources */,
 				66DEB5A8240619A600C770B5 /* LFMEGifView.m in Sources */,
 				66EBAAD3240E380F004E52B9 /* JRTestManager.m in Sources */,
 				66DEB5A4240619A600C770B5 /* LFMEWeakSelectorTarget.m in Sources */,

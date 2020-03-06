@@ -107,7 +107,6 @@
 
 static LFMEGifView *_jr_showView = nil;
 static UIView *_jr_contenView = nil;
-static UIView *_jr_maskView = nil;
 
 - (void)show:(JRImageCollectionViewCell *)cell
 {
@@ -129,14 +128,8 @@ static UIView *_jr_maskView = nil;
         [contenView addSubview:gifView];
         _jr_showView = gifView;
         
-        UIView *maskView = [[UIView alloc] initWithFrame:CGRectInset(covertRect, -5.f, -5.f)];
-        maskView.backgroundColor = [UIColor colorWithWhite:.8f alpha:.8f];
-        [keyWindow addSubview:maskView];
-        _jr_maskView = maskView;
         
     }
-    _jr_maskView.frame = CGRectInset(covertRect, -5.f, -5.f);
-    [_jr_maskView.layer setCornerRadius:2.f];
     CGRect f = _jr_contenView.frame;
     f.origin = CGPointMake(CGRectGetMidX(covertRect) - CGRectGetWidth(f)/2, CGRectGetMinY(covertRect) - 10.f - CGRectGetHeight(f));
     
@@ -182,7 +175,7 @@ static UICollectionView *_jr_subCollectionView = nil;
         {
             self.longPressIndexPath = [self.collectionView indexPathForItemAtPoint:location];
             JRImageCollectionViewCell *cell = (JRImageCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.longPressIndexPath];
-//            cell.longpress = YES;
+            [cell showMaskLayer:YES];
             [self show:cell];
         }
             break;
@@ -190,26 +183,24 @@ static UICollectionView *_jr_subCollectionView = nil;
         { // 手势位置改变
             NSIndexPath *changeIndexPath = [self.collectionView indexPathForItemAtPoint:location];
             if ((changeIndexPath && changeIndexPath.row != self.longPressIndexPath.row) || !self.longPressIndexPath) {
-//                NSIndexPath *oldIndexPath = self.longPressIndexPath;
-//                JRImageCollectionViewCell *oldCell = (JRImageCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:oldIndexPath];
-//                oldCell.longpress = NO;
+                NSIndexPath *oldIndexPath = self.longPressIndexPath;
+                JRImageCollectionViewCell *oldCell = (JRImageCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:oldIndexPath];
+                [oldCell showMaskLayer:NO];
                 self.longPressIndexPath = changeIndexPath;
                 JRImageCollectionViewCell *cell = (JRImageCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.longPressIndexPath];
-//                cell.longpress = YES;
+                [cell showMaskLayer:YES];
                 [self show:cell];
             } else if (changeIndexPath == nil) {
                 if (_jr_contenView) {
                     [_jr_contenView removeFromSuperview];
-                    [_jr_maskView removeFromSuperview];
                     [_jr_showView removeFromSuperview];
                     _jr_showView = nil;
                     _jr_contenView = nil;
                     _jr_subCollectionView = nil;
-                    _jr_maskView = nil;
                 }
                 if (self.longPressIndexPath) {
-//                    JRImageCollectionViewCell *cell = (JRImageCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.longPressIndexPath];
-//                    cell.longpress = NO;
+                    JRImageCollectionViewCell *cell = (JRImageCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.longPressIndexPath];
+                    [cell showMaskLayer:NO];
                     self.longPressIndexPath = nil;
                 }
             }
@@ -223,15 +214,13 @@ static UICollectionView *_jr_subCollectionView = nil;
             if (_jr_contenView) {
                 [_jr_contenView removeFromSuperview];
                 [_jr_showView removeFromSuperview];
-                [_jr_maskView removeFromSuperview];
                 _jr_showView = nil;
-                _jr_maskView = nil;
                 _jr_contenView = nil;
                 _jr_subCollectionView = nil;
             }
             if (self.longPressIndexPath) {
-//                JRImageCollectionViewCell *cell = (JRImageCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.longPressIndexPath];
-//                cell.longpress = NO;
+                JRImageCollectionViewCell *cell = (JRImageCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.longPressIndexPath];
+                [cell showMaskLayer:NO];
                 self.longPressIndexPath = nil;
             }
         }

@@ -55,6 +55,8 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     self.progressView.center = self.contentView.center;
     self.bottomView.frame = CGRectMake(0, CGRectGetHeight(self.contentView.bounds) - JR_kVideoBoomHeight, CGRectGetWidth(self.contentView.bounds), JR_kVideoBoomHeight);
     self.bottomLab.frame = CGRectInset(self.bottomView.bounds, 2.5f, 5.f);
+    self.maskLayer.frame = CGRectInset(self.contentView.bounds, -5.f, -5.f);
+
 }
 
 - (void)prepareForReuse
@@ -181,13 +183,9 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     [self lf_downloadCancel];
 }
 
--(void)setLongpress:(BOOL)longpress
+- (void)showMaskLayer:(BOOL)isShow
 {
-    _longpress = longpress;
-    self.bottomLab.textColor = [UIColor whiteColor];
-    if (_longpress) {
-        self.bottomLab.textColor = [UIColor redColor];
-    }
+    self.maskLayer.hidden = !isShow;
 }
 
 #pragma mark - Private Methods
@@ -225,10 +223,11 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     self.bottomLab = lab;
     
     CAShapeLayer *maskLayer = [CAShapeLayer layer];
-    maskLayer.bounds = self.contentView.bounds;
+    maskLayer.bounds = CGRectInset(self.contentView.bounds, -5.f, -5.f);
     maskLayer.hidden = YES;
-    maskLayer.backgroundColor = (__bridge CGColorRef _Nullable)([UIColor redColor]);
-    [self.imageView.layer addSublayer:maskLayer];
+    maskLayer.cornerRadius = 2.5f;
+    maskLayer.backgroundColor = [UIColor colorWithWhite:1.f alpha:.5f].CGColor;
+    [self.contentView.layer insertSublayer:maskLayer below:self.imageView.layer];
     self.maskLayer = maskLayer;
 }
 

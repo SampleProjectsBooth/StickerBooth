@@ -15,13 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, nonatomic, nonnull) UIImage *image;
 
-@property (assign, nonatomic) BOOL longpress;
-
 - (void)setCellData:(nullable id)data;
 
 - (void)clearData;
 
 - (void)jr_getImageData:(void(^)(NSData * _Nullable data, UIImage * _Nullable image))completeBlock;
+
+- (void)showMaskLayer:(BOOL)isShow;
 
 @end
 
