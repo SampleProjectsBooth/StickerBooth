@@ -12,8 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JRTitleCollectionViewCell : JRBaseCollectionViewCell
 
-@property (strong, nonatomic) UIFont *textFont;
-
 - (void)showAnimationOfProgress:(CGFloat)progress select:(BOOL)select;
 
 @end

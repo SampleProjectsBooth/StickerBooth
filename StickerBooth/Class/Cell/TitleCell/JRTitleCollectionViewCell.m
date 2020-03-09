@@ -39,24 +39,10 @@
     self.label.text = nil;
 }
 
-- (UIFont *)textFont
-{
-    if (!_textFont) {
-        if (self.label.font) {
-            _textFont = self.label.font;
-        } else {
-            _textFont = [UIFont systemFontOfSize:16.f];
-        }
-    }
-    return _textFont;
-}
 
 - (void)setCellData:(id)data
 {
     [super setCellData:data];
-    if (_textFont) {
-        self.label.font = self.textFont;
-    }
     if ([data isKindOfClass:[NSString class]]) {
         self.label.text = data;
     }
@@ -77,8 +63,8 @@
     UILabel *lable = [[UILabel alloc] initWithFrame:CGRectZero];
     [self.contentView addSubview:lable];
     self.label = lable;
-    self.label.font = _textFont;
     self.label.numberOfLines = 1.f;
+    self.label.font = [UIFont systemFontOfSize:16.f];
     self.label.textAlignment = NSTextAlignmentCenter;
     self.label.textColor = [UIColor whiteColor];
 }
