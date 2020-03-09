@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (PHImageRequestID)jr_GetPhotoDataWithAsset:(nullable id)asset completion:(void (^)(NSData *data,NSDictionary *info,BOOL isDegraded))completion progressHandler:(void (^)(double progress, NSError *error, BOOL *stop, NSDictionary *info))progressHandler;
 
-+ (PHImageRequestID)jr_GetPhotoWithAsset:(nullable PHAsset *)phAsset completion:(void (^)(UIImage *result,NSDictionary *info,BOOL isDegraded))completion progressHandler:(void (^)(double progress, NSError *error, BOOL *stop, NSDictionary *info))progressHandler;
++ (PHImageRequestID)jr_GetPhotoWithAsset:(nullable PHAsset *)phAsset photoWidth:(CGFloat)photoWidth completion:(void (^)(UIImage *result,NSDictionary *info,BOOL isDegraded))completion progressHandler:(void (^)(double progress, NSError *error, BOOL *stop, NSDictionary *info))progressHandler;
 
 @end
 
