@@ -222,12 +222,12 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
 }
 
 #pragma mark - @JRCollectionViewDelegate
-- (void)didSelectData:(NSData *)data index:(NSInteger)index
+- (void)didSelectData:(NSData *)data thumbnailImage:(nullable UIImage *)thumbnailImage index:(NSInteger)index
 {
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:[self.titles indexOfObject:self.selectTitle]];
     _selectIndexPath = indexPath;
     if (self.didSelectBlock) {
-        self.didSelectBlock(data);
+        self.didSelectBlock(data, thumbnailImage);
     }
     _selectIndexPath = nil;
 }
