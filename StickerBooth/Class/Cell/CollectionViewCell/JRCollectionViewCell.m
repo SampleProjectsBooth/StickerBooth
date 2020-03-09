@@ -143,7 +143,7 @@ static UIView *_jr_contenView = nil;
     CGSize imageSize = cell.image.size;
     CGRect convertF = CGRectInset(contentViewF, 10.f, 10.f);
     CGFloat radio = CGRectGetWidth(convertF)/imageSize.width;
-    if (imageSize.width < imageSize.height) {
+    if (imageSize.width > imageSize.height) {
         radio = CGRectGetHeight(convertF)/imageSize.height;
     }
     
@@ -153,10 +153,6 @@ static UIView *_jr_contenView = nil;
     contentViewF.size = CGSizeMake(convertSize.width + margin, convertSize.height + margin);
     contentViewF.origin = CGPointMake(CGRectGetMidX(covertRect) - CGRectGetWidth(contentViewF)/2, CGRectGetMinY(covertRect) - 10.f - CGRectGetHeight(contentViewF));
 
-    if (CGRectGetMinX(contentViewF) < 0) {
-        contentViewF.origin.x = 0.f;
-    }
-
     if (CGRectGetMaxX(contentViewF) > CGRectGetWidth(keyWindow.bounds)) {
         CGFloat margin = CGRectGetMaxX(contentViewF) - CGRectGetWidth(keyWindow.bounds);
         contentViewF.origin.x -= margin;
@@ -164,7 +160,15 @@ static UIView *_jr_contenView = nil;
     
     if (CGRectGetMinY(contentViewF) < 0) {
         contentViewF.origin.y = 10.f + CGRectGetMaxY(covertRect);
+        if (CGRectGetMaxY(contentViewF) > CGRectGetHeight(keyWindow.bounds)) {
+            contentViewF.origin.y = CGRectGetMinY(covertRect) - 10.f - CGRectGetHeight(contentViewF);
+        }
     }
+    
+    if (CGRectGetMinX(contentViewF) < 0) {
+        contentViewF.origin.x = 0.f;
+    }
+
     
     _jr_contenView.frame = contentViewF;
     
