@@ -19,8 +19,6 @@
 
 @property (weak, nonatomic) JRStickerDisplayView *myView;
 
-@property (weak, nonatomic) LFMEGifView *showView;
-
 @end
 
 @implementation ViewController
@@ -63,12 +61,6 @@
 
 }
 
-
-- (void)_hiddenShowView
-{
-    [self.showView removeFromSuperview];
-}
-
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
@@ -78,14 +70,6 @@
 {
     NSLog(@"VC dealloc");
     [JRConfigTool free];
-    [self.showView removeFromSuperview];
-}
-
-- (void)_createShowView
-{
-    LFMEGifView *view = [[LFMEGifView alloc] initWithFrame:CGRectZero];
-    [self.view addSubview:view];
-    self.showView = view;
 }
 
 + (NSArray <PHAsset *>*)jr_GetAllPhotos
