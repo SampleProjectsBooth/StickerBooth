@@ -119,6 +119,14 @@
 			path = LFImageCoder;
 			sourceTree = "<group>";
 		};
+		3B86CC632416324000D6FA06 /* Header */ = {
+			isa = PBXGroup;
+			children = (
+				66024874240F3C9A00F561D1 /* JRStickerHeader.h */,
+			);
+			path = Header;
+			sourceTree = "<group>";
+		};
 		3B897EFC240616A900A3E854 = {
 			isa = PBXGroup;
 			children = (
@@ -232,11 +240,11 @@
 				66024875240F579C00F561D1 /* Category */,
 				66024876240F57AB00F561D1 /* View */,
 				661DAA54240CE80D00C2D074 /* Utility */,
+				3B86CC632416324000D6FA06 /* Header */,
 				66DEB594240619A600C770B5 /* Cell */,
 				3B897F2424065A4D00A3E854 /* Model */,
 				66DEB5A3240619A600C770B5 /* JRStickerDisplayView.h */,
 				66DEB590240619A600C770B5 /* JRStickerDisplayView.m */,
-				66024874240F3C9A00F561D1 /* JRStickerHeader.h */,
 			);
 			path = Class;
 			sourceTree = "<group>";
