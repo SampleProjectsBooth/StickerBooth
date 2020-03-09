@@ -77,6 +77,12 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
 - (void)jr_getImageData:(void(^)(NSData *data))completeBlock
 {
     JRStickerContent *obj = (JRStickerContent *)self.cellData;
+    if (obj.state == JRStickerContentState_Fail) {
+        if (completeBlock) {
+            completeBlock(nil);
+        }
+        return;
+    }
     id itemData = obj.content;
     if (obj.state == JRStickerContentState_Success) {
         if ([itemData isKindOfClass:[NSURL class]]) {
@@ -133,7 +139,6 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
         if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
             NSData *localData = [NSData dataWithContentsOfURL:dataURL];
             if (localData) {
-                
                 obj.state = JRStickerContentState_Success;
                 self.bottomView.hidden =  ![self.imageView jr_dataForImageAndIsGif:localData];
             } else {
