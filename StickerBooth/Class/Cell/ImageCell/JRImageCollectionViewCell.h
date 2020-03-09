@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)clearData;
 
-- (void)jr_getImageData:(void(^)(NSData * _Nullable data, UIImage * _Nullable image))completeBlock;
+- (void)jr_getImageData:(void(^)(NSData * _Nullable data))completeBlock;
 
 - (void)showMaskLayer:(BOOL)isShow;
 
