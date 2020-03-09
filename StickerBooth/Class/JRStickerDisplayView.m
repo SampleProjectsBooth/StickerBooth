@@ -338,11 +338,8 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     CGSize size = [(UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout itemSize];
     if (collectionView == self.titleCollectionView) {
         NSString *item = [self.titles objectAtIndex:indexPath.row];
-        JRTitleCollectionViewCell *cell = (JRTitleCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
         CGFloat width = JR_V_ScrollView_Min_width;
-        if (cell) {
-            width = [item jr_textWidthForHeight:JR_V_ScrollView_height-JR_O_margin*2 fontSize:cell.textFont] + 20.f;
-        }
+        width = [item jr_textWidthForHeight:JR_V_ScrollView_height-JR_O_margin*2 fontSize:[UIFont systemFontOfSize:16.f]] + 20.f;
         
         width = width > JR_V_ScrollView_Min_width ? width : JR_V_ScrollView_Min_width;
        
