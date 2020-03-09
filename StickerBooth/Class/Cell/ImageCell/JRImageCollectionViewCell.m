@@ -109,9 +109,7 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
                 if (completeBlock) {
                     completeBlock(data);
                 }
-            } progressHandler:^(double progress, NSError * _Nonnull error, BOOL * _Nonnull stop, NSDictionary * _Nonnull info) {
-                
-            }];
+            } progressHandler:nil];
         }
     }
 }
