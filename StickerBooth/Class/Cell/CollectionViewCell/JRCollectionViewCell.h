@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol JRCollectionViewDelegate <NSObject>
 
-- (void)didSelectData:(NSData *)data index:(NSInteger)index;
+- (void)didSelectData:(nullable NSData *)data thumbnailImage:(nullable UIImage *)thumbnailImage index:(NSInteger)index;
 
 @end
 

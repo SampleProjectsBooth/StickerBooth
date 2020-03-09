@@ -13,6 +13,7 @@
 #import "JRPHAssetManager.h"
 #import "JRConfigTool.h"
 #import "JRDataImageView.h"
+#import "JRStickerHeader.h"
 
 
 CGFloat const JR_kVideoBoomHeight = 25.f;
@@ -74,19 +75,19 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     _queue = nil;
 }
 
-- (void)jr_getImageData:(void(^)(NSData *data))completeBlock
+- (void)jr_getImageData:(void (^)(NSData * _Nullable, UIImage * _Nullable))completeBlock
 {
     JRStickerContent *obj = (JRStickerContent *)self.cellData;
     if (obj.state == JRStickerContentState_Fail) {
         if (completeBlock) {
-            completeBlock(nil);
+            completeBlock(nil, nil);
         }
         return;
     }
     id itemData = obj.content;
+    __weak typeof(self) weakSelf = self;
     if (obj.state == JRStickerContentState_Success) {
         if ([itemData isKindOfClass:[NSURL class]]) {
-            __weak typeof(self) weakSelf = self;
             NSURL *dataURL = (NSURL *)itemData;
             if (!self.queue) {
                 self.queue = dispatch_queue_create("com.JRImageCollectionViewCell.queue", DISPATCH_QUEUE_SERIAL);
@@ -100,14 +101,14 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (completeBlock) {
-                        completeBlock(resultData);
+                        completeBlock(resultData, weakSelf.image);
                     }
                 });
             });
         } else if ([itemData isKindOfClass:[PHAsset class]]) {
             [JRPHAssetManager jr_GetPhotoDataWithAsset:itemData completion:^(NSData * _Nonnull data, NSDictionary * _Nonnull info, BOOL isDegraded) {
                 if (completeBlock) {
-                    completeBlock(data);
+                    completeBlock(data, weakSelf.image);
                 }
             } progressHandler:nil];
         }
@@ -138,8 +139,12 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
             NSData *localData = [NSData dataWithContentsOfURL:dataURL];
             if (localData) {
                 obj.state = JRStickerContentState_Success;
-                [self.imageView jr_dataForImage:localData];
+#ifdef jr_isPlayGif
+                self.bottomView.hidden = YES;
+#else
                 self.bottomView.hidden =  !self.imageView.isGif;
+#endif
+                [self.imageView jr_dataForImage:localData];
             } else {
                 obj.state = JRStickerContentState_Fail;
                 self.imageView.image = [JRConfigTool shareInstance].failureImage;
@@ -149,7 +154,11 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
             if (httplocalData) {
                 obj.state = JRStickerContentState_Success;
                 [self.imageView jr_dataForImage:httplocalData];
+#ifdef jr_isPlayGif
+                self.bottomView.hidden = YES;
+#else
                 self.bottomView.hidden =  !self.imageView.isGif;
+#endif
                 return;
             }
             self.progressView.hidden = NO;
@@ -167,7 +176,11 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
                     } else {
                         obj.state = JRStickerContentState_Success;
                         [weakSelf.imageView jr_dataForImage:downloadData];
+#ifdef jr_isPlayGif
+                        weakSelf.bottomView.hidden = YES;
+#else
                         weakSelf.bottomView.hidden =  !weakSelf.imageView.isGif;
+#endif
                     }
                 }
                 
@@ -176,7 +189,11 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     } else if ([itemData isKindOfClass:[PHAsset class]]){
         self.progressView.hidden = NO;
         self.progressView.progress = 0.f;
+#ifdef jr_isPlayGif
+        self.bottomView.hidden = YES;
+#else
         self.bottomView.hidden = ![JRPHAssetManager jr_IsGif:itemData];
+#endif
         __weak typeof(self) weakSelf = self;
         [JRPHAssetManager jr_GetPhotoWithAsset:itemData photoWidth:self.frame.size.width completion:^(UIImage * _Nonnull result, NSDictionary * _Nonnull info, BOOL isDegraded) {
             weakSelf.progressView.hidden = YES;

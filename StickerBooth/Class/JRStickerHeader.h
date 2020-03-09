@@ -24,4 +24,6 @@
 }
 
 
+#define jr_isPlayGif
+
 #endif /* JRStickerHeader_h */

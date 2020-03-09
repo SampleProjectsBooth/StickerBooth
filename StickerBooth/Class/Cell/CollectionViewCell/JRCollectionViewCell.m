@@ -11,6 +11,7 @@
 #import "LFEditCollectionView.h"
 #import "JRStickerContent.h"
 #import "JRConfigTool.h"
+#import "JRStickerHeader.h"
 
 @interface JRCollectionViewCell () <LFEditCollectionViewDelegate>
 
@@ -91,9 +92,9 @@
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, JRStickerContent * _Nonnull item) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
         if (item.state == JRStickerContentState_Success) {
-            if ([weakSelf.delegate respondsToSelector:@selector(didSelectData:index:)]) {
-                [imageCell jr_getImageData:^(NSData * _Nonnull data) {
-                    [weakSelf.delegate didSelectData:data index:indexPath.row];
+            if ([weakSelf.delegate respondsToSelector:@selector(didSelectData:thumbnailImage:index:)]) {
+                [imageCell jr_getImageData:^(NSData * _Nullable data, UIImage * _Nullable thumbnailImage) {
+                    [weakSelf.delegate didSelectData:data thumbnailImage:thumbnailImage index:indexPath.row];
                 }];
             }
         }
@@ -175,9 +176,13 @@ static UIView *_jr_contenView = nil;
     
     _jr_showView.frame = CGRectMake(margin, margin, imageSize.width, imageSize.height);
     
-    [cell jr_getImageData:^(NSData * _Nonnull data) {
+    [cell jr_getImageData:^(NSData * _Nullable data, UIImage * _Nullable thumbnailImage) {
         if (data) {
+#ifdef jr_isPlayGif
+        _jr_showView.image = [UIImage imageWithData:data];
+#else
             _jr_showView.data = data;
+#endif
             _jr_contenView.hidden = NO;
         }
     }];
