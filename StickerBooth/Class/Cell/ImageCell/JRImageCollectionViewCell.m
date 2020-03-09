@@ -126,7 +126,8 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
             if (localData) {
                 
                 obj.state = JRStickerContentState_Success;
-                self.bottomView.hidden =  ![self.imageView jr_dataForImageAndIsGif:localData];
+                [self.imageView jr_dataForImage:localData];
+                self.bottomView.hidden =  !self.imageView.isGif;
             } else {
                 obj.state = JRStickerContentState_Fail;
                 self.imageView.image = [JRConfigTool shareInstance].failureImage;
@@ -135,7 +136,8 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
             NSData *httplocalData = [self dataFromCacheWithURL:dataURL];
             if (httplocalData) {
                 obj.state = JRStickerContentState_Success;
-                self.bottomView.hidden =  ![self.imageView jr_dataForImageAndIsGif:httplocalData];
+                [self.imageView jr_dataForImage:httplocalData];
+                self.bottomView.hidden =  !self.imageView.isGif;
                 return;
             }
             self.progressView.hidden = NO;
@@ -146,13 +148,14 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
                 }
             } completed:^(NSData * _Nonnull downloadData, NSError * _Nonnull error, NSURL * _Nonnull URL) {
                 if ([URL.absoluteString isEqualToString:dataURL.absoluteString]) {
+                    weakSelf.progressView.hidden = YES;
                     if (error || downloadData == nil) {
                         obj.state = JRStickerContentState_Fail;
                         weakSelf.imageView.image = [JRConfigTool shareInstance].failureImage;
                     } else {
                         obj.state = JRStickerContentState_Success;
-                        weakSelf.progressView.hidden = YES;
-                        weakSelf.bottomView.hidden = ![weakSelf.imageView jr_dataForImageAndIsGif:downloadData];
+                        [weakSelf.imageView jr_dataForImage:downloadData];
+                        weakSelf.bottomView.hidden =  !weakSelf.imageView.isGif;
                     }
                 }
                 
@@ -193,14 +196,14 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
 {
     self.contentView.backgroundColor = [UIColor clearColor];
 
-    JRDataImageView *imageView = [[JRDataImageView alloc] initWithFrame:CGRectZero];
+    JRDataImageView *imageView = [[JRDataImageView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.contentView.bounds) - JR_kVideoBoomHeight, CGRectGetWidth(self.contentView.bounds), JR_kVideoBoomHeight)];
     imageView.contentMode = UIViewContentModeScaleAspectFill;
     imageView.clipsToBounds = YES;
     [self.contentView addSubview:imageView];
     self.imageView = imageView;
     self.imageView.image = [JRConfigTool shareInstance].normalImage;
 
-    LFStickerProgressView *view1 = [[LFStickerProgressView alloc] initWithFrame:CGRectZero];
+    LFStickerProgressView *view1 = [[LFStickerProgressView alloc] init];
     [self.contentView addSubview:view1];
     [self.contentView bringSubviewToFront:view1];
     self.progressView = view1;

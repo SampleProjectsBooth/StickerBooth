@@ -44,7 +44,7 @@
 {
     CGFloat photoWidth = [UIScreen mainScreen].bounds.size.width;
     CGFloat aspectRatio = phAsset.pixelWidth / (CGFloat)phAsset.pixelHeight;
-    CGFloat pixelWidth = photoWidth * 2.f;
+    CGFloat pixelWidth = photoWidth;
     CGFloat pixelHeight = pixelWidth / aspectRatio;
     CGSize imageSize = CGSizeMake(pixelWidth, pixelHeight);
     // 修复获取图片时出现的瞬间内存过高问题

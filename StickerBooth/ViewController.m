@@ -33,7 +33,8 @@
     
     [JRConfigTool shareInstance].failureImage = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
 
-    JRStickerDisplayView *view = [[JRStickerDisplayView alloc] initWithFrame:self.view.bounds];
+    JRStickerDisplayView *view = [[JRStickerDisplayView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.view.frame) - 350, CGRectGetWidth(self.view.frame), 350)];
+    view.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:view];
     self.myView = view;
 
@@ -71,12 +72,6 @@
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    CGFloat top, bottom, left, right = 0.f;
-    top = self.view.safeAreaInsets.top;
-    bottom = self.view.safeAreaInsets.bottom;
-    left = self.view.safeAreaInsets.left;
-    right = self.view.safeAreaInsets.right;
-    self.myView.frame = CGRectMake(left, top, CGRectGetWidth(self.view.frame) - left - right, CGRectGetHeight(self.view.frame) - top - bottom);
 }
 
 - (void)dealloc

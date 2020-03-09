@@ -27,62 +27,67 @@ inline static UIImageOrientation JRMEGifView_UIImageOrientationFromEXIFValue(NSI
 
 @property (nonatomic, strong) dispatch_queue_t queue;
 
-
 @end
 
 @implementation JRDataImageView
+
+@synthesize isGif = _isGif;
 
 - (void)dealloc
 {
     _queue = nil;
 }
 
-- (BOOL)jr_dataForImageAndIsGif:(NSData *)data;
+- (void)jr_dataForImage:(nullable NSData *)data
 {
-    BOOL isGif = NO;
+    _isGif = NO;
     if (data) {
-        __weak typeof(self) weakSelf = self;
-        UIImageOrientation imgOrientation = UIImageOrientationUp;
-        __block CGImageSourceRef imgSourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)(data), NULL);
-        if (imgSourceRef) {
-            NSInteger frameCount = CGImageSourceGetCount(imgSourceRef);
-            if (frameCount > 1) {
-                isGif = YES;
-            }
-            //exifInfo 包含了很多信息,有兴趣的可以打印看看,我们只需要Orientation这个字段
-            CFDictionaryRef exifInfo = CGImageSourceCopyPropertiesAtIndex(imgSourceRef, 0,NULL);
-            //判断Orientation这个字段,如果图片经过PS等处理,exif信息可能会丢失
-            if(CFDictionaryContainsKey(exifInfo, kCGImagePropertyOrientation)){
-                CFNumberRef orientation = CFDictionaryGetValue(exifInfo, kCGImagePropertyOrientation);
-                NSInteger orientationValue = 0;
-                CFNumberGetValue(orientation, kCFNumberIntType, &orientationValue);
-                imgOrientation = JRMEGifView_UIImageOrientationFromEXIFValue(orientationValue);
-            }
-            CFRelease(exifInfo);
+        CGImageSourceRef _imgSourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)(data), NULL);
+        if (_imgSourceRef) {
+            _isGif = CGImageSourceGetCount(_imgSourceRef) > 1;
             CGSize size = self.frame.size;
             UIViewContentMode mode = self.contentMode;
             if (!self.queue) {
                 self.queue = dispatch_queue_create("com.JRDataIamgeView.queue", DISPATCH_QUEUE_SERIAL);
             }
+            __weak typeof(self) weakSelf = self;
             dispatch_async(self.queue, ^{
-                CGImageRef imageRef = CGImageSourceCreateImageAtIndex(imgSourceRef, 0, (CFDictionaryRef)@{(id)kCGImageSourceShouldCache:@(YES)});
-                CGImageRef decodeImageRef = LFIC_CGImageScaleDecodedFromCopy(imageRef, size, mode, imgOrientation);
-                if (imageRef) {
-                    CGImageRelease(imageRef);
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    weakSelf.image = [UIImage imageWithCGImage:decodeImageRef];
-                    if (decodeImageRef) {
-                        CGImageRelease(decodeImageRef);
+                if (weakSelf != nil) {
+                    UIImageOrientation imgOrientation = UIImageOrientationUp;
+                    //exifInfo 包含了很多信息,有兴趣的可以打印看看,我们只需要Orientation这个字段
+                    CFDictionaryRef exifInfo = CGImageSourceCopyPropertiesAtIndex(_imgSourceRef, 0,NULL);
+                    //判断Orientation这个字段,如果图片经过PS等处理,exif信息可能会丢失
+                    if(CFDictionaryContainsKey(exifInfo, kCGImagePropertyOrientation)){
+                        CFNumberRef orientation = CFDictionaryGetValue(exifInfo, kCGImagePropertyOrientation);
+                        NSInteger orientationValue = 0;
+                        CFNumberGetValue(orientation, kCFNumberIntType, &orientationValue);
+                        imgOrientation = JRMEGifView_UIImageOrientationFromEXIFValue(orientationValue);
                     }
-                    CFRelease(imgSourceRef);
-                    imgSourceRef = nil;
-                });
+                    CFRelease(exifInfo);
+                    CGImageRef imageRef = CGImageSourceCreateImageAtIndex(_imgSourceRef, 0, NULL);
+                    CGImageRef decodeImageRef = LFIC_CGImageScaleDecodedFromCopy(imageRef, size, mode, imgOrientation);
+                    if (imageRef) {
+                        CGImageRelease(imageRef);
+                    }
+                    CFRelease(_imgSourceRef);
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.image = [UIImage imageWithCGImage:decodeImageRef];
+                        if (decodeImageRef) {
+                            CGImageRelease(decodeImageRef);
+                        }
+                    });
+                }
             });
         }
     } else {
         self.image = nil;
     }
-    return isGif;
 }
+
+- (BOOL)isGif
+{
+    return _isGif;
+}
+
 @end

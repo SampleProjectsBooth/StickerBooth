@@ -12,7 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JRDataImageView : UIImageView
 
-- (BOOL)jr_dataForImageAndIsGif:(nullable NSData *)data;
+- (void)jr_dataForImage:(nullable NSData *)data;
+
+@property (nonatomic, readonly) BOOL isGif;
 
 @end
 
