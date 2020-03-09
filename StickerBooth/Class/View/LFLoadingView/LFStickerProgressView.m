@@ -166,8 +166,8 @@
     rotationAnimation.toValue = [NSNumber numberWithFloat:M_PI * 2.0];
     rotationAnimation.duration = 1;
     rotationAnimation.cumulative = YES;
-    rotationAnimation.removedOnCompletion = NO;
     rotationAnimation.repeatCount = HUGE_VALF;
+    rotationAnimation.removedOnCompletion = NO;
     [self.backCircle addAnimation:rotationAnimation forKey:@"rotationAnimation"];
 }
 

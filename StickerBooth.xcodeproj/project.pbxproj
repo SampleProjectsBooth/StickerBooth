@@ -179,19 +179,19 @@
 			path = Category;
 			sourceTree = "<group>";
 		};
-		66024876240F57AB00F561D1 /* UIView */ = {
+		66024876240F57AB00F561D1 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				66DEB589240619A600C770B5 /* LFLoadingView */,
 				6683509E240F81D000089728 /* JRDataImageView.h */,
 				6683509F240F81D000089728 /* JRDataImageView.m */,
 			);
-			path = UIView;
+			path = View;
 			sourceTree = "<group>";
 		};
 		661DAA54240CE80D00C2D074 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				66024876240F57AB00F561D1 /* UIView */,
 				66EBAACD240E070C004E52B9 /* Config */,
 				661DAA55240DF35700C2D074 /* JRPHAssetManager.h */,
 				661DAA56240DF35700C2D074 /* JRPHAssetManager.m */,
@@ -229,8 +229,8 @@
 		66DEB582240619A600C770B5 /* Class */ = {
 			isa = PBXGroup;
 			children = (
-				66DEB589240619A600C770B5 /* LFLoadingView */,
 				66024875240F579C00F561D1 /* Category */,
+				66024876240F57AB00F561D1 /* View */,
 				661DAA54240CE80D00C2D074 /* Utility */,
 				66DEB594240619A600C770B5 /* Cell */,
 				3B897F2424065A4D00A3E854 /* Model */,
@@ -289,9 +289,9 @@
 			isa = PBXGroup;
 			children = (
 				66DEB595240619A600C770B5 /* CollectionViewCell */,
-				66DEB598240619A600C770B5 /* JRBaseCollectionViewCell.m */,
 				66DEB599240619A600C770B5 /* ImageCell */,
 				66DEB59C240619A600C770B5 /* JRBaseCollectionViewCell.h */,
+				66DEB598240619A600C770B5 /* JRBaseCollectionViewCell.m */,
 				66DEB59D240619A600C770B5 /* TitleCell */,
 			);
 			path = Cell;
