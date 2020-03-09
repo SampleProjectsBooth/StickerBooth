@@ -72,7 +72,7 @@ inline static UIImageOrientation JRMEGifView_UIImageOrientationFromEXIFValue(NSI
                     CFRelease(_imgSourceRef);
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        self.image = [UIImage imageWithCGImage:decodeImageRef];
+                        self.image = [UIImage imageWithCGImage:decodeImageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
                         if (decodeImageRef) {
                             CGImageRelease(decodeImageRef);
                         }

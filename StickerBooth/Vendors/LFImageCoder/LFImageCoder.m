@@ -66,6 +66,22 @@ CGImageRef LFIC_CGImageScaleDecodedFromCopy(CGImageRef imageRef, CGSize size, UI
         size_t height = CGImageGetHeight(imageRef);
         if (width == 0 || height == 0) return NULL;
         
+        switch (orientation) {
+            case UIImageOrientationLeft:
+            case UIImageOrientationLeftMirrored:
+            case UIImageOrientationRight:
+            case UIImageOrientationRightMirrored:
+                // Grr...
+            {
+                CGFloat tmpWidth = width;
+                width = height;
+                height = tmpWidth;
+            }
+                break;
+            default:
+                break;
+        }
+        
         if (size.width > 0 && size.height > 0) {
             float verticalRadio = size.height*1.0/height;
             float horizontalRadio = size.width*1.0/width;
@@ -113,22 +129,6 @@ CGImageRef LFIC_CGImageScaleDecodedFromCopy(CGImageRef imageRef, CGSize size, UI
             alphaInfo == kCGImageAlphaLast ||
             alphaInfo == kCGImageAlphaFirst) {
             hasAlpha = YES;
-        }
-        
-        switch (orientation) {
-            case UIImageOrientationLeft:
-            case UIImageOrientationLeftMirrored:
-            case UIImageOrientationRight:
-            case UIImageOrientationRightMirrored:
-                // Grr...
-            {
-                CGFloat tmpWidth = width;
-                width = height;
-                height = tmpWidth;
-            }
-                break;
-            default:
-                break;
         }
         
         CGAffineTransform transform = LFMEGifView_CGAffineTransformExchangeOrientation(orientation, CGSizeMake(width, height));

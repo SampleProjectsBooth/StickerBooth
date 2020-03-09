@@ -200,9 +200,13 @@ inline static UIImageOrientation LFMEGifView_UIImageOrientationFromEXIFValue(NSI
                 _image = [UIImage animatedImageWithImages:images duration:duration];
             } else {
                 CGImageRef imageRef = CGImageSourceCreateImageAtIndex(_gifSourceRef, 0, (CFDictionaryRef)@{(id)kCGImageSourceShouldCache:@(YES)});
-                UIImage *image = [UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:self.orientation];
+                CGImageRef decodeImageRef = LFIC_CGImageDecodedFromCopy(imageRef);
                 if (imageRef) {
                     CGImageRelease(imageRef);
+                }
+                UIImage *image = [UIImage imageWithCGImage:decodeImageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
+                if (decodeImageRef) {
+                    CGImageRelease(decodeImageRef);
                 }
                 if (image == nil) {
                     image = [UIImage imageWithData:self.data scale:[UIScreen mainScreen].scale];
