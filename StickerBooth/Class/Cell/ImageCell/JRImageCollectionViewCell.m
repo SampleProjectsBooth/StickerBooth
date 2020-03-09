@@ -28,6 +28,8 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
 
 @property (strong, nonatomic) CAShapeLayer *maskLayer;
 
+@property (nonatomic, strong) dispatch_queue_t queue;
+
 @end
 
 @implementation JRImageCollectionViewCell
@@ -69,30 +71,43 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
 
 - (void)dealloc
 {
-    
+    _queue = nil;
 }
 
-- (void)jr_getImageData:(void(^)(NSData *data, UIImage *image))completeBlock
+- (void)jr_getImageData:(void(^)(NSData *data))completeBlock
 {
     JRStickerContent *obj = (JRStickerContent *)self.cellData;
+    if (obj.state == JRStickerContentState_Fail) {
+        if (completeBlock) {
+            completeBlock(nil);
+        }
+        return;
+    }
     id itemData = obj.content;
     if (obj.state == JRStickerContentState_Success) {
         if ([itemData isKindOfClass:[NSURL class]]) {
-            NSURL *dataURL = (NSURL *)itemData;
-            NSData *resultData = nil;
-            if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
-                resultData = [NSData dataWithContentsOfURL:dataURL];
-            } else {
-                resultData = [self dataFromCacheWithURL:dataURL];
-            }
-            if (completeBlock) {
-                completeBlock(resultData, self.image);
-            }
-        } else if ([itemData isKindOfClass:[PHAsset class]]) {
             __weak typeof(self) weakSelf = self;
+            NSURL *dataURL = (NSURL *)itemData;
+            if (!self.queue) {
+                self.queue = dispatch_queue_create("com.JRImageCollectionViewCell.queue", DISPATCH_QUEUE_SERIAL);
+            }
+            dispatch_async(self.queue, ^{
+                NSData *resultData = nil;
+                if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
+                    resultData = [NSData dataWithContentsOfURL:dataURL];
+                } else {
+                    resultData = [weakSelf dataFromCacheWithURL:dataURL];
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (completeBlock) {
+                        completeBlock(resultData);
+                    }
+                });
+            });
+        } else if ([itemData isKindOfClass:[PHAsset class]]) {
             [JRPHAssetManager jr_GetPhotoDataWithAsset:itemData completion:^(NSData * _Nonnull data, NSDictionary * _Nonnull info, BOOL isDegraded) {
                 if (completeBlock) {
-                    completeBlock(data, weakSelf.image);
+                    completeBlock(data);
                 }
             } progressHandler:^(double progress, NSError * _Nonnull error, BOOL * _Nonnull stop, NSDictionary * _Nonnull info) {
                 
@@ -124,7 +139,6 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
         if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
             NSData *localData = [NSData dataWithContentsOfURL:dataURL];
             if (localData) {
-                
                 obj.state = JRStickerContentState_Success;
                 [self.imageView jr_dataForImage:localData];
                 self.bottomView.hidden =  !self.imageView.isGif;

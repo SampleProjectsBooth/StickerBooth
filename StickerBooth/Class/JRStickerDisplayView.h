@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void(^JRDidSelectItemBlock)(NSData * _Nullable data, UIImage * _Nullable image);
+typedef void(^JRDidSelectItemBlock)(NSData * _Nullable data);
 
 @interface JRStickerDisplayView : UIView
 

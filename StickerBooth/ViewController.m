@@ -57,7 +57,7 @@
     NSArray *objs = @[a2, a1, array1, [ViewController jr_GetAllPhotos]];
     self.myView.selectTitleColor = [UIColor blueColor];
     [self.myView setTitles:@[@"1", @"2", @"3", @"444444444"] contents:objs];
-    self.myView.didSelectBlock = ^(NSData * _Nullable data, UIImage * _Nullable image) {
+    self.myView.didSelectBlock = ^(NSData * _Nullable data) {
         NSLog(@"%@", [[objs objectAtIndex:weakSelf.myView.selectIndexPath.section] objectAtIndex:weakSelf.myView.selectIndexPath.row]);
     };
 

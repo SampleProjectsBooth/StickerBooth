@@ -91,9 +91,9 @@
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, JRStickerContent * _Nonnull item) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
         if (item.state == JRStickerContentState_Success) {
-            if ([weakSelf.delegate respondsToSelector:@selector(didSelectData:image:index:)]) {
-                [imageCell jr_getImageData:^(NSData * _Nonnull data, UIImage * _Nonnull image) {
-                    [weakSelf.delegate didSelectData:data image:image index:indexPath.row];
+            if ([weakSelf.delegate respondsToSelector:@selector(didSelectData:index:)]) {
+                [imageCell jr_getImageData:^(NSData * _Nonnull data) {
+                    [weakSelf.delegate didSelectData:data index:indexPath.row];
                 }];
             }
         }
@@ -110,45 +110,67 @@ static UIView *_jr_contenView = nil;
 
 - (void)show:(JRImageCollectionViewCell *)cell
 {
+    if (!cell) {
+        return;
+    }
     UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
     
     CGRect covertRect = [_jr_subCollectionView convertRect:cell.frame toView:keyWindow];
     
     
-    
     if (!_jr_contenView) {
-        UIView *contenView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 180.f, 180.f)];
-        contenView.layer.cornerRadius = 10.f;
-        contenView.backgroundColor = [UIColor grayColor];
-        contenView.hidden = YES;
-        [keyWindow addSubview:contenView];
-        [keyWindow bringSubviewToFront:contenView];
-        _jr_contenView = contenView;
-        LFMEGifView *gifView = [[LFMEGifView alloc] initWithFrame:CGRectInset(contenView.bounds, 10.f, 10.f)];
-        [contenView addSubview:gifView];
-        _jr_showView = gifView;
         
+        {
+            UIView *contenView = [[UIView alloc] initWithFrame:CGRectZero];
+            contenView.layer.cornerRadius = 3.f;
+            contenView.backgroundColor = [UIColor grayColor];
+            contenView.hidden = YES;
+            [keyWindow addSubview:contenView];
+            [keyWindow bringSubviewToFront:contenView];
+            _jr_contenView = contenView;
+        }
+        
+        {
+            LFMEGifView *gifView = [[LFMEGifView alloc] initWithFrame:CGRectZero];
+            gifView.layer.cornerRadius = 3.f;
+            [_jr_contenView addSubview:gifView];
+            _jr_showView = gifView;
+        }
         
     }
-    CGRect f = _jr_contenView.frame;
-    f.origin = CGPointMake(CGRectGetMidX(covertRect) - CGRectGetWidth(f)/2, CGRectGetMinY(covertRect) - 10.f - CGRectGetHeight(f));
-    
-    if (CGRectGetMinX(f) < 0) {
-        f.origin.x = 0.f;
+    CGRect contentViewF = _jr_contenView.frame;
+    contentViewF.size = CGSizeMake(CGRectGetWidth(covertRect)*2, CGRectGetHeight(covertRect)*2);
+    CGSize imageSize = cell.image.size;
+    CGRect convertF = CGRectInset(contentViewF, 10.f, 10.f);
+    CGFloat radio = CGRectGetWidth(convertF)/imageSize.width;
+    if (imageSize.width < imageSize.height) {
+        radio = CGRectGetHeight(convertF)/imageSize.height;
     }
     
-    if (CGRectGetMaxX(f) > CGRectGetWidth(keyWindow.bounds)) {
-        CGFloat margin = CGRectGetMaxX(f) - CGRectGetWidth(keyWindow.bounds);
-        f.origin.x -= margin;
+    CGFloat margin = 16.f;
+    
+    CGSize convertSize = CGSizeMake(imageSize.width * radio, imageSize.height * radio);
+    contentViewF.size = CGSizeMake(convertSize.width + margin, convertSize.height + margin);
+    contentViewF.origin = CGPointMake(CGRectGetMidX(covertRect) - CGRectGetWidth(contentViewF)/2, CGRectGetMinY(covertRect) - 10.f - CGRectGetHeight(contentViewF));
+
+    if (CGRectGetMinX(contentViewF) < 0) {
+        contentViewF.origin.x = 0.f;
+    }
+
+    if (CGRectGetMaxX(contentViewF) > CGRectGetWidth(keyWindow.bounds)) {
+        CGFloat margin = CGRectGetMaxX(contentViewF) - CGRectGetWidth(keyWindow.bounds);
+        contentViewF.origin.x -= margin;
     }
     
-    if (CGRectGetMinY(f) < 0) {
-        f.origin.y = 10.f + CGRectGetMaxY(covertRect);
+    if (CGRectGetMinY(contentViewF) < 0) {
+        contentViewF.origin.y = 10.f + CGRectGetMaxY(covertRect);
     }
     
-    _jr_contenView.frame = f;
+    _jr_contenView.frame = contentViewF;
     
-    [cell jr_getImageData:^(NSData * _Nonnull data, UIImage * _Nonnull image) {
+    _jr_showView.frame = CGRectMake(margin/2, margin/2, convertSize.width, convertSize.height);
+    
+    [cell jr_getImageData:^(NSData * _Nonnull data) {
         if (data) {
             _jr_showView.data = data;
             _jr_contenView.hidden = NO;
