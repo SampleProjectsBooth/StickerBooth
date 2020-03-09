@@ -180,7 +180,7 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
         self.progressView.progress = 0.f;
         self.bottomView.hidden = ![JRPHAssetManager jr_IsGif:itemData];
         __weak typeof(self) weakSelf = self;
-        [JRPHAssetManager jr_GetPhotoWithAsset:itemData completion:^(UIImage * _Nonnull result, NSDictionary * _Nonnull info, BOOL isDegraded) {
+        [JRPHAssetManager jr_GetPhotoWithAsset:itemData photoWidth:self.frame.size.width completion:^(UIImage * _Nonnull result, NSDictionary * _Nonnull info, BOOL isDegraded) {
             weakSelf.progressView.hidden = YES;
             if (!result) {
                 obj.state = JRStickerContentState_Fail;
