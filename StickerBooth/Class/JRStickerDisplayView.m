@@ -77,7 +77,7 @@ CGFloat const JR_O_margin = 1.5f;
     
 JRStickerDisplayView_bind_var(UIColor *, selectTitleColor, setSelectTitleColor);
 JRStickerDisplayView_bind_var(UIColor *, normalTitleColor, setNormalTitleColor);
-JRStickerDisplayView_bind_var(CGSize, itemCellSize, setItemCellSize);
+JRStickerDisplayView_bind_var(CGSize, itemSize, setItemSize);
 JRStickerDisplayView_bind_var(CGFloat, itemMargin, setItemMargin);
 JRStickerDisplayView_bind_var(UIImage *, normalImage, setNormalImage);
 JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
@@ -222,7 +222,7 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
 }
 
 #pragma mark - @JRCollectionViewDelegate
-- (void)didSelectData:(NSData *)data thumbnailImage:(nullable UIImage *)thumbnailImage index:(NSInteger)index
+- (void)didSelectData:(nullable NSData *)data thumbnailImage:(nullable UIImage *)thumbnailImage index:(NSInteger)index
 {
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:[self.titles indexOfObject:self.selectTitle]];
     _selectIndexPath = indexPath;

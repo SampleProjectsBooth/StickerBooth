@@ -78,7 +78,7 @@
 {
     __weak typeof(self) weakSelf = self;
     LFEditCollectionView *col = [[LFEditCollectionView alloc] initWithFrame:self.contentView.bounds];
-    col.itemSize = [JRConfigTool shareInstance].itemCellSize;
+    col.itemSize = [JRConfigTool shareInstance].itemSize;
     col.delegate = self;
     col.backgroundColor = [UIColor clearColor];
     [self.contentView addSubview:col];
@@ -123,7 +123,6 @@ static UIView *_jr_contenView = nil;
         
         {
             UIView *contenView = [[UIView alloc] initWithFrame:CGRectZero];
-            contenView.layer.cornerRadius = 3.f;
             contenView.backgroundColor = [UIColor grayColor];
             contenView.hidden = YES;
             [keyWindow addSubview:contenView];
@@ -133,7 +132,6 @@ static UIView *_jr_contenView = nil;
         
         {
             LFMEGifView *gifView = [[LFMEGifView alloc] initWithFrame:CGRectZero];
-            gifView.layer.cornerRadius = 3.f;
             [_jr_contenView addSubview:gifView];
             _jr_showView = gifView;
         }
@@ -173,17 +171,18 @@ static UIView *_jr_contenView = nil;
 
     
     _jr_contenView.frame = contentViewF;
+    _jr_contenView.layer.cornerRadius = MAX(CGRectGetWidth(contentViewF), CGRectGetHeight(contentViewF)) * 0.8;
     
     _jr_showView.frame = CGRectMake(margin, margin, imageSize.width, imageSize.height);
     
     [cell jr_getImageData:^(NSData * _Nullable data, UIImage * _Nullable thumbnailImage) {
         if (data) {
-#ifdef jr_isPlayGif
+#ifdef jr_NotSupperGif
         _jr_showView.image = [UIImage imageWithData:data];
 #else
-            _jr_showView.data = data;
+        _jr_showView.data = data;
 #endif
-            _jr_contenView.hidden = NO;
+        _jr_contenView.hidden = NO;
         }
     }];
 }
@@ -270,20 +269,20 @@ static UICollectionView *_jr_subCollectionView = nil;
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
 {
-    int count = collectionView.frame.size.width / ([JRConfigTool shareInstance].itemCellSize.width + [JRConfigTool shareInstance].itemMargin);
-    CGFloat margin = (collectionView.frame.size.width - [JRConfigTool shareInstance].itemCellSize.width * count) / (count + 1);
+    int count = collectionView.frame.size.width / ([JRConfigTool shareInstance].itemSize.width + [JRConfigTool shareInstance].itemMargin);
+    CGFloat margin = (collectionView.frame.size.width - [JRConfigTool shareInstance].itemSize.width * count) / (count + 1);
     return UIEdgeInsetsMake(margin, margin, margin, margin);
 }
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
 {
-    int count = collectionView.frame.size.width / ([JRConfigTool shareInstance].itemCellSize.width + [JRConfigTool shareInstance].itemMargin);
-    CGFloat margin = (collectionView.frame.size.width - [JRConfigTool shareInstance].itemCellSize.width * count) / (count + 1);
+    int count = collectionView.frame.size.width / ([JRConfigTool shareInstance].itemSize.width + [JRConfigTool shareInstance].itemMargin);
+    CGFloat margin = (collectionView.frame.size.width - [JRConfigTool shareInstance].itemSize.width * count) / (count + 1);
     return margin;
 }
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 {
-    int count = collectionView.frame.size.width / ([JRConfigTool shareInstance].itemCellSize.width + [JRConfigTool shareInstance].itemMargin);
-    CGFloat margin = (collectionView.frame.size.width - [JRConfigTool shareInstance].itemCellSize.width * count) / (count + 1);
+    int count = collectionView.frame.size.width / ([JRConfigTool shareInstance].itemSize.width + [JRConfigTool shareInstance].itemMargin);
+    CGFloat margin = (collectionView.frame.size.width - [JRConfigTool shareInstance].itemSize.width * count) / (count + 1);
     return margin;
 }
 

@@ -24,6 +24,6 @@
 }
 
 
-#define jr_isPlayGif
+#define jr_NotSupperGif
 
 #endif /* JRStickerHeader_h */

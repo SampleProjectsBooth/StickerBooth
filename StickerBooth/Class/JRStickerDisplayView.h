@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void(^JRDidSelectItemBlock)(NSData * _Nullable data, UIImage * _Nullable thumbnailImage);
+typedef void(^JRDidSelectItemBlock)(NSData *data, UIImage *thumbnailImage);
 
 @interface JRStickerDisplayView : UIView
 
@@ -21,7 +21,7 @@ typedef void(^JRDidSelectItemBlock)(NSData * _Nullable data, UIImage * _Nullable
 
 @property (nonatomic) UIColor *normalTitleColor;
 
-@property (nonatomic) CGSize itemCellSize;
+@property (nonatomic) CGSize itemSize;
 
 @property (nonatomic) CGFloat itemMargin;
 

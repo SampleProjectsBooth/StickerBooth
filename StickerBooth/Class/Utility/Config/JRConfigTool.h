@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) UIColor *normalTitleColor;
 
-@property (nonatomic) CGSize itemCellSize;
+@property (nonatomic) CGSize itemSize;
 
 @property (nonatomic) CGFloat itemMargin;
 

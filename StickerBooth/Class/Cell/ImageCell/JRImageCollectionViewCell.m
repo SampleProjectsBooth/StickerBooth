@@ -58,7 +58,9 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     self.progressView.center = self.contentView.center;
     self.bottomView.frame = CGRectMake(0, CGRectGetHeight(self.contentView.bounds) - JR_kVideoBoomHeight, CGRectGetWidth(self.contentView.bounds), JR_kVideoBoomHeight);
     self.bottomLab.frame = CGRectInset(self.bottomView.bounds, 2.5f, 5.f);
-    self.maskLayer.frame = CGRectInset(self.contentView.bounds, -5.f, -5.f);
+    CGRect markRect = CGRectInset(self.contentView.bounds, -5.f, -5.f);
+    self.maskLayer.frame = markRect;
+    self.maskLayer.cornerRadius = CGRectGetWidth(markRect) * 0.8;
 
 }
 
@@ -139,7 +141,7 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
             NSData *localData = [NSData dataWithContentsOfURL:dataURL];
             if (localData) {
                 obj.state = JRStickerContentState_Success;
-#ifdef jr_isPlayGif
+#ifdef jr_NotSupperGif
                 self.bottomView.hidden = YES;
 #else
                 self.bottomView.hidden =  !self.imageView.isGif;
@@ -154,7 +156,7 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
             if (httplocalData) {
                 obj.state = JRStickerContentState_Success;
                 [self.imageView jr_dataForImage:httplocalData];
-#ifdef jr_isPlayGif
+#ifdef jr_NotSupperGif
                 self.bottomView.hidden = YES;
 #else
                 self.bottomView.hidden =  !self.imageView.isGif;
@@ -176,7 +178,7 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
                     } else {
                         obj.state = JRStickerContentState_Success;
                         [weakSelf.imageView jr_dataForImage:downloadData];
-#ifdef jr_isPlayGif
+#ifdef jr_NotSupperGif
                         weakSelf.bottomView.hidden = YES;
 #else
                         weakSelf.bottomView.hidden =  !weakSelf.imageView.isGif;
@@ -189,7 +191,7 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     } else if ([itemData isKindOfClass:[PHAsset class]]){
         self.progressView.hidden = NO;
         self.progressView.progress = 0.f;
-#ifdef jr_isPlayGif
+#ifdef jr_NotSupperGif
         self.bottomView.hidden = YES;
 #else
         self.bottomView.hidden = ![JRPHAssetManager jr_IsGif:itemData];
@@ -254,10 +256,11 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     [self.bottomView addSubview:lab];
     self.bottomLab = lab;
     
+    CGRect markRect = CGRectInset(self.contentView.bounds, -5.f, -5.f);
     CAShapeLayer *maskLayer = [CAShapeLayer layer];
-    maskLayer.bounds = CGRectInset(self.contentView.bounds, -5.f, -5.f);
+    maskLayer.bounds = markRect;
     maskLayer.hidden = YES;
-    maskLayer.cornerRadius = 2.5f;
+    maskLayer.cornerRadius = CGRectGetWidth(markRect) * 0.8;
     maskLayer.backgroundColor = [UIColor colorWithWhite:1.f alpha:.5f].CGColor;
     [self.contentView.layer insertSublayer:maskLayer below:self.imageView.layer];
     self.maskLayer = maskLayer;
