@@ -167,6 +167,7 @@
     rotationAnimation.duration = 1;
     rotationAnimation.cumulative = YES;
     rotationAnimation.repeatCount = HUGE_VALF;
+    rotationAnimation.removedOnCompletion = NO;
     [self.backCircle addAnimation:rotationAnimation forKey:@"rotationAnimation"];
 }
 
