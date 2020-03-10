@@ -16,12 +16,22 @@ typedef NS_ENUM(NSInteger, JRStickerContentState) {
     JRStickerContentState_Fail,
 };
 
+typedef NS_ENUM(NSInteger, JRStickerContentType) {
+    JRStickerContentType_Unknow = 0,
+    JRStickerContentType_URLForHttp,
+    JRStickerContentType_URLForFile,
+    JRStickerContentType_PHAsset,
+};
+
+
 @interface JRStickerContent : NSObject
 
 /** 内容 */
 @property (nonatomic, strong) id content;
 /** 状态 */
 @property (nonatomic, assign) JRStickerContentState state;
+
+@property (nonatomic, assign, readonly) JRStickerContentType type;
 
 + (instancetype)stickerContentWithContent:(id)content;
 - (instancetype)initWithContent:(id)content;

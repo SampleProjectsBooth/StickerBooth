@@ -12,6 +12,7 @@
 #import "JRStickerContent.h"
 #import "JRConfigTool.h"
 #import "JRStickerHeader.h"
+#import "JRStickerContent+JRGetData.h"
 
 @interface JRCollectionViewCell () <LFEditCollectionViewDelegate>
 
@@ -93,8 +94,9 @@
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
         if (item.state == JRStickerContentState_Success) {
             if ([weakSelf.delegate respondsToSelector:@selector(didSelectData:thumbnailImage:index:)]) {
-                [imageCell jr_getImageData:^(NSData * _Nullable data, UIImage * _Nullable thumbnailImage) {
-                    [weakSelf.delegate didSelectData:data thumbnailImage:thumbnailImage index:indexPath.row];
+                JRStickerContent *obj = (JRStickerContent *)imageCell.cellData;
+                [obj jr_getData:^(NSData * _Nullable data) {
+                    [weakSelf.delegate didSelectData:data thumbnailImage:imageCell.image index:indexPath.row];
                 }];
             }
         }
@@ -175,16 +177,18 @@ static UIView *_jr_contenView = nil;
     
     _jr_showView.frame = CGRectMake(margin, margin, imageSize.width, imageSize.height);
     
-    [cell jr_getImageData:^(NSData * _Nullable data, UIImage * _Nullable thumbnailImage) {
-        if (data) {
+    JRStickerContent *obj = (JRStickerContent *)cell.cellData;
 #ifdef jr_NotSupperGif
-        _jr_showView.image = [UIImage imageWithData:data];
-#else
-        _jr_showView.data = data;
-#endif
+    [obj jr_getImage:^(UIImage * _Nullable image) {
+        _jr_showView.image = image;
         _jr_contenView.hidden = NO;
-        }
     }];
+#else
+    [obj jr_getData:^(NSData * _Nullable data) {
+        _jr_showView.data = data;
+        _jr_contenView.hidden = NO;
+    }];
+#endif
 }
 
 static UICollectionView *_jr_subCollectionView = nil;

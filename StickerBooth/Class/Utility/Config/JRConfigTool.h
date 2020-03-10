@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) CGFloat itemMargin;
 
+@property (nonatomic) dispatch_queue_t concurrentQueue;
+
 /** 占位图，为nil不显示 */
 @property (nonatomic, nullable) UIImage *normalImage;
 
