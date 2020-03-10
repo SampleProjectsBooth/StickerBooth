@@ -302,7 +302,7 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
     }
 }
 
-- (BOOL)redownloadURL:(NSURL *)URL
+- (BOOL)redownloadURL:(NSURL *)URL error:(NSError *)error
 {
     NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
     
@@ -312,6 +312,11 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
         if (self.repeatCountWhenDownloadFailed > downloadTimes) {
             info.downloadTimes++;
         } else {
+            if (info.complete) {
+                info.complete(nil, error, info.downloadURL);
+            }
+            info.complete = nil;
+            info.progress = nil;
             [downloadList removeObject:info];
             i--;
         }
@@ -387,7 +392,7 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
 {
     //给progressView赋值进度
 //    self.progressView.progress = 1.0 * totalBytesWritten / totalBytesExpectedToWrite;
-    NSURL *URL = downloadTask.currentRequest.URL;
+    NSURL *URL = downloadTask.originalRequest.URL;
     
     NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
     for (LFDownloadInfo *info in downloadList) {
@@ -407,7 +412,7 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
     //location为下载好的文件路径
     //NSLog(@"didFinishDownloadingToURL, %@", location);
     [downloadTask.lf_operation completeOperation];
-    NSURL *URL = downloadTask.currentRequest.URL;
+    NSURL *URL = downloadTask.originalRequest.URL;
     
     
     NSData *data = [NSData dataWithContentsOfURL:location];
@@ -438,7 +443,7 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
 {
     [task.lf_operation completeOperation];
     if (error) {
-        NSURL *URL = task.currentRequest.URL;
+        NSURL *URL = task.originalRequest.URL;
         if (task.state == NSURLSessionTaskStateCanceling) {
             NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
             for (LFDownloadInfo *info in downloadList) {
@@ -450,7 +455,7 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
         }
         
         
-        if (![self redownloadURL:URL]) {
+        if (![self redownloadURL:URL error:error]) {
             
             NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
             for (LFDownloadInfo *info in downloadList) {
