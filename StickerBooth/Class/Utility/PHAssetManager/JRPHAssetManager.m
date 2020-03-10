@@ -25,13 +25,7 @@
 
 + (PHImageRequestID)jr_GetPhotoDataWithAsset:(id)asset completion:(void (^)(NSData *data,NSDictionary *info,BOOL isDegraded))completion progressHandler:(void (^)(double progress, NSError *error, BOOL *stop, NSDictionary *info))progressHandler {
     if ([asset isKindOfClass:[PHAsset class]]) {
-        BOOL isGif = [JRPHAssetManager jr_IsGif:asset];
-        PHImageRequestOptions *option = [[PHImageRequestOptions alloc]init]; option.resizeMode = PHImageRequestOptionsResizeModeFast;
-        if (isGif) {
-            // GIF图片在系统相册中不能修改，它不存在编辑图或原图的区分。但是个别GIF使用默认的 PHImageRequestOptionsVersionCurrent属性可能仅仅是获取第一帧。
-            option.version = PHImageRequestOptionsVersionOriginal;
-        }
-        return [JRPHAssetManager _jr_getPhotoDataWithAsset:asset option:option isGif:isGif completion:completion progressHandler:progressHandler];
+        return [JRPHAssetManager _jr_getPhotoDataWithAsset:asset completion:completion progressHandler:progressHandler];
     } else {
         if (completion) completion(nil,nil,NO);
     }
@@ -95,8 +89,14 @@
 
 
 #pragma mark - Private Mehods
-+ (PHImageRequestID)_jr_getPhotoDataWithAsset:(id)asset option:(PHImageRequestOptions *)option isGif:(BOOL)isGif completion:(void (^)(NSData *data,NSDictionary *info,BOOL isDegraded))completion progressHandler:(void (^)(double progress, NSError *error, BOOL *stop, NSDictionary *info))progressHandler
++ (PHImageRequestID)_jr_getPhotoDataWithAsset:(id)asset completion:(void (^)(NSData *data,NSDictionary *info,BOOL isDegraded))completion progressHandler:(void (^)(double progress, NSError *error, BOOL *stop, NSDictionary *info))progressHandler
 {
+    BOOL isGif = [JRPHAssetManager jr_IsGif:asset];
+    PHImageRequestOptions *option = [[PHImageRequestOptions alloc]init]; option.resizeMode = PHImageRequestOptionsResizeModeFast;
+    if (isGif) {
+        // GIF图片在系统相册中不能修改，它不存在编辑图或原图的区分。但是个别GIF使用默认的 PHImageRequestOptionsVersionCurrent属性可能仅仅是获取第一帧。
+        option.version = PHImageRequestOptionsVersionOriginal;
+    }
     PHImageRequestID imageRequestID = PHInvalidImageRequestID;
     if (@available(iOS 13, *)) {
         imageRequestID = [[PHImageManager defaultManager] requestImageDataAndOrientationForAsset:asset options:option resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, CGImagePropertyOrientation orientation, NSDictionary * _Nullable info) {

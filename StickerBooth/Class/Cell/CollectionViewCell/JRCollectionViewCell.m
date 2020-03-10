@@ -13,6 +13,7 @@
 #import "JRConfigTool.h"
 #import "JRStickerHeader.h"
 #import "JRStickerContent+JRGetData.h"
+#import "JRPHAssetManager.h"
 
 @interface JRCollectionViewCell () <LFEditCollectionViewDelegate>
 
@@ -202,11 +203,28 @@ static UIView *_jr_contenView = nil;
         _jr_showView.image = image;
         _jr_contenView.hidden = NO;
     }];
+    
 #else
-    [obj jr_getData:^(NSData * _Nullable data) {
-        _jr_showView.data = data;
-        _jr_contenView.hidden = NO;
-    }];
+    if (obj.type == JRStickerContentType_PHAsset) {
+        if (obj == JRStickerContentType_PHAsset) {
+            if ([JRPHAssetManager jr_IsGif:obj.content]) {
+                [obj jr_getImage:^(UIImage * _Nullable image) {
+                    _jr_showView.image = image;
+                    _jr_contenView.hidden = NO;
+                }];
+            } else {
+                [obj jr_getData:^(NSData * _Nullable data) {
+                    _jr_showView.data = data;
+                    _jr_contenView.hidden = NO;
+                }];
+            }
+        }
+    } else {
+        [obj jr_getData:^(NSData * _Nullable data) {
+            _jr_showView.data = data;
+            _jr_contenView.hidden = NO;
+        }];
+    }
 #endif
 }
 

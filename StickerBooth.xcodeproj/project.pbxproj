@@ -22,6 +22,7 @@
 		663B314D2411FA61006F8639 /* UIView+JRLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 663B314C2411FA61006F8639 /* UIView+JRLayer.m */; };
 		663B3151241221E8006F8639 /* UIColor+JRColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 663B3150241221E8006F8639 /* UIColor+JRColor.m */; };
 		668350A0240F81D000089728 /* JRDataImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6683509F240F81D000089728 /* JRDataImageView.m */; };
+		66A894EA241777D40001C60C /* NSData+JRImageContentType.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A894E9241777D40001C60C /* NSData+JRImageContentType.m */; };
 		66D98D3A24163D01001CD859 /* JRPHAssetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 66D98D3924163D01001CD859 /* JRPHAssetManager.m */; };
 		66D98D3E2417211E001CD859 /* JRStickerContent+JRGetData.m in Sources */ = {isa = PBXBuildFile; fileRef = 66D98D3D2417211E001CD859 /* JRStickerContent+JRGetData.m */; };
 		66DEB5A4240619A600C770B5 /* LFMEWeakSelectorTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DEB587240619A600C770B5 /* LFMEWeakSelectorTarget.m */; };
@@ -70,6 +71,8 @@
 		663B3150241221E8006F8639 /* UIColor+JRColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+JRColor.m"; sourceTree = "<group>"; };
 		6683509E240F81D000089728 /* JRDataImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRDataImageView.h; sourceTree = "<group>"; };
 		6683509F240F81D000089728 /* JRDataImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRDataImageView.m; sourceTree = "<group>"; };
+		66A894E8241777D40001C60C /* NSData+JRImageContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+JRImageContentType.h"; sourceTree = "<group>"; };
+		66A894E9241777D40001C60C /* NSData+JRImageContentType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+JRImageContentType.m"; sourceTree = "<group>"; };
 		66D98D3824163D01001CD859 /* JRPHAssetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRPHAssetManager.h; sourceTree = "<group>"; };
 		66D98D3924163D01001CD859 /* JRPHAssetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRPHAssetManager.m; sourceTree = "<group>"; };
 		66D98D3C2417211E001CD859 /* JRStickerContent+JRGetData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JRStickerContent+JRGetData.h"; sourceTree = "<group>"; };
@@ -183,6 +186,7 @@
 		66024875240F579C00F561D1 /* Category */ = {
 			isa = PBXGroup;
 			children = (
+				66A894EB2417788A0001C60C /* NSData */,
 				662F1FD22412349B006ECB2A /* NSString */,
 				663B3152241222D3006F8639 /* UIView */,
 				663B314E241221D5006F8639 /* UIColor */,
@@ -205,7 +209,6 @@
 		661DAA54240CE80D00C2D074 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				66D98D3B24163D43001CD859 /* JRImageDataManager */,
 				66D98D3724163D01001CD859 /* PHAssetManager */,
 				66EBAACD240E070C004E52B9 /* Config */,
 			);
@@ -239,6 +242,15 @@
 			path = UIView;
 			sourceTree = "<group>";
 		};
+		66A894EB2417788A0001C60C /* NSData */ = {
+			isa = PBXGroup;
+			children = (
+				66A894E8241777D40001C60C /* NSData+JRImageContentType.h */,
+				66A894E9241777D40001C60C /* NSData+JRImageContentType.m */,
+			);
+			path = NSData;
+			sourceTree = "<group>";
+		};
 		66D98D3724163D01001CD859 /* PHAssetManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -246,13 +258,6 @@
 				66D98D3924163D01001CD859 /* JRPHAssetManager.m */,
 			);
 			path = PHAssetManager;
-			sourceTree = "<group>";
-		};
-		66D98D3B24163D43001CD859 /* JRImageDataManager */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = JRImageDataManager;
 			sourceTree = "<group>";
 		};
 		66DEB582240619A600C770B5 /* Class */ = {
@@ -436,6 +441,7 @@
 			files = (
 				66EBAAD0240E071A004E52B9 /* JRConfigTool.m in Sources */,
 				662F1FD5241234BA006ECB2A /* NSString+JRSize.m in Sources */,
+				66A894EA241777D40001C60C /* NSData+JRImageContentType.m in Sources */,
 				66D98D3E2417211E001CD859 /* JRStickerContent+JRGetData.m in Sources */,
 				668350A0240F81D000089728 /* JRDataImageView.m in Sources */,
 				66D98D3A24163D01001CD859 /* JRPHAssetManager.m in Sources */,
