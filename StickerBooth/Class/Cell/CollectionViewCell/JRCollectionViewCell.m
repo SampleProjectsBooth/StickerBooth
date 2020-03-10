@@ -119,7 +119,10 @@ static UIView *_jr_contenView = nil;
     UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
     
     CGRect covertRect = [_jr_subCollectionView convertRect:cell.frame toView:keyWindow];
-    
+    /** 主容器和cell的间距 */
+    CGFloat topMargin = [JRConfigTool shareInstance].itemMargin;
+    /** 长按cell的选择模式大小 */
+    covertRect = CGRectInset(covertRect, -topMargin/2, -topMargin/2);
     
     if (!_jr_contenView) {
         
@@ -139,31 +142,47 @@ static UIView *_jr_contenView = nil;
         }
         
     }
+    
+    /** 展示图片与主容器的间隔 */
     CGFloat margin = 8.f;
-
+    
     CGRect contentViewF = _jr_contenView.frame;
+    
     contentViewF.size = CGSizeMake(CGRectGetWidth(covertRect)*2, CGRectGetHeight(covertRect)*2);
+    /** 图片实际大小 */
     CGSize imageSize = cell.image.size;
+    /** 转换容器大小 */
     CGRect convertF = CGRectInset(contentViewF, margin, margin);
+    /** 实际比例  */
     CGFloat radio = CGRectGetWidth(convertF)/imageSize.width;
     if (imageSize.width > imageSize.height) {
         radio = CGRectGetHeight(convertF)/imageSize.height;
     }
-    
-    
+    /** 展示图片大小 */
     imageSize = CGSizeMake(roundf(imageSize.width * radio), roundf(imageSize.height * radio));
+    if (imageSize.width > (CGRectGetWidth(keyWindow.bounds) - margin*2)) {
+        radio = (CGRectGetWidth(keyWindow.bounds) - margin*2)/imageSize.width;
+        imageSize = CGSizeMake(roundf(imageSize.width * radio), roundf(imageSize.height * radio));
+    } else if (imageSize.height > (CGRectGetMinY(covertRect) - margin*2 - topMargin*2)) {
+        radio = ((CGRectGetMinY(covertRect) - margin*2 - topMargin*2) - margin*2)/imageSize.height;
+        imageSize = CGSizeMake(roundf(imageSize.width * radio), roundf(imageSize.height * radio));
+    }
+    
+    /** 根据展示大小确定主容器大小 */
     contentViewF.size = CGSizeMake(imageSize.width + margin*2, imageSize.height + margin*2);
-    contentViewF.origin = CGPointMake(CGRectGetMidX(covertRect) - CGRectGetWidth(contentViewF)/2, CGRectGetMinY(covertRect) - 10.f - CGRectGetHeight(contentViewF));
+    contentViewF.origin = CGPointMake(CGRectGetMidX(covertRect) - CGRectGetWidth(contentViewF)/2, CGRectGetMinY(covertRect) - topMargin - CGRectGetHeight(contentViewF));
 
+    /** 如果主容器x坐标超过当前屏幕 */
     if (CGRectGetMaxX(contentViewF) > CGRectGetWidth(keyWindow.bounds)) {
         CGFloat margin = CGRectGetMaxX(contentViewF) - CGRectGetWidth(keyWindow.bounds);
         contentViewF.origin.x -= margin;
     }
     
+    /** 主容器y坐标超过当前屏幕 */
     if (CGRectGetMinY(contentViewF) < 0) {
-        contentViewF.origin.y = 10.f + CGRectGetMaxY(covertRect);
+        contentViewF.origin.y = topMargin + CGRectGetMaxY(covertRect);
         if (CGRectGetMaxY(contentViewF) > CGRectGetHeight(keyWindow.bounds)) {
-            contentViewF.origin.y = CGRectGetMinY(covertRect) - 10.f - CGRectGetHeight(contentViewF);
+            contentViewF.origin.y = CGRectGetMinY(covertRect) - topMargin - CGRectGetHeight(contentViewF);
         }
     }
     
