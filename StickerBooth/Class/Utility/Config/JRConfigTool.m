@@ -58,6 +58,7 @@ static JRConfigTool *_tool = nil;
     _itemMargin = 10.f;
     _normalImage = nil;
     _failureImage = nil;
+    _concurrentQueue = dispatch_queue_create("djr.ConfigTool.queue", DISPATCH_QUEUE_CONCURRENT);
 }
 
 @end
