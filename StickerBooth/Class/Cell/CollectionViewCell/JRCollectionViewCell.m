@@ -115,8 +115,16 @@ static UIView *_jr_contenView = nil;
 - (void)show:(JRImageCollectionViewCell *)cell
 {
     if (!cell) {
+        _jr_contenView.hidden = YES;
         return;
     }
+    
+    JRStickerContent *obj = (JRStickerContent *)cell.cellData;
+    if (obj.state == JRStickerContentState_Fail) {
+        _jr_contenView.hidden = YES;
+        return;
+    }
+    
     UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
     
     CGRect covertRect = [_jr_subCollectionView convertRect:cell.frame toView:keyWindow];
@@ -197,7 +205,6 @@ static UIView *_jr_contenView = nil;
     
     _jr_showView.frame = CGRectMake(margin, margin, imageSize.width, imageSize.height);
     
-    JRStickerContent *obj = (JRStickerContent *)cell.cellData;
 #ifdef jr_NotSupperGif
     [obj jr_getImage:^(UIImage * _Nullable image) {
         _jr_showView.image = image;

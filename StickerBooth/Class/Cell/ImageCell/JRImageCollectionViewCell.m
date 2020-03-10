@@ -14,7 +14,7 @@
 #import "JRConfigTool.h"
 #import "JRDataImageView.h"
 #import "JRStickerHeader.h"
-
+#import "NSData+JRImageContentType.h"
 
 CGFloat const JR_kVideoBoomHeight = 25.f;
 @interface JRImageCollectionViewCell ()
@@ -78,46 +78,6 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     _queue = nil;
 }
 
-- (void)jr_getImageData:(void (^)(NSData * _Nullable, UIImage * _Nullable))completeBlock
-{
-    JRStickerContent *obj = (JRStickerContent *)self.cellData;
-    if (obj.state == JRStickerContentState_Fail) {
-        if (completeBlock) {
-            completeBlock(nil, nil);
-        }
-        return;
-    }
-    id itemData = obj.content;
-    __weak typeof(self) weakSelf = self;
-    if (obj.state == JRStickerContentState_Success) {
-        if ([itemData isKindOfClass:[NSURL class]]) {
-            NSURL *dataURL = (NSURL *)itemData;
-            if (!self.queue) {
-                self.queue = dispatch_queue_create("com.JRImageCollectionViewCell.queue", DISPATCH_QUEUE_SERIAL);
-            }
-            dispatch_async(self.queue, ^{
-                NSData *resultData = nil;
-                if ([[[dataURL scheme] lowercaseString] isEqualToString:@"file"]) {
-                    resultData = [NSData dataWithContentsOfURL:dataURL];
-                } else {
-                    resultData = [weakSelf dataFromCacheWithURL:dataURL];
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (completeBlock) {
-                        completeBlock(resultData, weakSelf.image);
-                    }
-                });
-            });
-        } else if ([itemData isKindOfClass:[PHAsset class]]) {
-            [JRPHAssetManager jr_GetPhotoDataWithAsset:itemData completion:^(NSData * _Nonnull data, NSDictionary * _Nonnull info, BOOL isDegraded) {
-                if (completeBlock) {
-                    completeBlock(data, weakSelf.image);
-                }
-            } progressHandler:nil];
-        }
-    }
-}
-
 - (UIImage *)image
 {
     return self.imageView.image;
@@ -138,7 +98,10 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     if (obj.type == JRStickerContentType_URLForFile) {
         NSURL *fileURL = (NSURL *)itemData;
         NSData *localData = [NSData dataWithContentsOfURL:fileURL];
-        if (localData) {
+        if ([NSData jr_imageFormatForImageData:localData] == JRImageFormatUndefined) {
+            obj.state = JRStickerContentState_Fail;
+            self.imageView.image = [JRConfigTool shareInstance].failureImage;
+        } else {
             obj.state = JRStickerContentState_Success;
 #ifdef jr_NotSupperGif
             self.bottomView.hidden = YES;
@@ -146,21 +109,23 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
             self.bottomView.hidden =  !self.imageView.isGif;
 #endif
             [self.imageView jr_dataForImage:localData];
-        } else {
-            obj.state = JRStickerContentState_Fail;
-            self.imageView.image = [JRConfigTool shareInstance].failureImage;
         }
     } else if (obj.type == JRStickerContentType_URLForHttp) {
         NSURL *httpURL = (NSURL *)itemData;
         NSData *httplocalData = [self dataFromCacheWithURL:httpURL];
         if (httplocalData) {
-            obj.state = JRStickerContentState_Success;
-            [self.imageView jr_dataForImage:httplocalData];
+            if ([NSData jr_imageFormatForImageData:httplocalData] == JRImageFormatUndefined) {
+                obj.state = JRStickerContentState_Fail;
+                self.imageView.image = [JRConfigTool shareInstance].failureImage;
+            } else {
+                obj.state = JRStickerContentState_Success;
+                [self.imageView jr_dataForImage:httplocalData];
 #ifdef jr_NotSupperGif
-            self.bottomView.hidden = YES;
+                self.bottomView.hidden = YES;
 #else
-            self.bottomView.hidden =  !self.imageView.isGif;
+                self.bottomView.hidden =  !self.imageView.isGif;
 #endif
+            }
         } else {
             self.progressView.hidden = NO;
             self.progressView.progress = 0.f;
@@ -175,13 +140,19 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
                         obj.state = JRStickerContentState_Fail;
                         weakSelf.imageView.image = [JRConfigTool shareInstance].failureImage;
                     } else {
-                        obj.state = JRStickerContentState_Success;
-                        [weakSelf.imageView jr_dataForImage:downloadData];
+                        if ([NSData jr_imageFormatForImageData:downloadData] == JRImageFormatUndefined) {
+                            obj.state = JRStickerContentState_Fail;
+                            weakSelf.imageView.image = [JRConfigTool shareInstance].failureImage;
+                        } else {
+                            
+                            obj.state = JRStickerContentState_Success;
+                            [weakSelf.imageView jr_dataForImage:downloadData];
 #ifdef jr_NotSupperGif
-                        weakSelf.bottomView.hidden = YES;
+                            weakSelf.bottomView.hidden = YES;
 #else
-                        weakSelf.bottomView.hidden =  !weakSelf.imageView.isGif;
+                            weakSelf.bottomView.hidden =  !weakSelf.imageView.isGif;
 #endif
+                        }
                     }
                 }
                 
