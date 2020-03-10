@@ -58,9 +58,10 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     self.progressView.center = self.contentView.center;
     self.bottomView.frame = CGRectMake(0, CGRectGetHeight(self.contentView.bounds) - JR_kVideoBoomHeight, CGRectGetWidth(self.contentView.bounds), JR_kVideoBoomHeight);
     self.bottomLab.frame = CGRectInset(self.bottomView.bounds, 2.5f, 5.f);
-    CGRect markRect = CGRectInset(self.contentView.bounds, -5.f, -5.f);
+    CGFloat markMargin = [JRConfigTool shareInstance].itemMargin/2;
+    CGRect markRect = CGRectInset(self.contentView.bounds, -markMargin, -markMargin);
     self.maskLayer.frame = markRect;
-    self.maskLayer.cornerRadius = CGRectGetWidth(markRect) * 0.8;
+    self.maskLayer.cornerRadius = CGRectGetWidth(markRect) * 0.05;
 
 }
 
@@ -227,8 +228,8 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
 {
     self.contentView.backgroundColor = [UIColor clearColor];
 
-    JRDataImageView *imageView = [[JRDataImageView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.contentView.bounds) - JR_kVideoBoomHeight, CGRectGetWidth(self.contentView.bounds), JR_kVideoBoomHeight)];
-    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    JRDataImageView *imageView = [[JRDataImageView alloc] initWithFrame:self.contentView.bounds];
+    imageView.contentMode = UIViewContentModeScaleAspectFit;
     imageView.clipsToBounds = YES;
     [self.contentView addSubview:imageView];
     self.imageView = imageView;
@@ -256,12 +257,13 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     [self.bottomView addSubview:lab];
     self.bottomLab = lab;
     
-    CGRect markRect = CGRectInset(self.contentView.bounds, -5.f, -5.f);
+    CGFloat markMargin = [JRConfigTool shareInstance].itemMargin/2;
+    CGRect markRect = CGRectInset(self.contentView.bounds, -markMargin, -markMargin);
     CAShapeLayer *maskLayer = [CAShapeLayer layer];
     maskLayer.bounds = markRect;
     maskLayer.hidden = YES;
-    maskLayer.cornerRadius = CGRectGetWidth(markRect) * 0.8;
-    maskLayer.backgroundColor = [UIColor colorWithWhite:1.f alpha:.5f].CGColor;
+    maskLayer.cornerRadius = CGRectGetWidth(markRect) * 0.05;
+    maskLayer.backgroundColor = [UIColor colorWithWhite:.5f alpha:.7f].CGColor;
     [self.contentView.layer insertSublayer:maskLayer below:self.imageView.layer];
     self.maskLayer = maskLayer;
 }

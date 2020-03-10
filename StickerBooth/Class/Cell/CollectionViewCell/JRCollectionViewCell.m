@@ -123,7 +123,7 @@ static UIView *_jr_contenView = nil;
         
         {
             UIView *contenView = [[UIView alloc] initWithFrame:CGRectZero];
-            contenView.backgroundColor = [UIColor grayColor];
+            contenView.backgroundColor = [UIColor whiteColor];
             contenView.hidden = YES;
             [keyWindow addSubview:contenView];
             [keyWindow bringSubviewToFront:contenView];
@@ -171,7 +171,7 @@ static UIView *_jr_contenView = nil;
 
     
     _jr_contenView.frame = contentViewF;
-    _jr_contenView.layer.cornerRadius = MAX(CGRectGetWidth(contentViewF), CGRectGetHeight(contentViewF)) * 0.8;
+    _jr_contenView.layer.cornerRadius = MIN(CGRectGetWidth(contentViewF), CGRectGetHeight(contentViewF)) * 0.05;
     
     _jr_showView.frame = CGRectMake(margin, margin, imageSize.width, imageSize.height);
     
