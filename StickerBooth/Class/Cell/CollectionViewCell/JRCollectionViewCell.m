@@ -14,7 +14,9 @@
 #import "JRStickerHeader.h"
 #import "JRStickerContent+JRGetData.h"
 #import "JRPHAssetManager.h"
-#import "UIView+LFDownloadManager.h"
+
+#import "NSObject+LFTipsGuideView.h"
+#import "NSBundle+LFMediaEditing.h"
 
 @interface JRCollectionViewCell () <LFEditCollectionViewDelegate>
 
@@ -42,15 +44,6 @@
     [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
-- (void)prepareForReuse
-{
-    [super prepareForReuse];
-    if (self.collectionView) {
-        self.collectionView.dataSources = @[];
-        [self.collectionView reloadData];
-    }
-}
-
 - (void)dealloc
 {
     [self.collectionView removeFromSuperview];
@@ -65,7 +58,14 @@
     if ([data isKindOfClass:[NSArray class]]) {
         self.collectionView.dataSources = @[data];
     }
-    [self.collectionView reloadData];
+    [self.collectionView performBatchUpdates:^{
+        [self.collectionView reloadData];
+    } completion:^(BOOL finished) {
+        UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        if (cell) {
+            [self lf_showInView:[UIApplication sharedApplication].keyWindow maskRects:@[[NSValue valueWithCGRect:[cell.superview convertRect:cell.frame toView:nil]]] withTips:@[[NSBundle LFME_localizedStringForKey:@"_LFME_UserGuide_StickerView_DisplayView_LongPress"]]];
+        }
+    }];
 }
 
 

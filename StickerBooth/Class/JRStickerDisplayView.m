@@ -107,22 +107,22 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     
 }
 
-- (void)loadDataSourceWithCache:(NSDictionary *)cache
+- (void)setCacheData:(id)cacheData
 {
-    if (cache) {
+    if ([cacheData isKindOfClass:[NSDictionary class]]) {
         NSArray *titles = @[];
-        if ([[cache allKeys] containsObject:jr_local_title_key]) {
-            titles = [cache objectForKey:jr_local_title_key];
+        if ([[cacheData allKeys] containsObject:jr_local_title_key]) {
+            titles = [cacheData objectForKey:jr_local_title_key];
         }
         NSArray *contents = @[];
-        if ([[cache allKeys] containsObject:jr_local_content_key]) {
-            contents = [cache objectForKey:jr_local_content_key];
+        if ([[cacheData allKeys] containsObject:jr_local_content_key]) {
+            contents = [cacheData objectForKey:jr_local_content_key];
         }
         [self setTitles:titles contents:contents];
     }
 }
 
-- (NSDictionary *)cache
+- (id)cacheData
 {
     if (!_contents || !_titles) {
         return nil;

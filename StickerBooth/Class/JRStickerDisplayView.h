@@ -31,18 +31,15 @@ typedef void(^JRDidSelectItemBlock)(NSData *data, UIImage *thumbnailImage);
 /** 加载失败图，为nil不显示 */
 @property (nonatomic, nullable) UIImage *failureImage;
 
-@property (nonatomic, readonly, nonnull) NSIndexPath *selectIndexPath;
+@property (nonatomic, readonly, nullable) NSIndexPath *selectIndexPath;
 
 /** 缓存，执行setTitles:contents:后才会有值 */
-@property (nonatomic, readonly, nonnull) NSDictionary *cache;
+@property (nonatomic, strong, nullable) id cacheData;
 
 /// 设置数据
 /// @param titles 标题
 /// @param contents 数据
 - (void)setTitles:(nonnull NSArray <NSString *>*)titles contents:(nonnull NSArray <NSArray *>*)contents;
-
-
-- (void)loadDataSourceWithCache:(NSDictionary *)cache;
 
 @end
 
