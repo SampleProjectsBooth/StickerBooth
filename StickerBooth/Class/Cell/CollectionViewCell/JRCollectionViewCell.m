@@ -53,6 +53,7 @@
 - (void)dealloc
 {
     [self.collectionView removeFromSuperview];
+    [self _removeDisplayView];
 }
 
 #pragma mark - Public Methods
