@@ -78,7 +78,8 @@
                         } else if (self.type == JRStickerContentType_URLForFile) {
                             resultData = [NSData dataWithContentsOfURL:self.content];
                         }
-                        UIImage *image = [resultData dataDecodedImageWithSize:[UIScreen mainScreen].bounds.size mode:UIViewContentModeScaleAspectFit];
+                        CGFloat maxLine = MAX(CGRectGetWidth([UIScreen mainScreen].bounds), CGRectGetHeight([UIScreen mainScreen].bounds));
+                        UIImage *image = [resultData dataDecodedImageWithSize:CGSizeMake(maxLine, maxLine) mode:UIViewContentModeScaleAspectFit];
                         dispatch_async(dispatch_get_main_queue(), ^{
                             completeBlock(image, NO);
                         });
