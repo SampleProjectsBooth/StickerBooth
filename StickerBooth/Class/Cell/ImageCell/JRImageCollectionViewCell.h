@@ -17,8 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setCellData:(nullable id)data;
 
-- (void)clearData;
-
 - (void)showMaskLayer:(BOOL)isShow;
 
 - (void)resetForDownloadFail;

@@ -68,7 +68,7 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-    self.imageView.image = [JRConfigTool shareInstance].normalImage;
+    self.imageView.image = nil;
     self.progressView.progress = 0;
     self.progressView.hidden = YES;
 }
@@ -129,6 +129,7 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
             [self _download:obj];
         }
     } else if (obj.type == JRStickerContentType_PHAsset) {
+        self.imageView.image = [JRConfigTool shareInstance].normalImage;
         self.progressView.hidden = NO;
         self.progressView.progress = 0.f;
 #ifdef jr_NotSupperGif
@@ -152,10 +153,6 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     }
 }
 
-- (void)clearData
-{
-    [self lf_downloadCancel];
-}
 
 - (void)showMaskLayer:(BOOL)isShow
 {
@@ -220,6 +217,7 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     if (content.type != JRStickerContentType_URLForHttp) {
         return;
     }
+    self.imageView.image = [JRConfigTool shareInstance].normalImage;
     NSURL *httpURL = (NSURL *)content.content;
     self.progressView.hidden = NO;
     if (content.type == JRStickerContentState_Downloading) {

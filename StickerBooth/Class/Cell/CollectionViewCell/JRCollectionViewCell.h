@@ -16,8 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak, nonatomic) id<JRCollectionViewDelegate>delegate;
 
-- (void)clearData;
-
 @end
 
 @protocol JRCollectionViewDelegate <NSObject>

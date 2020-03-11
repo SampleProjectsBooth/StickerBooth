@@ -43,13 +43,13 @@
 {
     ViewController *vc = [[ViewController alloc] init];
     
-//    if (!self.testDict) {
-//        vc.dicasdsa = ^(NSDictionary *dict) {
-//            self.testDict = dict;
-//        };
-//    } else {
-//        vc.testDict = self.testDict;
-//    }
+    if (!self.testDict) {
+        vc.dicasdsa = ^(NSDictionary *dict) {
+            self.testDict = dict;
+        };
+    } else {
+        vc.testDict = self.testDict;
+    }
     [self.navigationController pushViewController:vc animated:YES];
 }
 @end

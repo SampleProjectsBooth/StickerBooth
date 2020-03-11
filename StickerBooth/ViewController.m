@@ -55,7 +55,7 @@
     
 
     NSArray *objs = @[a2, a1, array1, [ViewController jr_GetAllPhotos]];
-    objs = @[a1, a1, [ViewController jr_GetAllPhotos]];
+//    objs = @[a1, a1, [ViewController jr_GetAllPhotos]];
     self.myView.selectTitleColor = [UIColor blueColor];
     if (self.testDict) {
         [self.myView loadDataSourceWithCache:self.testDict];

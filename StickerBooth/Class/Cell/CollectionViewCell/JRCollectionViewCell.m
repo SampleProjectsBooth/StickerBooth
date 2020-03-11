@@ -68,14 +68,6 @@
     [self.collectionView reloadData];
 }
 
-- (void)clearData
-{
-    NSArray <UICollectionViewCell *>*array = [self.collectionView visibleCells];
-    for (UICollectionViewCell *obj in array) {
-        JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)obj;
-        [imageCell clearData];
-    }
-}
 
 #pragma mark - Private Methods
 - (void)_initSubView
@@ -312,13 +304,6 @@ static JRStickerContent *_showStickerContent = nil;
             break;
     }
     
-}
-
-
-- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)cell;
-    [imageCell clearData];
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
