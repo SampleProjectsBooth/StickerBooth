@@ -13,7 +13,6 @@
 #import "JRConfigTool.h"
 #import "JRStickerHeader.h"
 #import "NSString+JRSize.h"
-#import "UIView+JRLayer.h"
 
 #define JRStickerDisplayView_bind_var(varType, varName, setterName) \
 JRSticker_bind_var_getter(varType, varName, [JRConfigTool shareInstance]) \
@@ -217,8 +216,25 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     if (self.titles.count) {
         [self.collectionView setContentOffset:CGPointMake((self.collectionView.frame.size.width) * currentIndex, 0) animated:NO];
     }
-    
-    [self.titleCollectionView jr_addBorder:JRBoardDirection_Bottom color:[UIColor colorWithWhite:.5f alpha:.8f] borderWidth:1.f];
+    [self _addbottomLineAtView:self.titleCollectionView color:[UIColor colorWithWhite:.5f alpha:.8f] borderWidth:1.f];
+}
+
+- (void)_addbottomLineAtView:(UIView *)view color:(UIColor *)color borderWidth:(CGFloat)borderWidth
+{
+    NSInteger tag = 10086;
+    NSString *key = @"com.djr.layer";
+    for (CALayer *layer in view.layer.sublayers) {
+        int layerTag = [[layer valueForKey:key] intValue];
+        if (layerTag == tag) {
+            [layer removeFromSuperlayer];
+            break;
+        }
+    }
+    CALayer *TopBorder = [CALayer layer];
+    [TopBorder setValue:@(tag) forKey:key];
+    TopBorder.frame = CGRectMake(0.f, CGRectGetHeight(view.frame)- borderWidth, CGRectGetWidth(view.frame), borderWidth);
+    TopBorder.backgroundColor = color.CGColor;
+    [view.layer addSublayer:TopBorder];
 }
 
 #pragma mark - @JRCollectionViewDelegate
