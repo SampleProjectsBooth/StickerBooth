@@ -10,6 +10,7 @@
 #import "JRConfigTool.h"
 #import "LFDownloadManager.h"
 #import "JRPHAssetManager.h"
+#import "NSData+CompressDecodedImage.h"
 
 @implementation JRStickerContent (JRGetData)
 
@@ -77,7 +78,7 @@
                         } else if (self.type == JRStickerContentType_URLForFile) {
                             resultData = [NSData dataWithContentsOfURL:self.content];
                         }
-                        UIImage *image = [UIImage imageWithData:resultData];
+                        UIImage *image = [resultData dataDecodedImageWithSize:[UIScreen mainScreen].bounds.size mode:UIViewContentModeScaleAspectFit];
                         dispatch_async(dispatch_get_main_queue(), ^{
                             completeBlock(image, NO);
                         });
