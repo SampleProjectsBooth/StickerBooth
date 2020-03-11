@@ -12,7 +12,6 @@
 #import "JRStickerContent.h"
 #import "JRConfigTool.h"
 #import "JRStickerHeader.h"
-#import "NSString+JRSize.h"
 
 #define JRStickerDisplayView_bind_var(varType, varName, setterName) \
 JRSticker_bind_var_getter(varType, varName, [JRConfigTool shareInstance]) \
@@ -355,14 +354,27 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     if (collectionView == self.titleCollectionView) {
         NSString *item = [self.titles objectAtIndex:indexPath.row];
         CGFloat width = JR_V_ScrollView_Min_width;
-        width = [item jr_textWidthForHeight:JR_V_ScrollView_height-JR_O_margin*2 fontSize:[UIFont systemFontOfSize:16.f]] + 20.f;
-        
+        width = [JRStickerDisplayView _caculateString:item height:JR_V_ScrollView_height-JR_O_margin*2 font:[UIFont systemFontOfSize:16.f]] + 20.f;        
         width = width > JR_V_ScrollView_Min_width ? width : JR_V_ScrollView_Min_width;
        
         return CGSizeMake(width, JR_V_ScrollView_height-JR_O_margin*2);
     }
     return size;
 }
+
+ ///获取文字高度
++ (CGFloat)_caculateString:(NSString *)string height:(CGFloat)height font:(UIFont *)font
+{
+    
+    if (string.length == 0) {
+        return 20.f;
+    }
+    NSDictionary *dict = @{NSFontAttributeName:font};
+    CGRect rect = [string boundingRectWithSize:CGSizeMake(MAXFLOAT, height) options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin attributes:dict context:nil];
+    //返回计算出的行高
+    return rect.size.width;
+}
+
 
 
 @end

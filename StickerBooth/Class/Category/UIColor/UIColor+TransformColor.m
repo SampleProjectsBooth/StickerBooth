@@ -1,14 +1,14 @@
 //
-//  UIColor+JRColor.m
+//  UIColor+TransformColor.m
 //  StickerBooth
 //
 //  Created by djr on 2020/3/6.
 //  Copyright © 2020 lfsampleprojects. All rights reserved.
 //
 
-#import "UIColor+JRColor.h"
+#import "UIColor+TransformColor.h"
 
-@implementation UIColor (JRColor)
+@implementation UIColor (TransformColor)
 
 + (UIColor *)colorTransformFrom:(UIColor*)fromColor to:(UIColor *)toColor progress:(CGFloat)progress {
 

@@ -19,8 +19,7 @@
 		3B897F1B240616B000A3E854 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F1A240616B000A3E854 /* main.m */; };
 		3B897F2724065A6D00A3E854 /* JRStickerContent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B897F2624065A6D00A3E854 /* JRStickerContent.m */; };
 		661DAA50240C92C600C2D074 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 661DAA4F240C92C600C2D074 /* RootViewController.m */; };
-		662F1FD5241234BA006ECB2A /* NSString+JRSize.m in Sources */ = {isa = PBXBuildFile; fileRef = 662F1FD4241234BA006ECB2A /* NSString+JRSize.m */; };
-		663B3151241221E8006F8639 /* UIColor+JRColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 663B3150241221E8006F8639 /* UIColor+JRColor.m */; };
+		663B3151241221E8006F8639 /* UIColor+TransformColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 663B3150241221E8006F8639 /* UIColor+TransformColor.m */; };
 		668350A0240F81D000089728 /* JRDataImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6683509F240F81D000089728 /* JRDataImageView.m */; };
 		66A894EA241777D40001C60C /* NSData+JRImageContentType.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A894E9241777D40001C60C /* NSData+JRImageContentType.m */; };
 		66D98D3A24163D01001CD859 /* JRPHAssetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 66D98D3924163D01001CD859 /* JRPHAssetManager.m */; };
@@ -65,10 +64,8 @@
 		66024874240F3C9A00F561D1 /* JRStickerHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRStickerHeader.h; sourceTree = "<group>"; };
 		661DAA4E240C92C600C2D074 /* RootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
 		661DAA4F240C92C600C2D074 /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
-		662F1FD3241234B9006ECB2A /* NSString+JRSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+JRSize.h"; sourceTree = "<group>"; };
-		662F1FD4241234BA006ECB2A /* NSString+JRSize.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+JRSize.m"; sourceTree = "<group>"; };
-		663B314F241221E8006F8639 /* UIColor+JRColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+JRColor.h"; sourceTree = "<group>"; };
-		663B3150241221E8006F8639 /* UIColor+JRColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+JRColor.m"; sourceTree = "<group>"; };
+		663B314F241221E8006F8639 /* UIColor+TransformColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+TransformColor.h"; sourceTree = "<group>"; };
+		663B3150241221E8006F8639 /* UIColor+TransformColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+TransformColor.m"; sourceTree = "<group>"; };
 		6683509E240F81D000089728 /* JRDataImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRDataImageView.h; sourceTree = "<group>"; };
 		6683509F240F81D000089728 /* JRDataImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRDataImageView.m; sourceTree = "<group>"; };
 		66A894E8241777D40001C60C /* NSData+JRImageContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+JRImageContentType.h"; sourceTree = "<group>"; };
@@ -189,7 +186,6 @@
 			isa = PBXGroup;
 			children = (
 				66A894EB2417788A0001C60C /* NSData */,
-				662F1FD22412349B006ECB2A /* NSString */,
 				663B314E241221D5006F8639 /* UIColor */,
 			);
 			path = Category;
@@ -214,20 +210,11 @@
 			path = Utility;
 			sourceTree = "<group>";
 		};
-		662F1FD22412349B006ECB2A /* NSString */ = {
-			isa = PBXGroup;
-			children = (
-				662F1FD3241234B9006ECB2A /* NSString+JRSize.h */,
-				662F1FD4241234BA006ECB2A /* NSString+JRSize.m */,
-			);
-			path = NSString;
-			sourceTree = "<group>";
-		};
 		663B314E241221D5006F8639 /* UIColor */ = {
 			isa = PBXGroup;
 			children = (
-				663B314F241221E8006F8639 /* UIColor+JRColor.h */,
-				663B3150241221E8006F8639 /* UIColor+JRColor.m */,
+				663B314F241221E8006F8639 /* UIColor+TransformColor.h */,
+				663B3150241221E8006F8639 /* UIColor+TransformColor.m */,
 			);
 			path = UIColor;
 			sourceTree = "<group>";
@@ -432,7 +419,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				66EBAAD0240E071A004E52B9 /* JRConfigTool.m in Sources */,
-				662F1FD5241234BA006ECB2A /* NSString+JRSize.m in Sources */,
 				66A894EA241777D40001C60C /* NSData+JRImageContentType.m in Sources */,
 				66D98D3E2417211E001CD859 /* JRStickerContent+JRGetData.m in Sources */,
 				668350A0240F81D000089728 /* JRDataImageView.m in Sources */,
@@ -441,7 +427,7 @@
 				3B897F10240616A900A3E854 /* ViewController.m in Sources */,
 				66DEB5A9240619A600C770B5 /* JRStickerDisplayView.m in Sources */,
 				3B7ACD66240F52310074DC40 /* LFImageCoder.m in Sources */,
-				663B3151241221E8006F8639 /* UIColor+JRColor.m in Sources */,
+				663B3151241221E8006F8639 /* UIColor+TransformColor.m in Sources */,
 				66DEB5AD240619A600C770B5 /* JRBaseCollectionViewCell.m in Sources */,
 				3B897F0A240616A900A3E854 /* AppDelegate.m in Sources */,
 				66DEB5AC240619A600C770B5 /* JRCollectionViewCell.m in Sources */,

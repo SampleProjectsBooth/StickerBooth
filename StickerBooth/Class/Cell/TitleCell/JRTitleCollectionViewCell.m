@@ -8,7 +8,7 @@
 
 #import "JRTitleCollectionViewCell.h"
 #import "JRConfigTool.h"
-#import "UIColor+JRColor.h"
+#import "UIColor+TransformColor.h"
 
 @interface JRTitleCollectionViewCell ()
 

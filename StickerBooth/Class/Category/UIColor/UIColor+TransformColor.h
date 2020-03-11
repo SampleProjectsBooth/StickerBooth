@@ -1,5 +1,5 @@
 //
-//  NSString+JRSize.h
+//  UIColor+TransformColor.h
 //  StickerBooth
 //
 //  Created by djr on 2020/3/6.
@@ -7,13 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSString (JRSize)
+@interface UIColor (TransformColor)
 
-- (CGFloat)jr_textWidthForHeight:(CGFloat)height fontSize:(UIFont *)font;
++ (nonnull UIColor *)colorTransformFrom:(nonnull UIColor *)fromColor to:(nonnull UIColor *)toColor progress:(CGFloat)progress;
 
 @end
 
