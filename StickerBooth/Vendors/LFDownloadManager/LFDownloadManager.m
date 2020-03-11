@@ -425,7 +425,6 @@ static const char * LFURLSessionOperationKey = "LFURLSessionOperationKey";
     }
     
     NSMutableArray <LFDownloadInfo *>* downloadList = self.downloadDictionary[URL];
-    NSLog(@"downloadList.count:%ld", downloadList.count);
     for (LFDownloadInfo *info in downloadList) {
         if (info.complete) {
             info.complete(data, nil, info.downloadURL);

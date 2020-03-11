@@ -29,8 +29,6 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
 
 @property (strong, nonatomic) CAShapeLayer *maskLayer;
 
-@property (nonatomic, strong) dispatch_queue_t queue;
-
 @end
 
 @implementation JRImageCollectionViewCell
@@ -75,7 +73,7 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
 
 - (void)dealloc
 {
-    _queue = nil;
+    [self lf_downloadCancel];
 }
 
 - (UIImage *)image
