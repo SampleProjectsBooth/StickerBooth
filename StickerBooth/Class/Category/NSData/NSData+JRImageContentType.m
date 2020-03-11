@@ -8,19 +8,15 @@
  */
 
 #import "NSData+JRImageContentType.h"
-#if SD_MAC
-#import <CoreServices/CoreServices.h>
-#else
 #import <MobileCoreServices/MobileCoreServices.h>
-#endif
 
 // AVFileTypeHEIC/AVFileTypeHEIF is defined in AVFoundation via iOS 11, we use this without import AVFoundation
-#define kSDUTTypeHEIC ((__bridge CFStringRef)@"public.heic")
-#define kSDUTTypeHEIF ((__bridge CFStringRef)@"public.heif")
+#define kJRUTTypeHEIC ((__bridge CFStringRef)@"public.heic")
+#define kJRUTTypeHEIF ((__bridge CFStringRef)@"public.heif")
 // HEIC Sequence (Animated Image)
-#define kSDUTTypeHEICS ((__bridge CFStringRef)@"public.heics")
+#define kJRUTTypeHEICS ((__bridge CFStringRef)@"public.heics")
 // Currently Image/IO does not support WebP
-#define kSDUTTypeWebP ((__bridge CFStringRef)@"public.webp")
+#define kJRUTTypeWebP ((__bridge CFStringRef)@"public.webp")
 
 @implementation NSData (JRImageContentType)
 
@@ -89,13 +85,13 @@
             UTType = kUTTypeTIFF;
             break;
         case JRImageFormatWebP:
-            UTType = kSDUTTypeWebP;
+            UTType = kJRUTTypeWebP;
             break;
         case JRImageFormatHEIC:
-            UTType = kSDUTTypeHEIC;
+            UTType = kJRUTTypeHEIC;
             break;
         case JRImageFormatHEIF:
-            UTType = kSDUTTypeHEIF;
+            UTType = kJRUTTypeHEIF;
             break;
         default:
             // default is kUTTypePNG
@@ -118,11 +114,11 @@
         imageFormat = JRImageFormatGIF;
     } else if (CFStringCompare(uttype, kUTTypeTIFF, 0) == kCFCompareEqualTo) {
         imageFormat = JRImageFormatTIFF;
-    } else if (CFStringCompare(uttype, kSDUTTypeWebP, 0) == kCFCompareEqualTo) {
+    } else if (CFStringCompare(uttype, kJRUTTypeWebP, 0) == kCFCompareEqualTo) {
         imageFormat = JRImageFormatWebP;
-    } else if (CFStringCompare(uttype, kSDUTTypeHEIC, 0) == kCFCompareEqualTo) {
+    } else if (CFStringCompare(uttype, kJRUTTypeHEIC, 0) == kCFCompareEqualTo) {
         imageFormat = JRImageFormatHEIC;
-    } else if (CFStringCompare(uttype, kSDUTTypeHEIF, 0) == kCFCompareEqualTo) {
+    } else if (CFStringCompare(uttype, kJRUTTypeHEIF, 0) == kCFCompareEqualTo) {
         imageFormat = JRImageFormatHEIF;
     } else {
         imageFormat = JRImageFormatUndefined;

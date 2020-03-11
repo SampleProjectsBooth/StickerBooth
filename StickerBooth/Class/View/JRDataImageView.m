@@ -9,20 +9,7 @@
 #import "JRDataImageView.h"
 #import "LFImageCoder.h"
 #import "JRConfigTool.h"
-
-inline static UIImageOrientation JRMEGifView_UIImageOrientationFromEXIFValue(NSInteger value) {
-    switch (value) {
-        case kCGImagePropertyOrientationUp: return UIImageOrientationUp;
-        case kCGImagePropertyOrientationDown: return UIImageOrientationDown;
-        case kCGImagePropertyOrientationLeft: return UIImageOrientationLeft;
-        case kCGImagePropertyOrientationRight: return UIImageOrientationRight;
-        case kCGImagePropertyOrientationUpMirrored: return UIImageOrientationUpMirrored;
-        case kCGImagePropertyOrientationDownMirrored: return UIImageOrientationDownMirrored;
-        case kCGImagePropertyOrientationLeftMirrored: return UIImageOrientationLeftMirrored;
-        case kCGImagePropertyOrientationRightMirrored: return UIImageOrientationRightMirrored;
-        default: return UIImageOrientationUp;
-    }
-}
+#import "JRStickerHeader.h"
 
 @interface JRDataImageView ()
 

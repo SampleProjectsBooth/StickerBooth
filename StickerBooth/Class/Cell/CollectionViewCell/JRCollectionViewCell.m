@@ -206,9 +206,11 @@ static UIView *_jr_contenView = nil;
     _jr_showView.frame = CGRectMake(margin, margin, imageSize.width, imageSize.height);
     
 #ifdef jr_NotSupperGif
-    [obj jr_getImage:^(UIImage * _Nullable image) {
-        _jr_showView.image = image;
-        _jr_contenView.hidden = NO;
+    [obj jr_getImage:^(UIImage * _Nullable image, BOOL isDegraded) {
+        if (!isDegraded) {
+            _jr_showView.image = image;
+            _jr_contenView.hidden = NO;
+        }
     }];
     
 #else

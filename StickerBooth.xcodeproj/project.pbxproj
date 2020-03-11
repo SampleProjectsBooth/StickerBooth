@@ -177,6 +177,8 @@
 		3B897F2424065A4D00A3E854 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				66D98D3C2417211E001CD859 /* JRStickerContent+JRGetData.h */,
+				66D98D3D2417211E001CD859 /* JRStickerContent+JRGetData.m */,
 				3B897F2524065A6D00A3E854 /* JRStickerContent.h */,
 				3B897F2624065A6D00A3E854 /* JRStickerContent.m */,
 			);
@@ -190,8 +192,6 @@
 				662F1FD22412349B006ECB2A /* NSString */,
 				663B3152241222D3006F8639 /* UIView */,
 				663B314E241221D5006F8639 /* UIColor */,
-				66D98D3C2417211E001CD859 /* JRStickerContent+JRGetData.h */,
-				66D98D3D2417211E001CD859 /* JRStickerContent+JRGetData.m */,
 			);
 			path = Category;
 			sourceTree = "<group>";

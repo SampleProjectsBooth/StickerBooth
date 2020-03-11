@@ -26,12 +26,12 @@ static const JRImageFormat JRImageFormatHEIF      = 6;
 /**
  NSData category about the image content type and UTI.
  */
-@interface NSData (ImageContentType)
+@interface NSData (JRImageContentType)
 
 /**
  *  Return image format
  *
- *  @param data the input image data
+ *  @param data the input image dataJR
  *
  *  @return the image format as `SDImageFormat` (enum)
  */
