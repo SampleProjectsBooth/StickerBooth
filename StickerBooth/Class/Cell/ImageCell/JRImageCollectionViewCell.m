@@ -94,7 +94,6 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
         return;
     }
     id itemData = obj.content;
-    __weak typeof(self) weakSelf = self;
     if (obj.type == JRStickerContentType_URLForFile) {
         NSURL *fileURL = (NSURL *)itemData;
         NSData *localData = [NSData dataWithContentsOfURL:fileURL];
@@ -127,36 +126,7 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
 #endif
             }
         } else {
-            self.progressView.hidden = NO;
-            self.progressView.progress = 0.f;
-            [self lf_downloadImageWithURL:httpURL progress:^(CGFloat progress, NSURL * _Nonnull URL) {
-                if ([URL.absoluteString isEqualToString:httpURL.absoluteString]) {
-                    weakSelf.progressView.progress = progress;
-                }
-            } completed:^(NSData * _Nonnull downloadData, NSError * _Nonnull error, NSURL * _Nonnull URL) {
-                if ([URL.absoluteString isEqualToString:httpURL.absoluteString]) {
-                    weakSelf.progressView.hidden = YES;
-                    if (error || downloadData == nil) {
-                        obj.state = JRStickerContentState_Fail;
-                        weakSelf.imageView.image = [JRConfigTool shareInstance].failureImage;
-                    } else {
-                        if ([NSData jr_imageFormatForImageData:downloadData] == JRImageFormatUndefined) {
-                            obj.state = JRStickerContentState_Fail;
-                            weakSelf.imageView.image = [JRConfigTool shareInstance].failureImage;
-                        } else {
-                            
-                            obj.state = JRStickerContentState_Success;
-                            [weakSelf.imageView jr_dataForImage:downloadData];
-#ifdef jr_NotSupperGif
-                            weakSelf.bottomView.hidden = YES;
-#else
-                            weakSelf.bottomView.hidden =  !weakSelf.imageView.isGif;
-#endif
-                        }
-                    }
-                }
-                
-            }];
+            [self _download:obj];
         }
     } else if (obj.type == JRStickerContentType_PHAsset) {
         self.progressView.hidden = NO;
@@ -192,6 +162,14 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     self.maskLayer.hidden = !isShow;
 }
 
+- (void)resetForDownloadFail
+{
+    JRStickerContent *content = (JRStickerContent *)self.cellData;
+    if (content.state == JRStickerContentState_Fail) {
+        content.state = JRStickerContentState_Downloading;
+        [self _download:content];
+    }
+}
 #pragma mark - Private Methods
 - (void)_initSubViewAndDataSources
 {
@@ -237,5 +215,46 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     self.maskLayer = maskLayer;
 }
 
+- (void)_download:(JRStickerContent *)content
+{
+    if (content.type != JRStickerContentType_URLForHttp) {
+        return;
+    }
+    NSURL *httpURL = (NSURL *)content.content;
+    self.progressView.hidden = NO;
+    if (content.type == JRStickerContentState_Downloading) {
+        content.progress = 0.f;
+    }
+    self.progressView.progress = content.progress;
+    __weak typeof(self) weakSelf = self;
+    [self lf_downloadImageWithURL:httpURL progress:^(CGFloat progress, NSURL * _Nonnull URL) {
+        if ([URL.absoluteString isEqualToString:httpURL.absoluteString]) {
+            weakSelf.progressView.progress = content.progress = progress;
+        }
+    } completed:^(NSData * _Nonnull downloadData, NSError * _Nonnull error, NSURL * _Nonnull URL) {
+        if ([URL.absoluteString isEqualToString:httpURL.absoluteString]) {
+            weakSelf.progressView.hidden = YES;
+            if (error || downloadData == nil) {
+                content.state = JRStickerContentState_Fail;
+                weakSelf.imageView.image = [JRConfigTool shareInstance].failureImage;
+            } else {
+                if ([NSData jr_imageFormatForImageData:downloadData] == JRImageFormatUndefined) {
+                    content.state = JRStickerContentState_Fail;
+                    weakSelf.imageView.image = [JRConfigTool shareInstance].failureImage;
+                } else {
+                    
+                    content.state = JRStickerContentState_Success;
+                    [weakSelf.imageView jr_dataForImage:downloadData];
+#ifdef jr_NotSupperGif
+                    weakSelf.bottomView.hidden = YES;
+#else
+                    weakSelf.bottomView.hidden =  !weakSelf.imageView.isGif;
+#endif
+                }
+            }
+        }
+        
+    }];
 
+}
 @end

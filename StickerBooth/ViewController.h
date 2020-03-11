@@ -10,6 +10,9 @@
 
 @interface ViewController : UIViewController
 
+@property (strong, nonatomic) NSDictionary *testDict;
+
+@property (strong, nonatomic) void(^dicasdsa)(NSDictionary *dict);
 
 @end
 

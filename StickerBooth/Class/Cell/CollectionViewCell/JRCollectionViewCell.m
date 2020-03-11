@@ -14,6 +14,7 @@
 #import "JRStickerHeader.h"
 #import "JRStickerContent+JRGetData.h"
 #import "JRPHAssetManager.h"
+#import "UIView+LFDownloadManager.h"
 
 @interface JRCollectionViewCell () <LFEditCollectionViewDelegate>
 
@@ -94,12 +95,16 @@
         [imageCell setCellData:item];
     } didSelectItemAtIndexPath:^(NSIndexPath * _Nonnull indexPath, JRStickerContent * _Nonnull item) {
         JRImageCollectionViewCell *imageCell = (JRImageCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
+        JRStickerContent *obj = (JRStickerContent *)imageCell.cellData;
         if (item.state == JRStickerContentState_Success) {
             if ([weakSelf.delegate respondsToSelector:@selector(didSelectData:thumbnailImage:index:)]) {
-                JRStickerContent *obj = (JRStickerContent *)imageCell.cellData;
                 [obj jr_getImageAndData:^(NSData * _Nullable data, UIImage * _Nullable image) {
                     [weakSelf.delegate didSelectData:data thumbnailImage:image index:indexPath.row];
                 }];
+            }
+        } else if (item.state == JRStickerContentState_Fail) {
+            if (obj.type == JRStickerContentType_URLForHttp) {
+                [imageCell resetForDownloadFail];
             }
         }
     }];

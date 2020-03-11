@@ -9,6 +9,8 @@
 #import "JRStickerContent.h"
 #import <Photos/Photos.h>
 
+
+
 @interface JRStickerContent ()
 
 
@@ -27,6 +29,7 @@
     if (self) {
         _content = content;
         _state = JRStickerContentState_None;
+        _progress = 0.f;
     }
     return self;
 }

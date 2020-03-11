@@ -33,10 +33,16 @@ typedef void(^JRDidSelectItemBlock)(NSData *data, UIImage *thumbnailImage);
 
 @property (nonatomic, readonly, nonnull) NSIndexPath *selectIndexPath;
 
+/** 缓存，执行setTitles:contents:后才会有值 */
+@property (nonatomic, readonly, nonnull) NSDictionary *cache;
+
 /// 设置数据
 /// @param titles 标题
 /// @param contents 数据
 - (void)setTitles:(nonnull NSArray <NSString *>*)titles contents:(nonnull NSArray <NSArray *>*)contents;
+
+
+- (void)loadDataSourceWithCache:(NSDictionary *)cache;
 
 @end
 

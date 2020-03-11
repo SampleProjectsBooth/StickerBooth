@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, JRStickerContentState) {
     JRStickerContentState_None = 0,
+    JRStickerContentState_Downloading,
     JRStickerContentState_Success,
     JRStickerContentState_Fail,
 };
@@ -28,6 +29,10 @@ typedef NS_ENUM(NSInteger, JRStickerContentType) {
 
 /** 内容 */
 @property (nonatomic, strong) id content;
+
+/** 进度 */
+@property (nonatomic, assign) float progress;
+
 /** 状态 */
 @property (nonatomic, assign) JRStickerContentState state;
 
@@ -35,6 +40,7 @@ typedef NS_ENUM(NSInteger, JRStickerContentType) {
 
 + (instancetype)stickerContentWithContent:(id)content;
 - (instancetype)initWithContent:(id)content;
+
 
 @end
 

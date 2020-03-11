@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-
+#import "LFDownloadManager.h"
 @interface AppDelegate ()
 
 @end
@@ -17,6 +17,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+//    [LFDownloadManager shareLFDownloadManager].cacheData = NO;
     return YES;
 }
 

@@ -37,7 +37,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <connections>
-                                    <segue destination="BYZ-38-t0r" kind="push" id="N8N-NW-TUf"/>
+                                    <action selector="_dsadasdasdasdas:" destination="qWr-OI-D6z" eventType="touchUpInside" id="nf3-2B-SfB"/>
                                 </connections>
                             </button>
                         </subviews>

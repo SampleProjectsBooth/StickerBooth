@@ -8,8 +8,11 @@
 
 #import "RootViewController.h"
 #import "JRTestManager.h"
+#import "ViewController.h"
 
 @interface RootViewController ()
+
+@property (strong, nonatomic) NSDictionary *testDict;
 
 @end
 
@@ -34,5 +37,19 @@
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     NSLog(@"aabbcc:%ld", [JRTestManager shareInstance].count);
+}
+
+- (IBAction)_dsadasdasdasdas:(id)sender
+{
+    ViewController *vc = [[ViewController alloc] init];
+    
+//    if (!self.testDict) {
+//        vc.dicasdsa = ^(NSDictionary *dict) {
+//            self.testDict = dict;
+//        };
+//    } else {
+//        vc.testDict = self.testDict;
+//    }
+    [self.navigationController pushViewController:vc animated:YES];
 }
 @end

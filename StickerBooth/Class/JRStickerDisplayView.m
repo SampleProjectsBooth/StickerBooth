@@ -13,6 +13,9 @@
 #import "JRConfigTool.h"
 #import "JRStickerHeader.h"
 
+NSString * const jr_local_title_key = @"jr_local_title_key";
+NSString * const jr_local_content_key = @"jr_local_content_key";
+
 #define JRStickerDisplayView_bind_var(varType, varName, setterName) \
 JRSticker_bind_var_getter(varType, varName, [JRConfigTool shareInstance]) \
 JRSticker_bind_var_setter(varType, varName, setterName, [JRConfigTool shareInstance])
@@ -89,7 +92,11 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     for (NSArray *subContents in contents) {
         NSMutableArray *s_contents = [NSMutableArray arrayWithCapacity:subContents.count];
         for (id content in subContents) {
-            [s_contents addObject:[JRStickerContent stickerContentWithContent:content]];
+            if ([content isKindOfClass:[JRStickerContent class]]) {
+                [s_contents addObject:content];
+            } else {
+                [s_contents addObject:[JRStickerContent stickerContentWithContent:content]];
+            }
         }
         [r_contents addObject:[s_contents copy]];
     }
@@ -97,6 +104,30 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     if (_titles.count) {
         [self _initSubViews];
     }
+    
+}
+
+- (void)loadDataSourceWithCache:(NSDictionary *)cache
+{
+    if (cache) {
+        NSArray *titles = @[];
+        if ([[cache allKeys] containsObject:jr_local_title_key]) {
+            titles = [cache objectForKey:jr_local_title_key];
+        }
+        NSArray *contents = @[];
+        if ([[cache allKeys] containsObject:jr_local_content_key]) {
+            contents = [cache objectForKey:jr_local_content_key];
+        }
+        [self setTitles:titles contents:contents];
+    }
+}
+
+- (NSDictionary *)cache
+{
+    if (!_contents || !_titles) {
+        return nil;
+    }
+    return @{jr_local_title_key:_titles, jr_local_content_key:_contents};
 }
 
 #pragma mark - @Private Methods
@@ -354,7 +385,7 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     if (collectionView == self.titleCollectionView) {
         NSString *item = [self.titles objectAtIndex:indexPath.row];
         CGFloat width = JR_V_ScrollView_Min_width;
-        width = [JRStickerDisplayView _caculateString:item height:JR_V_ScrollView_height-JR_O_margin*2 font:[UIFont systemFontOfSize:16.f]] + 20.f;        
+        width = [JRStickerDisplayView _caculateString:item height:JR_V_ScrollView_height-JR_O_margin*2 font:[UIFont systemFontOfSize:16.f]] + 20.f;
         width = width > JR_V_ScrollView_Min_width ? width : JR_V_ScrollView_Min_width;
        
         return CGSizeMake(width, JR_V_ScrollView_height-JR_O_margin*2);

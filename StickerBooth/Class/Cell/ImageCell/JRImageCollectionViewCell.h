@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showMaskLayer:(BOOL)isShow;
 
+- (void)resetForDownloadFail;
+
 @end
 
 NS_ASSUME_NONNULL_END
