@@ -96,8 +96,8 @@
         if (item.state == JRStickerContentState_Success) {
             if ([weakSelf.delegate respondsToSelector:@selector(didSelectData:thumbnailImage:index:)]) {
                 JRStickerContent *obj = (JRStickerContent *)imageCell.cellData;
-                [obj jr_getData:^(NSData * _Nullable data) {
-                    [weakSelf.delegate didSelectData:data thumbnailImage:imageCell.image index:indexPath.row];
+                [obj jr_getImageAndData:^(NSData * _Nullable data, UIImage * _Nullable image) {
+                    [weakSelf.delegate didSelectData:data thumbnailImage:image index:indexPath.row];
                 }];
             }
         }
@@ -207,26 +207,22 @@ static UIView *_jr_contenView = nil;
     
 #ifdef jr_NotSupperGif
     [obj jr_getImage:^(UIImage * _Nullable image, BOOL isDegraded) {
-        if (!isDegraded) {
-            _jr_showView.image = image;
-            _jr_contenView.hidden = NO;
-        }
+        _jr_showView.image = image;
+        _jr_contenView.hidden = NO;
     }];
     
 #else
     if (obj.type == JRStickerContentType_PHAsset) {
-        if (obj == JRStickerContentType_PHAsset) {
-            if ([JRPHAssetManager jr_IsGif:obj.content]) {
-                [obj jr_getImage:^(UIImage * _Nullable image) {
-                    _jr_showView.image = image;
-                    _jr_contenView.hidden = NO;
-                }];
-            } else {
-                [obj jr_getData:^(NSData * _Nullable data) {
-                    _jr_showView.data = data;
-                    _jr_contenView.hidden = NO;
-                }];
-            }
+        if ([JRPHAssetManager jr_IsGif:obj.content]) {
+            [obj jr_getImage:^(UIImage * _Nullable image, BOOL isDegraded) {
+                _jr_showView.image = image;
+                _jr_contenView.hidden = NO;
+            }];
+        } else {
+            [obj jr_getData:^(NSData * _Nullable data) {
+                _jr_showView.data = data;
+                _jr_contenView.hidden = NO;
+            }];
         }
     } else {
         [obj jr_getData:^(NSData * _Nullable data) {
