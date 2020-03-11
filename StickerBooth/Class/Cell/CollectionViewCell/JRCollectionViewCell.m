@@ -111,16 +111,29 @@
 
 static LFMEGifView *_jr_showView = nil;
 static UIView *_jr_contenView = nil;
+static JRStickerContent *_showStickerContent = nil;
 
-- (void)show:(JRImageCollectionViewCell *)cell
+- (void)_removeDisplayView
+{
+    if (_jr_contenView) {
+        [_jr_contenView removeFromSuperview];
+        [_jr_showView removeFromSuperview];
+        _jr_showView = nil;
+        _jr_contenView = nil;
+        _jr_subCollectionView = nil;
+        _showStickerContent = nil;
+    }
+}
+
+- (void)_showDisplayView:(JRImageCollectionViewCell *)cell
 {
     if (!cell) {
         _jr_contenView.hidden = YES;
         return;
     }
     
-    JRStickerContent *obj = (JRStickerContent *)cell.cellData;
-    if (obj.state == JRStickerContentState_Fail) {
+    _showStickerContent = (JRStickerContent *)cell.cellData;
+    if (_showStickerContent.state == JRStickerContentState_Fail) {
         _jr_contenView.hidden = YES;
         return;
     }
@@ -205,29 +218,38 @@ static UIView *_jr_contenView = nil;
     
     _jr_showView.frame = CGRectMake(margin, margin, imageSize.width, imageSize.height);
     
+    
 #ifdef jr_NotSupperGif
-    [obj jr_getImage:^(UIImage * _Nullable image, BOOL isDegraded) {
-        _jr_showView.image = image;
-        _jr_contenView.hidden = NO;
+    [_showStickerContent jr_getImage:^(UIImage * _Nullable image, BOOL isDegraded) {
+        if (_showStickerContent == cell.cellData) {
+            _jr_showView.image = image;
+            _jr_contenView.hidden = NO;
+        }
     }];
     
 #else
-    if (obj.type == JRStickerContentType_PHAsset) {
-        if ([JRPHAssetManager jr_IsGif:obj.content]) {
-            [obj jr_getImage:^(UIImage * _Nullable image, BOOL isDegraded) {
-                _jr_showView.image = image;
-                _jr_contenView.hidden = NO;
+    if (_showStickerContent.type == JRStickerContentType_PHAsset) {
+        if ([JRPHAssetManager jr_IsGif:_showStickerContent.content]) {
+            [_showStickerContent jr_getImage:^(UIImage * _Nullable image, BOOL isDegraded) {
+                if (_showStickerContent == cell.cellData) {
+                    _jr_showView.image = image;
+                    _jr_contenView.hidden = NO;
+                }
             }];
         } else {
-            [obj jr_getData:^(NSData * _Nullable data) {
-                _jr_showView.data = data;
-                _jr_contenView.hidden = NO;
+            [_showStickerContent jr_getData:^(NSData * _Nullable data) {
+                if (_showStickerContent == cell.cellData) {
+                    _jr_showView.data = data;
+                    _jr_contenView.hidden = NO;
+                }
             }];
         }
     } else {
-        [obj jr_getData:^(NSData * _Nullable data) {
-            _jr_showView.data = data;
-            _jr_contenView.hidden = NO;
+        [_showStickerContent jr_getData:^(NSData * _Nullable data) {
+            if (_showStickerContent == cell.cellData) {
+                _jr_showView.data = data;
+                _jr_contenView.hidden = NO;
+            }
         }];
     }
 #endif
@@ -253,7 +275,7 @@ static UICollectionView *_jr_subCollectionView = nil;
             self.longPressIndexPath = [self.collectionView indexPathForItemAtPoint:location];
             JRImageCollectionViewCell *cell = (JRImageCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.longPressIndexPath];
             [cell showMaskLayer:YES];
-            [self show:cell];
+            [self _showDisplayView:cell];
         }
             break;
         case UIGestureRecognizerStateChanged:
@@ -266,15 +288,9 @@ static UICollectionView *_jr_subCollectionView = nil;
                 self.longPressIndexPath = changeIndexPath;
                 JRImageCollectionViewCell *cell = (JRImageCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.longPressIndexPath];
                 [cell showMaskLayer:YES];
-                [self show:cell];
+                [self _showDisplayView:cell];
             } else if (changeIndexPath == nil) {
-                if (_jr_contenView) {
-                    [_jr_contenView removeFromSuperview];
-                    [_jr_showView removeFromSuperview];
-                    _jr_showView = nil;
-                    _jr_contenView = nil;
-                    _jr_subCollectionView = nil;
-                }
+                [self _removeDisplayView];
                 if (self.longPressIndexPath) {
                     JRImageCollectionViewCell *cell = (JRImageCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.longPressIndexPath];
                     [cell showMaskLayer:NO];
@@ -288,13 +304,7 @@ static UICollectionView *_jr_subCollectionView = nil;
         case UIGestureRecognizerStateFailed:
         case UIGestureRecognizerStatePossible:
         {
-            if (_jr_contenView) {
-                [_jr_contenView removeFromSuperview];
-                [_jr_showView removeFromSuperview];
-                _jr_showView = nil;
-                _jr_contenView = nil;
-                _jr_subCollectionView = nil;
-            }
+            [self _removeDisplayView];
             if (self.longPressIndexPath) {
                 JRImageCollectionViewCell *cell = (JRImageCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.longPressIndexPath];
                 [cell showMaskLayer:NO];
