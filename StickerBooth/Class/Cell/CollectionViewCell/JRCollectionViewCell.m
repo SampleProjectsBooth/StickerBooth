@@ -126,7 +126,6 @@ static JRStickerContent *_showStickerContent = nil;
         [_jr_showView removeFromSuperview];
         _jr_showView = nil;
         _jr_contenView = nil;
-        _jr_subCollectionView = nil;
         _showStickerContent = nil;
     }
 }
@@ -146,7 +145,7 @@ static JRStickerContent *_showStickerContent = nil;
     
     UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
     
-    CGRect covertRect = [_jr_subCollectionView convertRect:cell.frame toView:keyWindow];
+    CGRect covertRect = [cell.superview convertRect:cell.frame toView:keyWindow];
     /** 主容器和cell的间距 */
     CGFloat topMargin = [JRConfigTool shareInstance].itemMargin;
     /** 长按cell的选择模式大小 */
@@ -261,20 +260,13 @@ static JRStickerContent *_showStickerContent = nil;
 #endif
 }
 
-static UICollectionView *_jr_subCollectionView = nil;
-
 - (void)_longpress:(UILongPressGestureRecognizer *)longpress
 {
-    if (!_jr_subCollectionView) {
-        for (UIView *subView in self.collectionView.subviews) {
-            if ([subView isKindOfClass:[UICollectionView class]]) {
-                _jr_subCollectionView = (UICollectionView *)subView;
-                break;
-            }
-        }
-    }
     CGPoint location = [longpress locationInView:self];
-    location = [self convertPoint:location toView:_jr_subCollectionView];
+    location = [self convertPoint:location toView:self.collectionView];
+    location.x += self.collectionView.contentOffset.x;
+    location.y += self.collectionView.contentOffset.y;
+    
     switch (longpress.state) {
         case UIGestureRecognizerStateBegan:
         {
