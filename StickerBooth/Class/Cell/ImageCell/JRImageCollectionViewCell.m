@@ -218,11 +218,7 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     if (content.type != JRStickerContentType_URLForHttp) {
         return;
     }
-    
-    if (content.state == JRStickerContentState_Success || content.state == JRStickerContentState_Downloading) {
-        return;
-    }
-    
+        
     content.state = JRStickerContentState_Downloading;
     
     self.imageView.image = [JRConfigTool shareInstance].normalImage;
