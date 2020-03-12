@@ -27,6 +27,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
+    self.view.backgroundColor = [UIColor whiteColor];
+    
     [JRConfigTool shareInstance].normalImage = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"success" ofType:@"png"]];
     
     [JRConfigTool shareInstance].failureImage = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"png"]];
@@ -61,7 +63,7 @@
         self.myView.cacheData = self.testDict;
     } else {
         //@[@"阿斯顿发", @"威武人", @"科维克金人", @"文氛围"]
-        [self.myView setTitles:@[@"阿斯顿发", @"威武人", @"科维克金人", @"文氛围"] contents:objs];
+        [self.myView setTitles:@[@"阿斯顿发", @"威武人", @"科维克金人", @"abcdeabcdeabcdeabcdeabcdeabcde"] contents:objs];
     }
     self.myView.didSelectBlock = ^(NSData * _Nullable data, UIImage * _Nullable thumbnailImage) {
         NSLog(@"%@", [[objs objectAtIndex:weakSelf.myView.selectIndexPath.section] objectAtIndex:weakSelf.myView.selectIndexPath.row]);

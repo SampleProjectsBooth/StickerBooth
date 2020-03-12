@@ -12,6 +12,7 @@
 #import "JRStickerContent.h"
 #import "JRConfigTool.h"
 #import "JRStickerHeader.h"
+#import "JRCollectionViewTitleModel.h"
 
 NSString * const jr_local_title_key = @"jr_local_title_key";
 NSString * const jr_local_content_key = @"jr_local_content_key";
@@ -20,22 +21,16 @@ NSString * const jr_local_content_key = @"jr_local_content_key";
 JRSticker_bind_var_getter(varType, varName, [JRConfigTool shareInstance]) \
 JRSticker_bind_var_setter(varType, varName, setterName, [JRConfigTool shareInstance])
 
-/** title高度 */
-CGFloat const JR_V_ScrollView_height = 50.f;
-CGFloat const JR_V_ScrollView_Min_width = 60.f;
-
-/** 按钮宽度 */
-CGFloat const JR_V_Button_width = 80.f;
 /** 按钮在scrollView的间距 */
-CGFloat const JR_O_margin = 1.5f;
+CGFloat const JR_O_margin = 15.f;
 
 @interface JRStickerDisplayView () <JRCollectionViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource>
 
-@property (readonly , nonatomic, nonnull) NSArray <NSString *>*titles;
+@property (readonly , nonatomic, nonnull) NSArray <JRCollectionViewTitleModel *>*titles;
 
 @property (readonly , nonatomic, nonnull) NSArray <NSArray <JRStickerContent *>*>*contents;
 
-@property (copy, nonatomic) NSString *selectTitle;
+@property (strong, nonatomic) JRCollectionViewTitleModel *selectTitleMoel;
 
 @property (assign, nonatomic) BOOL stopAnimation;
 
@@ -44,6 +39,8 @@ CGFloat const JR_O_margin = 1.5f;
 @property (weak, nonatomic) UICollectionView *collectionView;
 
 @property (weak, nonatomic) UICollectionView *titleCollectionView;
+
+@property (weak, nonatomic) UIView *lineView;
 
 @end
 
@@ -82,8 +79,13 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
 #pragma mark - @Public Methods
 - (void)setTitles:(NSArray *)titles contents:(NSArray<NSArray *> *)contents
 {
-    _titles = titles;
-    _selectTitle = [titles firstObject];
+    NSMutableArray *titleModels = [NSMutableArray arrayWithCapacity:titles.count];
+    for (NSString *string in titles) {
+        JRCollectionViewTitleModel *model = [[JRCollectionViewTitleModel alloc] initWithTitle:string];
+        [titleModels addObject:model];
+    }
+    _titles = [titleModels copy];
+    _selectTitleMoel = [_titles firstObject];
     NSMutableArray *r_contents = [NSMutableArray arrayWithCapacity:contents.count];
     for (NSArray *subContents in contents) {
         NSMutableArray *s_contents = [NSMutableArray arrayWithCapacity:subContents.count];
@@ -107,8 +109,12 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
             titles = [cacheData objectForKey:jr_local_title_key];
         }
         
-        _titles = titles;
-        _selectTitle = [titles firstObject];
+        NSMutableArray *titleModels = [NSMutableArray arrayWithCapacity:titles.count];
+        for (NSDictionary *dic in titles) {
+            [titleModels addObject:[[JRCollectionViewTitleModel alloc] initWithDictionary:dic]];
+        }
+        _titles = [titleModels copy];
+        _selectTitleMoel = [_titles firstObject];
 
         NSArray *contents = @[];
         if ([[cacheData allKeys] containsObject:jr_local_content_key]) {
@@ -150,10 +156,18 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
         }
         cacheContents = [array copy];
     }
+    
+    NSArray *cacheTitles = nil;
     if (!_titles) {
-        _titles = @[];
+        cacheTitles = @[];
+    } else {
+        NSMutableArray *array = [NSMutableArray arrayWithCapacity:_titles.count];
+        for (JRCollectionViewTitleModel *model in _titles) {
+            [array addObject:model.dictionary];
+        }
+        cacheTitles = [array copy];
     }
-    return @{jr_local_title_key:_titles, jr_local_content_key:cacheContents};
+    return @{jr_local_title_key:cacheTitles, jr_local_content_key:cacheContents};
 }
 
 #pragma mark - @Private Methods
@@ -170,7 +184,9 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
         tFlowLayout.minimumInteritemSpacing = JR_O_margin;
         tFlowLayout.sectionInset = UIEdgeInsetsMake(JR_O_margin, JR_O_margin, JR_O_margin, JR_O_margin);
         
-        UICollectionView *titleView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:tFlowLayout];
+        JRCollectionViewTitleModel *model = [self.titles firstObject];
+        CGFloat height = model.size.height + JR_O_margin*2;
+        UICollectionView *titleView = [[UICollectionView alloc] initWithFrame:CGRectMake(0.f, 0.f, CGRectGetWidth(self.frame), height) collectionViewLayout:tFlowLayout];
         titleView.showsVerticalScrollIndicator = NO;
         titleView.showsHorizontalScrollIndicator = NO;
         titleView.backgroundColor = [UIColor clearColor];
@@ -181,6 +197,13 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
         
         [self.titleCollectionView registerClass:[JRTitleCollectionViewCell class] forCellWithReuseIdentifier:[JRTitleCollectionViewCell identifier]];
 
+    }
+    
+    {
+        UIView *marginView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, CGRectGetWidth(self.titleCollectionView.bounds), .3f)];
+        marginView.backgroundColor = [UIColor colorWithWhite:1.f alpha:0.8f];
+        [self addSubview:marginView];
+        self.lineView = marginView;
     }
     
     //九宫格
@@ -209,22 +232,22 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
 }
 
 #pragma mark 点击切换文字
-- (void)_changeTitle:(NSString *)string
+- (void)_changeTitle:(JRCollectionViewTitleModel *)model
 {
-    if ([self.selectTitle isEqualToString:string]) {
+    if ([self.selectTitleMoel isEqual:model]) {
         return;
     }
     self.stopAnimation = YES;
-    NSUInteger oldIndex = [self.titles indexOfObject:self.selectTitle];
-    NSUInteger selectIndex = [self.titles indexOfObject:string];
-    self.selectTitle = string;
+    NSUInteger oldIndex = [self.titles indexOfObject:self.selectTitleMoel];
+    NSUInteger selectIndex = [self.titles indexOfObject:model];
+    self.selectTitleMoel = model;
     [self.titleCollectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:oldIndex inSection:0], [NSIndexPath indexPathForRow:selectIndex inSection:0]]];
 }
 
 #pragma mark 切换文字动画效果
 - (void)_changeTitleAnimotionProgress:(CGFloat)progress
 {
-    NSUInteger _selectedIndex = [self.titles indexOfObject:self.selectTitle];
+    NSUInteger _selectedIndex = [self.titles indexOfObject:self.selectTitleMoel];
     //获取下一个index
     NSInteger targetIndex = progress < 0 ? _selectedIndex - 1 : _selectedIndex + 1;
     if (targetIndex < 0 || targetIndex >= [self.titles count]) return;
@@ -237,63 +260,49 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     
     [targetCell showAnimationOfProgress:progress select:YES];
 
-
 }
 
 #pragma mark 适配横竖屏
 - (void)_customLayoutSubviews
 {
     self.stopAnimation = YES;
-    NSInteger currentIndex = [self.titles indexOfObject:self.selectTitle];
+    
+    NSInteger currentIndex = [self.titles indexOfObject:self.selectTitleMoel];
 
     CGRect topViewR = self.titleCollectionView.frame;
 
-    if (CGRectEqualToRect(topViewR, CGRectZero)) {
-        topViewR = CGRectMake(0.f, 0.f, CGRectGetWidth(self.frame), JR_V_ScrollView_height);
-    }
     topViewR.size.width = CGRectGetWidth(self.frame);
     self.titleCollectionView.frame = topViewR;
     [self.titleCollectionView.collectionViewLayout invalidateLayout];
     
+    CGRect lineViewF = self.lineView.frame;
+    lineViewF.origin.y = CGRectGetMaxY(self.titleCollectionView.frame);
+    lineViewF.size.width = CGRectGetWidth(self.titleCollectionView.frame);
+    self.lineView.frame = lineViewF;
+    
     CGRect collectionViewR = self.collectionView.frame;
     if (CGRectEqualToRect(collectionViewR, CGRectZero)) {
-        collectionViewR = CGRectMake(0.f, JR_V_ScrollView_height, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame) - JR_V_ScrollView_height);
+        collectionViewR = CGRectMake(0.f, CGRectGetMaxY(lineViewF), CGRectGetWidth(self.frame), CGRectGetHeight(self.frame) - CGRectGetMaxY(lineViewF));
     }
-    collectionViewR.size = CGSizeMake(CGRectGetWidth(self.frame), CGRectGetHeight(self.frame) - JR_V_ScrollView_height);
+    
+    collectionViewR.size = CGSizeMake(CGRectGetWidth(self.frame), CGRectGetHeight(self.frame) - CGRectGetMaxY(lineViewF));
     UICollectionViewFlowLayout *flowLayout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
     flowLayout.itemSize = collectionViewR.size;
     self.collectionView.frame = collectionViewR;
     [self.collectionView setCollectionViewLayout:flowLayout];
     self.collectionView.contentSize = CGSizeMake(self.titles.count * (self.collectionView.frame.size.width), 0.f);
     [self.collectionView.collectionViewLayout invalidateLayout];
+    
     if (self.titles.count) {
         [self.collectionView setContentOffset:CGPointMake((self.collectionView.frame.size.width) * currentIndex, 0) animated:NO];
     }
-    [self _addbottomLineAtView:self.titleCollectionView color:[UIColor colorWithWhite:.5f alpha:.8f] borderWidth:1.f];
 }
 
-- (void)_addbottomLineAtView:(UIView *)view color:(UIColor *)color borderWidth:(CGFloat)borderWidth
-{
-    NSInteger tag = 10086;
-    NSString *key = @"com.djr.layer";
-    for (CALayer *layer in view.layer.sublayers) {
-        int layerTag = [[layer valueForKey:key] intValue];
-        if (layerTag == tag) {
-            [layer removeFromSuperlayer];
-            break;
-        }
-    }
-    CALayer *TopBorder = [CALayer layer];
-    [TopBorder setValue:@(tag) forKey:key];
-    TopBorder.frame = CGRectMake(0.f, CGRectGetHeight(view.frame)- borderWidth, CGRectGetWidth(view.frame), borderWidth);
-    TopBorder.backgroundColor = color.CGColor;
-    [view.layer addSublayer:TopBorder];
-}
 
 #pragma mark - @JRCollectionViewDelegate
 - (void)didSelectData:(nullable NSData *)data thumbnailImage:(nullable UIImage *)thumbnailImage index:(NSInteger)index
 {
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:[self.titles indexOfObject:self.selectTitle]];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:[self.titles indexOfObject:self.selectTitleMoel]];
     _selectIndexPath = indexPath;
     if (self.didSelectBlock) {
         self.didSelectBlock(data, thumbnailImage);
@@ -313,13 +322,20 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
         if (self.stopAnimation) {
             return;
         }
-        CGFloat value = scrollView.contentOffset.x/scrollView.bounds.size.width - [self.titles indexOfObject:self.selectTitle];
+        NSInteger currentIndex = [self.titles indexOfObject:self.selectTitleMoel];
+        NSIndexPath *currentIndexPath = [NSIndexPath indexPathForRow:currentIndex inSection:0];
+        CGFloat value = scrollView.contentOffset.x/scrollView.bounds.size.width - [self.titles indexOfObject:self.selectTitleMoel];
         [self _changeTitleAnimotionProgress:value];
         CGFloat index = scrollView.contentOffset.x/scrollView.bounds.size.width;
         if (isnan(index)) {
             index = 0.f;
         }
-        self.selectTitle = [self.titles objectAtIndex:index];
+        self.selectTitleMoel = [self.titles objectAtIndex:index];
+        UICollectionViewCell *cell = [self.titleCollectionView cellForItemAtIndexPath:currentIndexPath];
+        CGRect convertF = [self.titleCollectionView convertRect:cell.frame toView:self];
+        if (!CGRectContainsRect(convertF, self.titleCollectionView.frame)) {
+            [self.titleCollectionView scrollToItemAtIndexPath:currentIndexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+        }
     }
 }
 
@@ -375,7 +391,7 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
         resultCell = imageCell;
     } else if (self.titleCollectionView == collectionView) {
         
-        NSString *item = [self.titles objectAtIndex:indexPath.row];
+        JRCollectionViewTitleModel *item = [self.titles objectAtIndex:indexPath.row];
         
         identifier = [JRTitleCollectionViewCell identifier];
         JRTitleCollectionViewCell *cell = (JRTitleCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
@@ -383,7 +399,7 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
         [cell setCellData:item];
         cell.backgroundColor =  [UIColor clearColor];
         [cell showAnimationOfProgress:1.f select:NO];
-        if ([self.selectTitle isEqualToString:item]) {
+        if ([self.selectTitleMoel isEqual:item]) {
             [cell showAnimationOfProgress:1.f select:YES];
         }
         
@@ -397,7 +413,7 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (collectionView == self.titleCollectionView) {
-        NSString *item = [self.titles objectAtIndex:indexPath.row];
+        JRCollectionViewTitleModel *item = [self.titles objectAtIndex:indexPath.row];
         [self _changeTitle:item];
         [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
     }
@@ -407,29 +423,12 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
 {
     CGSize size = [(UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout itemSize];
     if (collectionView == self.titleCollectionView) {
-        NSString *item = [self.titles objectAtIndex:indexPath.row];
-        CGFloat width = JR_V_ScrollView_Min_width;
-        width = [JRStickerDisplayView _caculateString:item height:JR_V_ScrollView_height-JR_O_margin*2 font:[UIFont systemFontOfSize:16.f]] + 20.f;
-        width = width > JR_V_ScrollView_Min_width ? width : JR_V_ScrollView_Min_width;
-       
-        return CGSizeMake(width, JR_V_ScrollView_height-JR_O_margin*2);
+        JRCollectionViewTitleModel *item = [self.titles objectAtIndex:indexPath.row];
+        size = item.size;
+        size.width += 20.f;
+        return size;
     }
     return size;
 }
-
- ///获取文字高度
-+ (CGFloat)_caculateString:(NSString *)string height:(CGFloat)height font:(UIFont *)font
-{
-    
-    if (string.length == 0) {
-        return 20.f;
-    }
-    NSDictionary *dict = @{NSFontAttributeName:font};
-    CGRect rect = [string boundingRectWithSize:CGSizeMake(MAXFLOAT, height) options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin attributes:dict context:nil];
-    //返回计算出的行高
-    return rect.size.width;
-}
-
-
 
 @end

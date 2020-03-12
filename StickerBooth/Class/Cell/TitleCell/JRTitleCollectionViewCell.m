@@ -9,6 +9,7 @@
 #import "JRTitleCollectionViewCell.h"
 #import "JRConfigTool.h"
 #import "UIColor+TransformColor.h"
+#import "JRCollectionViewTitleModel.h"
 
 @interface JRTitleCollectionViewCell ()
 
@@ -43,8 +44,10 @@
 - (void)setCellData:(id)data
 {
     [super setCellData:data];
-    if ([data isKindOfClass:[NSString class]]) {
-        self.label.text = data;
+    if ([data isKindOfClass:[JRCollectionViewTitleModel class]]) {
+        JRCollectionViewTitleModel *model = (JRCollectionViewTitleModel *)data;
+        self.label.text = model.title;
+        self.label.font = model.font;
     }
 }
 
@@ -64,7 +67,6 @@
     [self.contentView addSubview:lable];
     self.label = lable;
     self.label.numberOfLines = 1.f;
-    self.label.font = [UIFont systemFontOfSize:16.f];
     self.label.textAlignment = NSTextAlignmentCenter;
     self.label.textColor = [UIColor whiteColor];
 }
