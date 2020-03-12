@@ -88,11 +88,7 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     for (NSArray *subContents in contents) {
         NSMutableArray *s_contents = [NSMutableArray arrayWithCapacity:subContents.count];
         for (id content in subContents) {
-            if ([content isKindOfClass:[NSDictionary class]]) {
-                [s_contents addObject:[[JRStickerContent alloc] initWithDictionary:content]];
-            } else {
-                [s_contents addObject:[JRStickerContent stickerContentWithContent:content]];
-            }
+            [s_contents addObject:[JRStickerContent stickerContentWithContent:content]];
         }
         [r_contents addObject:[s_contents copy]];
     }
@@ -110,11 +106,31 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
         if ([[cacheData allKeys] containsObject:jr_local_title_key]) {
             titles = [cacheData objectForKey:jr_local_title_key];
         }
+        
+        _titles = titles;
+        _selectTitle = [titles firstObject];
+
         NSArray *contents = @[];
         if ([[cacheData allKeys] containsObject:jr_local_content_key]) {
             contents = [cacheData objectForKey:jr_local_content_key];
         }
-        [self setTitles:titles contents:contents];
+        
+        
+        NSMutableArray *r_contents = [NSMutableArray arrayWithCapacity:contents.count];
+
+        for (NSArray *subContents in contents) {
+            NSMutableArray *s_contents = [NSMutableArray arrayWithCapacity:subContents.count];
+            for (NSDictionary *dic in subContents) {
+                [s_contents addObject:[[JRStickerContent alloc] initWithDictionary:dic]];
+            }
+            [r_contents addObject:[s_contents copy]];
+        }
+        
+        _contents = [r_contents copy];
+        if (_titles.count) {
+            [self _initSubViews];
+        }
+
     }
 }
 
@@ -199,7 +215,7 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
         return;
     }
     self.stopAnimation = YES;
-    NSUInteger oldIndex = [self.titles indexOfObject:_selectTitle];
+    NSUInteger oldIndex = [self.titles indexOfObject:self.selectTitle];
     NSUInteger selectIndex = [self.titles indexOfObject:string];
     self.selectTitle = string;
     [self.titleCollectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:oldIndex inSection:0], [NSIndexPath indexPathForRow:selectIndex inSection:0]]];

@@ -54,13 +54,12 @@ NSString * const JRStickerContent_state = @"JRStickerContent_state";
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary
 {
-    if ([[dictionary allKeys] containsObject:JRStickerContent_content]) {
-        self = [self initWithContent:[dictionary objectForKey:JRStickerContent_content]];
-        if (self) {
-            _state = [[dictionary objectForKey:JRStickerContent_state] integerValue];
-        } return self;
-    }
-    return nil;
+    self = [self init];
+    if (self) {
+        _content = [dictionary objectForKey:JRStickerContent_content];
+        _progress = 0.f;
+        _state = [[dictionary objectForKey:JRStickerContent_state] integerValue];
+    } return self;
 }
 
 - (NSDictionary *)dictionary
