@@ -109,9 +109,6 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
         }
     } else if (obj.type == JRStickerContentType_URLForHttp) {
         NSURL *httpURL = (NSURL *)itemData;
-        if (obj.state == JRStickerContentState_Success) {
-            
-        }
         NSData *httplocalData = [self dataFromCacheWithURL:httpURL];
         if (httplocalData) {
             if ([NSData jr_imageFormatForImageData:httplocalData] == JRImageFormatUndefined) {
