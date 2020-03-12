@@ -41,8 +41,6 @@ CGFloat const JR_O_margin = 1.5f;
 
 @property (strong, nonatomic, nullable) NSIndexPath *selectIndexPath;
 
-@property (strong, nonatomic) NSMapTable *cells;
-
 @property (weak, nonatomic) UICollectionView *collectionView;
 
 @property (weak, nonatomic) UICollectionView *titleCollectionView;
@@ -56,7 +54,6 @@ CGFloat const JR_O_margin = 1.5f;
     self = [super initWithFrame:frame];
     if (self) {
         _stopAnimation = YES;
-        _cells = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsWeakMemory valueOptions:NSPointerFunctionsStrongMemory capacity:1];
         self.backgroundColor = [UIColor blackColor];
     } return self;
 }
@@ -69,7 +66,6 @@ CGFloat const JR_O_margin = 1.5f;
 
 - (void)dealloc
 {
-    [self.cells removeAllObjects];
     [self.titleCollectionView removeFromSuperview];
     [self.collectionView removeFromSuperview];
     self.titleCollectionView = nil;
@@ -92,8 +88,8 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     for (NSArray *subContents in contents) {
         NSMutableArray *s_contents = [NSMutableArray arrayWithCapacity:subContents.count];
         for (id content in subContents) {
-            if ([content isKindOfClass:[JRStickerContent class]]) {
-                [s_contents addObject:content];
+            if ([content isKindOfClass:[NSDictionary class]]) {
+                [s_contents addObject:[[JRStickerContent alloc] initWithDictionary:content]];
             } else {
                 [s_contents addObject:[JRStickerContent stickerContentWithContent:content]];
             }
@@ -124,10 +120,24 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
 
 - (id)cacheData
 {
-    if (!_contents || !_titles) {
-        return nil;
+    NSArray *cacheContents = nil;
+    if (!_contents ) {
+        cacheContents = @[];
+    } else {
+        NSMutableArray *array = [NSMutableArray arrayWithCapacity:_contents.count];
+        for (NSArray *subContents in _contents) {
+            NSMutableArray *subArray = [NSMutableArray arrayWithCapacity:subContents.count];
+            for (JRStickerContent *obj in subContents) {
+                [subArray addObject:obj.dictionary];
+            }
+            [array addObject:[subArray copy]];
+        }
+        cacheContents = [array copy];
     }
-    return @{jr_local_title_key:_titles, jr_local_content_key:_contents};
+    if (!_titles) {
+        _titles = @[];
+    }
+    return @{jr_local_title_key:_titles, jr_local_content_key:cacheContents};
 }
 
 #pragma mark - @Private Methods
@@ -177,10 +187,7 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
         }
         [self addSubview:collectionView];
         self.collectionView = collectionView;
-        for (NSUInteger i = 0; i < _titles.count; i ++) {
-            NSString *identifier = [NSString stringWithFormat:@"%@abc%lu", [JRTitleCollectionViewCell identifier], (unsigned long)i];
-            [self.collectionView registerClass:[JRCollectionViewCell class] forCellWithReuseIdentifier:identifier];
-        }
+        [self.collectionView registerClass:[JRCollectionViewCell class] forCellWithReuseIdentifier:[JRCollectionViewCell identifier]];
     }
 
 }
@@ -278,6 +285,11 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     _selectIndexPath = nil;
 }
 
+- (void)didEndReloadData:(JRCollectionViewCell *)cell
+{
+    
+}
+
 #pragma mark - @UIScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -335,18 +347,14 @@ JRStickerDisplayView_bind_var(UIImage *, failureImage, setFailureImage);
     UICollectionViewCell *resultCell = nil;
     NSString *identifier = nil;
     if (self.collectionView == collectionView) {
-        identifier = [NSString stringWithFormat:@"%@abc%lu", [JRTitleCollectionViewCell identifier], (unsigned long)indexPath.row];
-        JRCollectionViewCell *imageCell = [self.cells objectForKey:identifier];
-        if (!imageCell) {
-            imageCell = (JRCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-            imageCell.delegate = self;
-            imageCell.backgroundColor = [UIColor clearColor];
-            [self.cells setObject:imageCell forKey:identifier];
-            if (self.contents.count > indexPath.row) {
-                [imageCell setCellData:[self.contents objectAtIndex:indexPath.row]];
-            } else {
-                [imageCell setCellData:nil];
-            }
+        identifier = [JRCollectionViewCell identifier];
+        JRCollectionViewCell *imageCell = (JRCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
+        imageCell.delegate = self;
+        imageCell.backgroundColor = [UIColor clearColor];
+        if (self.contents.count > indexPath.row) {
+            [imageCell setCellData:[self.contents objectAtIndex:indexPath.row]];
+        } else {
+            [imageCell setCellData:nil];
         }
         resultCell = imageCell;
     } else if (self.titleCollectionView == collectionView) {

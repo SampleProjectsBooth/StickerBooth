@@ -245,7 +245,6 @@ lfEditCollection_bind_var_setter(varType, varName, setterName, ((UICollectionVie
     }
     return [(UICollectionViewFlowLayout *)self.collectionViewLayout footerReferenceSize];
 }
-
 #pragma mark - UIScrollView setter/getter
 
 lfEditCollection_bind_var(BOOL, bounces, setBounces);
@@ -308,6 +307,10 @@ lfEditCollection_bind_var(BOOL, isPrefetchingEnabled, setPrefetchingEnabled);
     return [self.collectionView indexPathForItemAtPoint:point];
 }
 
+- (void)performBatchUpdates:(void (^)(void))updates completion:(void (^)(BOOL))completion
+{
+    [self.collectionView performBatchUpdates:updates completion:completion];
+}
 #pragma mark - UICollectionViewFlowLayout setter/getter
 - (void)setCollectionViewLayout:(UICollectionViewLayout *)collectionViewLayout
 {

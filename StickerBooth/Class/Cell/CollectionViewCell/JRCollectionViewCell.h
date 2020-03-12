@@ -20,7 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol JRCollectionViewDelegate <NSObject>
 
+@optional
 - (void)didSelectData:(nullable NSData *)data thumbnailImage:(nullable UIImage *)thumbnailImage index:(NSInteger)index;
+
+- (void)didEndReloadData:(JRCollectionViewCell *)cell;
 
 @end
 

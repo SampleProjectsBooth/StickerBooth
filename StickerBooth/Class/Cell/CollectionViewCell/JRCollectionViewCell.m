@@ -15,9 +15,6 @@
 #import "JRStickerContent+JRGetData.h"
 #import "JRPHAssetManager.h"
 
-#import "NSObject+LFTipsGuideView.h"
-#import "NSBundle+LFMediaEditing.h"
-
 @interface JRCollectionViewCell () <LFEditCollectionViewDelegate>
 
 @property (strong, nonatomic) LFEditCollectionView *collectionView;
@@ -44,6 +41,13 @@
     [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
+-(void)prepareForReuse
+{
+    [super prepareForReuse];
+    self.collectionView.dataSources = @[];
+    [self.collectionView reloadData];
+}
+
 - (void)dealloc
 {
     [self.collectionView removeFromSuperview];
@@ -58,13 +62,15 @@
     if ([data isKindOfClass:[NSArray class]]) {
         self.collectionView.dataSources = @[data];
     }
+
+    __weak typeof(self) weakSelf = self;
     [self.collectionView performBatchUpdates:^{
-        [self.collectionView reloadData];
+        [weakSelf.collectionView reloadData];
     } completion:^(BOOL finished) {
-        UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-        if (cell) {
-            [self lf_showInView:[UIApplication sharedApplication].keyWindow maskRects:@[[NSValue valueWithCGRect:[cell.superview convertRect:cell.frame toView:nil]]] withTips:@[[NSBundle LFME_localizedStringForKey:@"_LFME_UserGuide_StickerView_DisplayView_LongPress"]]];
+        if ([weakSelf.delegate respondsToSelector:@selector(didEndReloadData:)]) {
+            [weakSelf.delegate didEndReloadData:weakSelf];
         }
+        
     }];
 }
 

@@ -109,6 +109,9 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
         }
     } else if (obj.type == JRStickerContentType_URLForHttp) {
         NSURL *httpURL = (NSURL *)itemData;
+        if (obj.state == JRStickerContentState_Success) {
+            
+        }
         NSData *httplocalData = [self dataFromCacheWithURL:httpURL];
         if (httplocalData) {
             if ([NSData jr_imageFormatForImageData:httplocalData] == JRImageFormatUndefined) {
@@ -215,12 +218,16 @@ CGFloat const JR_kVideoBoomHeight = 25.f;
     if (content.type != JRStickerContentType_URLForHttp) {
         return;
     }
+    
+    if (content.state == JRStickerContentState_Success || content.state == JRStickerContentState_Downloading) {
+        return;
+    }
+    
+    content.state = JRStickerContentState_Downloading;
+    
     self.imageView.image = [JRConfigTool shareInstance].normalImage;
     NSURL *httpURL = (NSURL *)content.content;
     self.progressView.hidden = NO;
-    if (content.type == JRStickerContentState_Downloading) {
-        content.progress = 0.f;
-    }
     self.progressView.progress = content.progress;
     __weak typeof(self) weakSelf = self;
     [self lf_downloadImageWithURL:httpURL progress:^(CGFloat progress, NSURL * _Nonnull URL) {

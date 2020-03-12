@@ -42,6 +42,10 @@ typedef NS_ENUM(NSInteger, JRStickerContentType) {
 - (instancetype)initWithContent:(id)content;
 
 
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary;
+
+- (NSDictionary *)dictionary;
+
 @end
 
 NS_ASSUME_NONNULL_END

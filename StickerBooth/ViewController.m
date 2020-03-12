@@ -58,11 +58,10 @@
 //    objs = @[a1, a1, [ViewController jr_GetAllPhotos]];
     self.myView.selectTitleColor = [UIColor blueColor];
     if (self.testDict) {
-        [self.myView loadDataSourceWithCache:self.testDict];
+        self.myView.cacheData = self.testDict;
     } else {
         //@[@"阿斯顿发", @"威武人", @"科维克金人", @"文氛围"]
         [self.myView setTitles:@[@"阿斯顿发", @"威武人", @"科维克金人", @"文氛围"] contents:objs];
-        if(self.dicasdsa) self.dicasdsa(self.myView.cache);
     }
     self.myView.didSelectBlock = ^(NSData * _Nullable data, UIImage * _Nullable thumbnailImage) {
         NSLog(@"%@", [[objs objectAtIndex:weakSelf.myView.selectIndexPath.section] objectAtIndex:weakSelf.myView.selectIndexPath.row]);
@@ -78,6 +77,7 @@
 - (void)dealloc
 {
     NSLog(@"VC dealloc");
+    if(self.dicasdsa) self.dicasdsa(self.myView.cacheData);
     [JRConfigTool free];
 }
 

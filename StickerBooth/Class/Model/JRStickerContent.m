@@ -9,7 +9,8 @@
 #import "JRStickerContent.h"
 #import <Photos/Photos.h>
 
-
+NSString * const JRStickerContent_content = @"JRStickerContent_content";
+NSString * const JRStickerContent_state = @"JRStickerContent_state";
 
 @interface JRStickerContent ()
 
@@ -50,4 +51,29 @@
     return _type;
 }
 
+
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+{
+    if ([[dictionary allKeys] containsObject:JRStickerContent_content]) {
+        self = [self initWithContent:[dictionary objectForKey:JRStickerContent_content]];
+        if (self) {
+            _state = [[dictionary objectForKey:JRStickerContent_state] integerValue];
+        } return self;
+    }
+    return nil;
+}
+
+- (NSDictionary *)dictionary
+{
+    NSMutableDictionary *muDict = @{}.mutableCopy;
+    if (self.content) {
+        [muDict setObject:self.content forKey:JRStickerContent_content];
+    }
+    if (self.state == JRStickerContentState_Downloading) {
+        self.state = JRStickerContentState_None;
+    }
+    [muDict setObject:@(self.state) forKey:JRStickerContent_state];
+    return [muDict copy];
+
+}
 @end
